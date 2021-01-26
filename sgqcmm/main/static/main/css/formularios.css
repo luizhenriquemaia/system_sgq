@@ -1,0 +1,176 @@
+@charset "UFT-8";
+
+fieldset {
+	margin: -20px 100px 50px 100px;
+	box-shadow: 5px 5px 10px rgba(0,0,0,.5);
+}
+
+fieldset legend {
+	font-size: 24px;
+	margin: 10px 10px 10px 0p;
+}
+
+.campo {
+	margin-top: -20px;
+	margin-left: 40px;
+	margin-bottom: 20px;
+	font-size: 18px;
+}
+
+.etiqueta {
+	font-family: Arial, san-serif;
+	font-size: 15px;
+	text-align: left;
+	margin-top: 10px;
+	margin-left: 20px;
+}
+
+.botaoradio {
+	margin: 10px 10px 20px 40px;
+}
+
+.etqradio {
+	font-family: Arial, san-serif;
+	font-weight: bold;
+	font-size: 15px;
+}
+
+table.tabform {
+	margin-left: auto;
+	margin-right: auto;
+	border-color: black;
+}
+
+table td.cabtab {
+	font-family: Arial, san-serif;
+	font-weight: bold;
+	font-size: 13px;
+	text-align: center;
+	border-color: #ffffff;
+	background-color: #cecece;
+	padding: 10px;
+}
+
+table td.ittab {
+	font-family: Arial, san-serif;
+	font-size: 13px;
+	border-color: #ffffff;
+	text-align: center;
+}
+
+.numtab {
+	font-family: Arial, san-serif;
+	font-size: 13px;
+	text-align: center;
+}
+
+.chktab {
+	text-align: center;
+	margin-left: 25px;
+}
+
+.botcomando {
+	height: 40px;
+	width: 150px;
+	margin-top: -60px;
+	margin-left: 720px;
+	margin-bottom: 50px;
+	box-shadow: 5px 5px 10px rgba(0,0,0,.5);
+}
+
+h5#lblNome {
+	position: absolute;
+	top: 283px;
+	left: 410px;
+}
+
+input#cmpNome {
+	position: absolute;
+	top: 316px;
+	left: 448px;
+}
+
+h5#lblEmail {
+	position: absolute;
+	top: 347px;
+	left: 642px;
+}
+
+input#cmpMail {
+	position: absolute;
+	top: 381px;
+	left: 680px;
+}
+
+fieldset#localizacao {
+	height: 220px;
+}
+
+select#lstLocaliz {
+	font-size: 16px;
+	position: absolute;
+	top: 509px;
+	left: 281px;
+}
+
+h5#lblMun {
+	position: absolute;
+	top: 500px;
+	left: 485px;
+}
+
+input#cmpMun {
+	position: absolute;
+	top: 534px;
+	left: 523px;
+}
+
+h5#lblBai {
+	position: absolute;
+	top: 500px;
+	left: 718px;
+}
+
+input#cmpBai {
+	position: absolute;
+	top: 534px;
+	left: 756px;
+}
+
+h5#lblEnd {
+	position: absolute;
+	top: 559px;
+	left: 485px;
+}
+
+input#cmpEnd {
+	position: absolute;
+	top: 593px;
+	left: 523px;
+}
+
+h5#lblCEP {
+	position: absolute;
+	top: 618px;
+	left: 485px;
+}
+
+input#cmpCEP {
+	position: absolute;
+	top: 652px;
+	left: 523px;
+}
+
+h5#lblDist {
+	position: absolute;
+	top: 618px;
+	left: 753px;
+}
+
+input#cmpDist {
+	position: absolute;
+	top: 652px;
+	left: 791px;
+	text-align: right;
+}
+

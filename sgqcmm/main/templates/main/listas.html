@@ -1,0 +1,66 @@
+{% extends "main/basePage.html" %}
+	{% block content %}
+		{% if user.is_authenticated %}
+		<div class="content">
+			<div class="title-page">
+				<h4>Listas {{tipolista}} para App XNaMão</h4>
+			</div>
+			<p>
+				Copie o código abaixo para o PyDroid do dispositivo móvel, salve-o com o nome de 'CriarArquivos.Py' e execute-o.
+			</p>
+			<div class="divider"></div>
+				<fieldset id="txtCodigo">
+<p><textarea name="tMsg" id="cMsg" cols="35"rows="15" placeholder="Mensagem">
+import json
+{% if itenslista %}
+# Criar arquivo {{tipolista}}
+listdados = [ {% for item in itenslista %} {{item.texto}} {{item.continua}} {% endfor %} ]
+
+arqdados = open('{{nomearq}}.json', 'w')
+json.dump(listdados, arqdados)
+arqdados.close() {% endif %}
+</textarea></p>
+				</fieldset>
+			</div>
+		{% endif %}
+	{% endblock content %}
+	{% block footer %}
+		<footer>
+			<p>
+				<a href="../listas-offline/">Listas de Categorias Off-Line</a>
+			</p>
+			<p>
+				<a href="../listas-insumos/">Listas de Insumos Off-Line</a>
+			</p>
+			<p>
+				<a href="../listas-empresas/">Listas de Empresas Off-Line</a>
+			</p>
+			<p>
+				<a href="../listas-caixas/">Listas de Caixas Off-Line</a>
+			</p>
+			<p>
+				<a href="../listas-ccustos/">Listas de Centro de Custo Off-Line</a>
+			</p>
+			<p>
+				<a href="../listas-ativs/">Listas de Atividades Off-Line</a>
+			</p>
+			<p>
+				<a href="../listas-patrs/">Listas de Patrimônios Off-Line</a>
+			</p>
+			<p>
+				<a href="../listas-colabs/">Listas de Colaboradores Off-Line</a>
+			</p>
+			<p>
+				<a href="../listas-forns/">Listas de Fornecedores Off-Line</a>
+			</p>
+			<p>
+				<a href="../listas-ctsforns/">Listas de Contratos de Fornecimento Off-Line</a>
+			</p>
+			<ul style="list-style-type:none;">
+				<li><a href="../edit-profile/">Voltar</a></li>
+			</ul>
+		</footer>
+	{% endblock footer %}
+
+
+

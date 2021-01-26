@@ -1,0 +1,172 @@
+@charset "UFT-8";
+@import url('https://fonts.googleapis.com/css?family=Cardo');
+
+header {background-color: white}
+
+header#cabecalho {
+	background: url("../_imagens/logo_gc.png") no-repeat 0px 0px;
+	border-bottom: 1px #606060 solid;
+	height: 100px;
+}
+
+header#cabecalho h1 {
+	font-family: 'Cardo', serif;
+	font-size: 24pt;
+	text-align: right;
+	margin-top: -10px;
+	margin-right: 20px;
+}
+
+
+body {
+	/*background-color:#cdc9c9;*/
+	background-color:#F2F2F1;
+	color:rgba(0,0,0,1);
+}
+
+body h2 {
+	font-family: 'Cardo', serif;
+	/*font-family: Arial, san-serif;*/
+	margin-left: 20px;
+}
+
+body h3 {
+	font-family: 'Cardo', serif;
+	/*font-family: Arial, san-serif;*/
+	margin-left: 20px;
+}
+
+body h4 {
+	font-family: 'Cardo', serif;
+	/*font-family: Arial, san-serif;*/
+	margin-left: 20px;
+}
+
+body p {
+	font-family: 'Cardo', serif;
+	/*font-family: Arial, san-serif;*/
+	text-align: justify;
+	margin-left: 20px;
+	margin-right: 20px;
+	padding: 5px 20px 5px 20px;
+}
+
+body li {
+	font-family: 'Cardo', serif;
+	/*font-family: Arial, san-serif;*/
+	padding: 10px;
+}
+
+
+div#interface{
+	width: 970px;
+	background-color: white;
+	margin: 50px auto 0px auto;
+	box-shadow: 1px 1px 4px black;
+	padding: 10px;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover{
+	text-decoration: underline;
+}
+
+/* Formatação do Menu Principal */
+
+nav#menu {
+	display: block;
+}
+
+nav#menu ul {
+	list-style: none;
+	text-transform: uppercase;
+	position: relative;
+	top: -60px;
+	left: -40px;
+	font-family: 'Cardo', serif;
+	/*font-family: Arial;*/
+}
+
+nav#menu li {
+	display: inline-block;
+	/*background-color: #dddddd;*/
+	background-color: #C2C2C2;
+	padding: 10px;
+	margin: 10px 4px 2px 4px;
+	transition: background-color 1s;
+	font-family: 'Cardo', serif;
+	font-size: 10pt;
+	box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 0.5);
+}
+
+nav#menu li:hover {
+	background-color: #606060;
+}
+
+nav#menu h1 {
+	display: none;
+}
+
+nav#menu a {
+	color: black;
+	text-decoration: none;
+}
+
+nav#menu a:hover {
+	color: white;
+	/*text-decoration: underline;*/
+	text-decoration: none;
+}
+
+/* Formatação do Menu de Operação das Páginas */
+
+nav#operacao li {
+	font-family: 'Cardo', serif;
+	/*font-family: Arial;*/
+	margin: 5px;
+}
+
+/* Formatação do Menu de Mais Informações */
+
+nav#maisinf li {
+	font-family: 'Cardo', serif;
+	/*font-family: Arial;*/
+	margin: 5px;
+}
+
+
+/* Formatação de imagens com legendas */
+figure.foto-legenda {
+	position: relative;
+	border: 8px solid white;
+	box-shadow: 1px 1px 4px black;
+}
+
+figure.foto-legenda img {
+	width: 100%;
+	height: 100%;
+}
+
+figure.foto-legenda figcaption {
+	opacity: 0;
+	position: absolute;
+	top: 0px;
+	background-color: rgba(0,0,0,.4);
+	color: white;
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	box-sizing: border-box;
+	transition: opacity 1s;
+}
+
+figure.foto-legenda:hover figcaption {
+	opacity: 1;
+}
+
+footer#rodape{
+	height: 100px;
+}

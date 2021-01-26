@@ -1,0 +1,45 @@
+{% extends "main/basePage.html" %}
+	{% block content %}
+		{% if user.is_authenticated %}
+		<div class="content">
+			<div class="title-page">
+				<h4>Sistema de Gestão da Qualidade</h4>
+			</div>
+			<p>
+				Clique no link do aplicativo desejado:
+			</p>
+			<div class="collection">
+			<a href="/sgqcmm/inicio" class="collection-item black-text">
+				<strong>Gerenciamento Comercial - Orçamentos, Entregas, Faturamento, Estoque e Contas a Receber</strong>
+			</a>
+			<a href="/sgqcmm/xpagamentos" class="collection-item black-text">
+				<strong>Gerenciamento de Contas a Pagar - Agendamento, Comprovantes e Contratos de Fornecimento</strong>
+			</a>
+			<a href="/sgqcmm/xfinanceiro" class="collection-item black-text">
+				<strong>Gerenciamento Financeiro - Lançamentos, Controle de Caixa, Consolidações & Apurações</strong>
+			</a>
+			<a href="/sgqcmm/xtalentos/inicio" class="collection-item black-text">
+				<strong>Gerenciamento dos Recursos Humanos - Cadastros e Rotinas de RH</strong>
+			</a>
+			<a href="/sgqcmm/xpatrimonios" class="collection-item black-text">
+				<strong>Gerenciamento de Patrimônio - Imóveis, Veículos, Máquinas & Equipamentos, etc.</strong>
+			</a>
+			<a href="/sgqcmm/xproducao" class="collection-item black-text">
+				<strong>Gerenciamento da Produção Industrial - Produção e Controle de Lotes</strong>
+			</a>
+			<a href="/sgqcmm/xprojetos" class="collection-item black-text">
+				<strong>Gerenciamento de Projetos - Cronograma, Diário de Obras, Apontamentos e Medições</strong>
+			</a>
+			<a href="/sgqcmm/configuracoes" class="collection-item black-text">
+				<strong>Configurações - Empresas, Centros de Custos, Planos de Contas e Outros Cadastro em Geral</strong>
+			</a>
+		</div>
+		{% endif %}
+	{% endblock content %}
+	{% block footer %}
+		<footer>
+			<ul style="list-style-type:none;">
+				<li><a href="/sgqcmm/procs/operacao/">Exibir procedimentos de operação do Sistema de Gestão de Qualidade</a></li>
+			</ul>
+		</footer>
+	{% endblock footer %}

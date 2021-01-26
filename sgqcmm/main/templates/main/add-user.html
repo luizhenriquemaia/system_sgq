@@ -1,0 +1,66 @@
+{% extends "main/basePage.html" %}
+  {% block content %}
+  {% if user.is_staff %}
+    <div class="container-content">
+      <h4 style="text-align:center;">Cadastrar Usuário</h4>
+      <br>
+      <form method="post">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col s12">
+            <label>Nome do Usuário</label>
+            {{ form.username }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Nome</label>
+            {{ form.first_name }}
+          </div>
+          <div class="col s6">
+            <label>Sobrenome</label>
+            {{ form.last_name }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <label>Email</label>
+            {{ form.email }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Senha</label>
+            {{ form.password1 }}
+            <p style="font-size:13px;">
+              Sua senha não pode ser tão parecida com suas outras informações pessoais.
+            </p>
+            <p style="font-size:13px;">
+              Sua senha precisa conter pelo menos 8 caracteres.
+            </p>
+            <p style="font-size:13px;">
+              Sua senha não pode ser uma senha habitualmente utilizada.
+            </p>
+            <p style="font-size:13px;">
+              Sua senha não pode ser inteiramente numérica.
+            </p>
+          </div>
+          <div class="col s6">
+            <label>Confirmação de Senha</label>
+            {{ form.password2 }}
+            <p style="font-size:13px;">
+              Informe a mesma senha informada anteriormente, para verificação.
+            </p>
+          </div>
+        </div>
+        <br>
+  			<br>
+  			<div class="row">
+  				<div class="col s1 offset-s11">
+  					<button class="submit-hover" name="btnCadastrar" type="submit" value="btnCadastrar">CADASTRAR</button>
+  				</div>
+  		  </div>
+      </form>
+    </div>
+  {% endif %}
+  {% endblock content %}

@@ -1,0 +1,63 @@
+{% extends "main/basePage.html" %}
+  {% block content %}
+    <div id="content-for-hidden">
+      <div class="container-content">
+        <h4 style="text-align:center;">Usuário</h4>
+        <br>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-field">
+            <div class="row">
+              <div class="col s12">
+                <label>Nome de Usuário</label>
+                {{ form.username }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s6">
+                <label>Nome</label>
+                {{ form.first_name }}
+              </div>
+              <div class="col s6">
+                <label>Sobrenome</label>
+                {{ form.last_name }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <label>Email</label>
+                {{ form.email }}
+              </div>
+            </div>
+          </div>
+          <br>
+    			<br>
+    			<div class="row">
+    				<div class="col s1 offset-s11">
+    					<button class="submit-hover" name="btnAlterar" type="submit" value="btnAlterar">ALTERAR</button>
+    				</div>
+    		  </div>
+        </form>
+      </div>
+    </div>
+    <div id="content-menu">
+			<p>
+				<a href="../change-password/">Alterar senha</a>
+			</p>
+      {% if user.is_staff %}
+			<p>
+				<a href="../add-user/">Adicionar usuário</a>
+			</p>
+      {% endif %}
+			<p>
+				<a href="../listas-offline/">Listas de Dados Off-Line</a>
+			</p>
+		</div>
+		<button class="responsible-button" onclick="menuSandwich(this)">
+		  <div class="sandwich-line1"></div>
+		  <div class="sandwich-line2"></div>
+		  <div class="sandwich-line3"></div>
+		</button>
+    {% load static %}
+		<script src="{% static 'main/js/menuPagina.js' %}" type="text/javascript"></script>
+  {% endblock content %}
