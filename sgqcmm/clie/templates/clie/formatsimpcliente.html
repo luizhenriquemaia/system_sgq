@@ -1,0 +1,91 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+	<div class="content">
+		<div class="title-page">
+			<h4>Solicitante</h4>
+		</div>
+		<form method="POST">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col s2">
+					<label>Tratamento</label>
+					<input type="text" name="tratamento" placeholder="Sr., Sra., Eng., etc." maxlength="200" required id="tratamento"
+						value="{{ dados.tratamento }}" required>
+				</div>
+				<div class="col s10">
+					<label>Nome Completo</label>
+					<input type="text" name="nomecompleto" placeholder="Nome Completo" maxlength="200" required id="nomecompleto"
+						value="{{ dados.nomecompleto }}" required>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12">
+					<label>Descrição Cadastro</label>
+					<input type="text" name="descrCadastro" maxlength="200" required id="descrCadastro"
+						value="{{ dados.descr_cad }}" required>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s6">
+					<label>Jurídica</label>
+					{{ form.juridica }}
+				</div>
+				<div class="col s6">
+					<label>Genero</label>
+					{{ form.genero }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12">
+					<label>Empresa</label>
+					{{ form.empresa }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s6">
+					<label>Telefones</label>
+					{% for telefone in dados.telefones %}
+						<input type="text" name="txtFone" id="cmpFone" size="20" maxlength="15" placeholder="(dd) nnnnn-nnnn"
+							value="{{ telefone }}">
+					{% endfor %}
+					<input type="text" name="nvfone" id="nvfone" size="20" maxlength="15" placeholder="(dd) nnnnn-nnnn"
+						{% if dados.novofone != '0' %} value="{{ dados.novofone }}" {% endif %}>
+				</div>
+				<div class="col s6">
+					<label>E-mail</label>
+					<input type="email" class="validate" name="nvemail" id="nvemail" {% if dados.novoemail != '@' %}
+						value="{{ dados.novoemail }}" {% endif %}>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12">
+					{% for endereco in dados.enderecos %}
+						<label class="black-text">
+							<input class="with-gap" name="endereco" type="radio" value="{{endereco.id}}" required />
+							<span>{{endereco.logradouro}}, {{endereco.complend}}, {{endereco.bairro}},
+								{{endereco.municipio}}-{{endereco.estado_id}}</span>
+						</label>
+					{% endfor %}
+					<label>
+						<input class="with-gap" name="endereco" type="radio" value="0" required />
+						<span class="black-text">Incluir novo endereco</span>
+					</label>
+
+				</div>
+			</div>
+			<br>
+			<br>
+			<button class="submit-ok submit-hover" name="proximo" type="submit" value="proximo">
+				<i class="material-icons">navigate_next</i>
+			</button>
+		</form>
+	</div>
+{% endblock content %}
+{% block footer %}
+<footer>
+	<ul style="list-style-type:none;">
+		<li><a href="/procs/comercial/011">Como atualizar os dados do cliente?</a></li>
+		<li><a href="/procs/comercial/">Exibir todos os procedimentos do departamento comercial</a></li>
+	</ul>
+</footer>
+{% endblock footer %}

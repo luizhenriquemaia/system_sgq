@@ -1,0 +1,117 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+	<div class="content">
+		<div class="title-page">
+			<h4>{{parametros.nomeseq}} para {{parametros.nomecliente}}</h4>
+		</div>
+		<form method="POST">
+			{% csrf_token %}
+			<p>Use as opções abaixo para identificar o bairro</p>
+			<div class="divider"></div>
+			<br>
+			<br>
+			<br>
+			<div class="row">
+				<div class="col s12">
+					<label class="black-text"><strong>Município:</strong></label>
+					<nav>
+						<div class="nav-wrapper grey lighten-3">
+							<div class="col s12">
+								<a href="../mudaregiao" class="breadcrumb black-text">{{parametros.regiao}}</a>
+								<a href="../mudaestado/{{parametros.regiao}}" class="breadcrumb black-text">{{parametros.nomeuf}}</a>
+								<a href="../mudamunicipio/A-B-C.1" class="breadcrumb black-text">{{parametros.nomemuni}}</a>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col s12">
+					<label class="black-text"><strong>Bairro:</strong></label>
+					<nav>
+						<div class="nav-wrapper grey lighten-3">
+							<ul class="left hide-on-med-and-down black-text">
+								{% if parametros.filtro == 'A-B-C.1' %}
+									<li class="active"><a href="../mudabairro/A-B-C.1" class="black-text">a-b-c</a></li>
+								{% else %}
+									<li><a href="../mudabairro/A-B-C.1" class="black-text">a-b-c</a></li>
+								{% endif %}
+								{% if parametros.filtro == 'A-B-C.2' %}
+									<li class="active"><a href="../mudabairro/A-B-C.2" class="black-text">d-e-f</a></li>
+								{% else %}
+									<li><a href="../mudabairro/A-B-C.2" class="black-text">d-e-f</a></li>
+								{% endif %}
+								{% if parametros.filtro == 'A-B-C.3' %}
+									<li class="active"><a href="../mudabairro/A-B-C.3" class="black-text">g-h-i</a></li>
+								{% else %}
+									<li><a href="../mudabairro/A-B-C.3" class="black-text">g-h-i</a></li>
+								{% endif %}
+								{% if parametros.filtro == 'A-B-C.4' %}
+									<li class="active"><a href="../mudabairro/A-B-C.4" class="black-text">j-k-l</a></li>
+								{% else %}
+									<li><a href="../mudabairro/A-B-C.4" class="black-text">j-k-l</a></li>
+								{% endif %}
+								{% if parametros.filtro == 'A-B-C.5' %}
+									<li class="active"><a href="../mudabairro/A-B-C.5" class="black-text">m-n-o</a></li>
+								{% else %}
+									<li><a href="../mudabairro/A-B-C.5" class="black-text">m-n-o</a></li>
+								{% endif %}
+								{% if parametros.filtro == 'A-B-C.6' %}
+									<li class="active"><a href="../mudabairro/A-B-C.6" class="black-text">p-q-r</a></li>
+								{% else %}
+									<li><a href="../mudabairro/A-B-C.6" class="black-text">p-q-r</a></li>
+								{% endif %}
+								{% if parametros.filtro == 'A-B-C.7' %}
+									<li class="active"><a href="../mudabairro/A-B-C.7" class="black-text">s-t-u</a></li>
+								{% else %}
+									<li><a href="../mudabairro/A-B-C.7" class="black-text">s-t-u</a></li>
+								{% endif %}
+								{% if parametros.filtro == 'A-B-C.8' %}
+									<li class="active"><a href="../mudabairro/A-B-C.8" class="black-text">v-w-x</a></li>
+								{% else %}
+									<li><a href="../mudabairro/A-B-C.8" class="black-text">v-w-x</a></li>
+								{% endif %}
+								{% if parametros.filtro == 'A-B-C.9' %}
+									<li class="active"><a href="../mudabairro/A-B-C.9" class="black-text">y-z</a></li>
+								{% else %}
+									<li><a href="../mudabairro/A-B-C.9" class="black-text">y-z</a></li>
+								{% endif %}
+							</ul>
+						</div>
+					</nav>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col s11">
+					<label for="pesqbairro" class="black-text"><strong>Pesquisar por:</strong></label>
+					<input type="text" name="pesqbairro" placeholder="Pesquisar por Bairro de {{parametros.nomemuni}} - {{parametros.siglauf}}"
+							maxlength="200" id="pesqbairro" required>
+				</div>
+				<div class="col s1">
+					<br>
+					<button class="submit-hover" name="pesquisar" type="submit" style="padding: 15px;"><i class="material-icons">search</i></button>
+				</div>
+			</div>
+			<br>
+			<br>
+			<h5 style="text-align: center;">Lista de bairros</h5>
+			<div class="divider"></div>
+			<br>
+			<div class="row" style="text-align: center;">
+				{% for bairro in listabairros %}
+					<div class="col s4" style="margin-bottom: 20px;">
+						<a href="../bairro/{{bairro.id}}" class="collection-item black-text">{{bairro.bairro}}</a>
+					</div>
+				{% endfor %}
+			</div>
+			<div class="divider"></div>
+			<br>
+			<br>
+			{% if parametros.codbair == 0 %}
+				<a href="../bairro/0" class="collection-item black-text"><strong>Incluir '{{parametros.nomebair}}'</strong></a>
+			{% endif %}
+		</form>
+	</div>
+{% endblock content %}

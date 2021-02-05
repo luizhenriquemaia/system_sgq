@@ -1,0 +1,61 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+	<div class="content">
+		<div class="title-pag">
+			<h4>{{parametros.nomeseq}} para {{parametros.nomecliente}}</h4>
+		</div>
+		<form method="POST">
+			{% csrf_token %}
+			<p>Use as opções abaixo para identificar o local</p>
+			<div class="divider"></div>
+			<br>
+			<br>
+			<br>
+			<div class="row">
+				<div class="col s12">
+					<label class="black-text"><strong>Bairro:</strong></label>
+					<nav>
+						<div class="nav-wrapper grey lighten-3">
+							<div class="col s12">
+								<a href="../mudaregiao" class="breadcrumb black-text">{{parametros.regiao}}</a>
+								<a href="../mudaestado/{{parametros.regiao}}" class="breadcrumb black-text">{{parametros.nomeuf}}</a>
+								<a href="../mudamunicipio/A-B-C.1" class="breadcrumb black-text">{{parametros.nomemuni}}</a>
+								<a href="../mudabairro/A-B-C.1" class="breadcrumb black-text">{{parametros.nomebair}}</a>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col s12">
+					<label class="black-text"><strong>Logradouro:</strong></label>
+					<div class="collection">
+						{% for lograd in parametros.listalograd %}
+							<input class="with-gap" name="codlograd" type="radio" value="{{lograd.Id_Logr}}" required />
+							<span>{{lograd.Logradouro}}</span>
+						{% endfor %}
+						<input class="with-gap" name="codlograd" type="radio" checked value="0" required />
+						<span>Novo Logradouro:</span>
+						<input type="text" name="novolograd" placeholder="Novo Logradouro de {{parametros.nomebair}}, {{parametros.nomemuni}} - {{parametros.siglauf}}" maxlength="200" id="novolograd">
+					</div>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col s12">
+					<label class="black-text"><strong>Complemento:</strong></label>
+					<input type="text" name="complemento" placeholder="Numero, Quadra, Lote, etc." maxlength="200"
+						required id="complemento" value="{{ parametros.complemento }}" required>
+				</div>
+			</div>
+			<br>
+			<br>
+			<div class="row">
+				<div class="col s1 offset-s12" style="padding:0px;">
+					<button class="submit-hover" name="proximo" type="submit" style="padding: 15px 20px 15px 20px;"><i class="material-icons">navigate_next</i></button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock content %}

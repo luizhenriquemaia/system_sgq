@@ -1,2 +1,3 @@
 db.sqlite3
 secret_key.txt
+access_db.txt

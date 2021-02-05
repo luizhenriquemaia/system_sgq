@@ -1,0 +1,54 @@
+{% extends "main/basePage.html" %}
+	{% block content %}
+		<div class="content">
+			<div class="title-page">
+				<h4>{{parametros.nomeseq}} para {{parametros.nomecliente}}</h4>
+			</div>
+			<form method="POST">
+				{% csrf_token %}
+				<p>Use as opções abaixo para identificar o estado</p>
+				<div class="divider"></div>
+				<br>
+				<br>
+				<br>
+				<p><label class="black-text"><strong>Região:</strong></label></p>
+				<nav>
+					<div class="nav-wrapper grey lighten-3">
+						<ul class="left hide-on-med-and-down">
+							{% if parametros.regiao == 'Centro Oeste' %}
+								<li class="active"><a href="../mudaestado/Centro_Oeste" class="black-text">Centro Oeste</a></li>
+							{% else %}
+								<li><a href="../mudaestado/Centro_Oeste" class="black-text">Centro Oeste</a></li>
+							{% endif %}
+							{% if parametros.regiao == 'Nordeste' %}
+								<li class="active"><a href="../mudaestado/Nordeste" class="black-text">Nordeste</a></li>
+							{% else %}
+								<li><a href="../mudaestado/Nordeste" class="black-text">Nordeste</a></li>
+							{% endif %}
+							{% if parametros.regiao == 'Norte' %}
+								<li class="active"><a href="../mudaestado/Norte" class="black-text">Norte</a></li>
+							{% else %}
+								<li><a href="../mudaestado/Norte" class="black-text">Norte</a></li>
+							{% endif %}
+							{% if parametros.regiao == 'Sudeste' %}
+								<li class="active"><a href="../mudaestado/Sudeste" class="black-text">Sudeste</a></li>
+							{% else %}
+								<li><a href="../mudaestado/Sudeste" class="black-text">Sudeste</a></li>
+							{% endif %}
+							{% if parametros.regiao == 'Sul' %}
+								<li class="active"><a href="../mudaestado/Sul" class="black-text">Sul</a></li>
+							{% else %}
+								<li><a href="../mudaestado/Sul" class="black-text">Sul</a></li>
+							{% endif %}
+						</ul>
+					</div>
+				</nav>
+				<br>
+				<p><label class="black-text"><strong>Estados:</strong></label></p>
+				{% for estadobra in listaestado %}
+					<p><a href="../estado/{{estadobra.uf}}" class="collection-item black-text">&nbsp&nbsp&nbsp{{estadobra.estado}}</a></p>
+				{% endfor %}
+				<br>
+			</form>
+		</div>
+	{% endblock content %}

@@ -1,0 +1,43 @@
+{% extends "main/basePage.html" %}
+	{% block content %}
+	<div class="content">
+		<div class="title-page">
+			<h4>Informar Cliente Solicitante</h4>
+		</div>
+		<form method="POST">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col s12">
+					<label>Nome</label>
+					<input type="text" name="nome" id="nome" placeholder="Nome do Cliente - Informação Obrigatória" maxlength="200" required>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12">
+					<label>Telefone</label>
+					<input type="text" name="fone" id="fone" size="20" maxlength="15" placeholder="(dd) nnnnn-nnnn">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12">
+					<label>Email</label>
+					<input type="email" class="validate" name="email" id="email" placeholder="Email">
+				</div>
+			</div>
+			<br>
+			<br>
+			<button class="submit-ok submit-hover" name="proximo" type="submit" value="proximo">
+				<i class="material-icons">navigate_next</i>
+			</button>
+		</form>
+	</div>
+	{% endblock content %}
+	{% block footer %}
+		<footer>
+			<ul style="list-style-type:none;">
+				<li><a href="/procs/comercial/011">Como atualizar os dados do cliente?</a></li>
+				<li><a href="/procs/comercial/">Exibir todos os procedimentos do departamento comercial</a></li>
+			</ul>
+		</footer>
+	{% endblock footer %}
+</html>
