@@ -50,53 +50,57 @@
     </form>
 </div>
 <script>
-    function carregarEstados(value) {
-        if (value !== 0) {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function(data) {
+    function carregarDados(element) {
+        var xhttp = new XMLHttpRequest();
+        if (element.id === "id_regiao") {
+            if (element.value !== 0 && element.value !== "") {
+                xhttp.onreadystatechange = function (data) {
                     if (this.readyState === 4 && this.status === 200) {
                         document.getElementById("id_estado").innerHTML = this.response
                     }
                 }
-                xhttp.open("GET", `../ajax/carregar-estados/${value}`, true)
+                xhttp.open("GET", `../ajax/carregar-estados/${element.value}`, true)
                 xhttp.send()
+            } else {
+                document.getElementById("id_estado").innerHTML = ""
             }
-        }
-    function carregarCidades(value) {
-            if (value !== 0) {
-                var xhttp = new XMLHttpRequest();
+        } else if (element.id === "id_estado") {
+            if (element.value !== 0 && element.value !== "") {
                 xhttp.onreadystatechange = function (data) {
                     if (this.readyState === 4 && this.status === 200) {
                         document.getElementById("id_cidade").innerHTML = this.response
                     }
                 }
-                xhttp.open("GET", `../ajax/carregar-cidades/${value}`, true)
+                xhttp.open("GET", `../ajax/carregar-cidades/${element.value}`, true)
                 xhttp.send()
+            } else {
+                document.getElementById("id_cidade").innerHTML = ""
             }
-        }
-    function carregarBairros(value) {
-            if (value !== 0) {
-                var xhttp = new XMLHttpRequest();
+        } else if (element.id === "id_cidade") {
+            if (element.value !== 0 && element.value !== "") {
                 xhttp.onreadystatechange = function (data) {
                     if (this.readyState === 4 && this.status === 200) {
                         document.getElementById("id_bairro").innerHTML = this.response
                     }
                 }
-                xhttp.open("GET", `../ajax/carregar-bairros/${value}`, true)
+                xhttp.open("GET", `../ajax/carregar-bairros/${element.value}`, true)
                 xhttp.send()
+            } else {
+                document.getElementById("id_bairro").innerHTML = ""
             }
-        }
-    function carregarLogradouros(value) {
-            if (value !== 0) {
-                var xhttp = new XMLHttpRequest();
+        } else if (element.id === "id_bairro") {
+            if (element.value !== 0 && element.value !== "") {
                 xhttp.onreadystatechange = function (data) {
                     if (this.readyState === 4 && this.status === 200) {
                         document.getElementById("id_logradouro").innerHTML = this.response
                     }
                 }
-                xhttp.open("GET", `../ajax/carregar-logradouros/${value}`, true)
+                xhttp.open("GET", `../ajax/carregar-logradouros/${element.value}`, true)
                 xhttp.send()
+            } else {
+                document.getElementById("id_logradouro").innerHTML = ""
             }
         }
+    }
 </script>
 {% endblock content %}

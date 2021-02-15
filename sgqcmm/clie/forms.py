@@ -80,15 +80,15 @@ class frmPesqLogradouro(forms.Form):
 
 
 class formNovoEndereco(forms.Form):
-    regiao_choices = [(0, '---------'), ('Norte', 'Norte'), ('Nordeste', 'Nordeste'), (
+    regiao_choices = [(0, ''), ('Norte', 'Norte'), ('Nordeste', 'Nordeste'), (
         'Centro Oeste', 'Centro Oeste'), ('Sul', 'Sul'), ('Sudeste', 'Sudeste')]
     regiao = forms.ChoiceField(choices=regiao_choices, 
-        widget=forms.Select(attrs={'onchange': "carregarEstados(this.value);"}))
+        widget=forms.Select(attrs={'onchange': "carregarDados(this);"}))
     estado = forms.ModelChoiceField(queryset=a03Estados.objetos.none(),
-        widget=forms.Select(attrs={'onchange': "carregarCidades(this.value);"}))
+        widget=forms.Select(attrs={'onchange': "carregarDados(this);"}))
     cidade = forms.ModelChoiceField(queryset=a04Municipios.objetos.none(),
-        widget=forms.Select(attrs={'onchange': "carregarBairros(this.value);"}))
+        widget=forms.Select(attrs={'onchange': "carregarDados(this);"}))
     bairro = forms.ModelChoiceField(queryset=a05Bairros.objetos.none(),
-        widget=forms.Select(attrs={'onchange': "carregarLogradouros(this.value);"}))
+        widget=forms.Select(attrs={'onchange': "carregarDados(this);"}))
     logradouro = forms.ModelChoiceField(queryset=a06Lograds.objetos.none())
     complemento = forms.CharField(label='Complemento', max_length=200, required=True)
