@@ -358,45 +358,73 @@ def dados_cliente(request):
 
 def cadastrar_novo_endereco(request):
     codcliente = request.session['codcliente']
-    form = formNovoEndereco()
-    if request.method == "POST":
+    if request.POST:
         form = formNovoEndereco(request.POST)
         if form.is_valid():
             regiao = request.POST['regiao']
             estado = request.POST['estado']
             cidade = request.POST['cidade']
-            bairro = request.POST['bairro']
-            logradouro = request.POST['logradouro']
+            if form.cleaned_data['novo_bairro']:
+                bairro = a05Bairros(
+                    id=a05Bairros.objetos.latest('id').id + 1,
+                    bairro=form.cleaned_data['novo_bairro'],
+                    cepini=0,
+                    cepfin=0,
+                    distfab=0,
+                    municipio=a04Municipios.objetos.get(id=cidade)
+                )
+                bairro.save()
+            else:
+                if request.POST['bairro'] != "":
+                    bairro = a05Bairros.objetos.get(id=request.POST['bairro'])
+            if form.cleaned_data['novo_logradouro']:
+                logradouro = a06Lograds(
+                    id=a06Lograds.objetos.latest('id').id + 1,
+                    logradouro=form.cleaned_data['novo_logradouro'],
+                    ceplogr="",
+                    distfab=0,
+                    bairro=bairro
+                )
+                logradouro.save()
+            else:
+                if request.POST['logradouro'] != "":
+                    logradouro = a06Lograds.objetos.get(id=request.POST['logradouro'])
             complemento = form.cleaned_data['complemento']
             novo_endereco_cliente = e04EndCad(
                 id=e04EndCad.proxnumcad(e04EndCad),
                 cadastro=e01Cadastros.objetos.get(pk=codcliente),
                 tipend=a07TiposEnd.objetos.get(id=1),
-                lograd=a06Lograds.objetos.get(id=logradouro),
+                lograd=logradouro,
                 complend=complemento
             )
-            #novo_endereco_cliente.save()
-            request.session['codendcliente'] = novo_endereco_cliente
+            novo_endereco_cliente.save()
+            request.session['codendcliente'] = novo_endereco_cliente.id
+            messages.info(request, "Endereço cadastrado")
+            return render(request, "clie/cadastrar-novo-endereco.html", {"form": form})
         else:
+            #print(form.errors) #Print errors if there is one
             messages.info(request, "Erro ao validar os dados do formulário")
             return render(request, "clie/cadastrar-novo-endereco.html", {"form": form})
-    return render(request,"clie/cadastrar-novo-endereco.html", {"form": form})
+    else:
+        form = formNovoEndereco()
+        return render(request,"clie/cadastrar-novo-endereco.html", {"form": form})
 
 
 def carregar_estados(request, regiao):
-    estados = a03Estados.objetos.filter(regiao=regiao)
+    estados = a03Estados.objetos.filter(regiao=regiao).order_by('estado')
     return render(request, 'clie/carregar-estados.html', {'estados': estados})
 
 def carregar_cidades(request, estado):
-    cidades = a04Municipios.objetos.filter(estado_id=estado)
+    cidades = a04Municipios.objetos.filter(estado_id=estado).order_by('municipio')
     return render(request, 'clie/carregar-cidades.html', {'cidades': cidades})
 
 def carregar_bairros(request, cidade):
-    bairros = a05Bairros.objetos.filter(municipio_id=cidade)
+    bairros = a05Bairros.objetos.filter(municipio_id=cidade).order_by('bairro')
     return render(request, 'clie/carregar-bairros.html', {'bairros': bairros})
 
 def carregar_logradouros(request, bairro):
-    logradouros = a06Lograds.objetos.filter(bairro_id=bairro)
+    logradouros = a06Lograds.objetos.filter(bairro_id=bairro).order_by('logradouro')
+    print(a06Lograds.objetos.all())
     return render(request, 'clie/carregar-logradouros.html', {'logradouros': logradouros})
 
 
