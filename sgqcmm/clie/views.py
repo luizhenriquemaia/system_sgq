@@ -142,7 +142,7 @@ def criar_novo_cliente(request, nome, telefone, email):
         io_string = StringIO(data_set)
         for count, column in enumerate(reader(io_string, delimiter=',', quotechar="|")):
             phone = a09TiposFone(
-                id=count,
+                id=count + 1,
                 tfone=column[1].strip(' "'),
             )
             phone.save()
@@ -657,6 +657,19 @@ def mudalogradouro(request):
                 parametros['codlogr'] = nvcodlogr
                 parametros['nomelogr'] = nvlograd.logradouro
             if codlograd > 0 and form.cleaned_data['complemento']:
+                try:
+                    # se não tiver tipos de endereços cadastrados
+                    a07TiposEnd.objetos.get(pk=1)
+                except:
+                    csv_file = Path.cwd().joinpath("seeds_db", 'main_a07tiposend.csv')
+                    data_set = csv_file.read_text(encoding='UTF-8')
+                    io_string = StringIO(data_set)
+                    for count, column in enumerate(reader(io_string, delimiter=',', quotechar="|")):
+                        tipo_endereço = a07TiposEnd(
+                            id=count + 1,
+                            tend=column[1].strip(' "'),
+                        )
+                        tipo_endereço.save()
                 # Cadastrar novo endereco para cliente
                 complend = form.cleaned_data['complemento']
                 nvcodend = e04EndCad.proxnumcad(e04EndCad)
