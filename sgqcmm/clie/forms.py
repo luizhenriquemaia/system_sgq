@@ -1,5 +1,5 @@
 from django import forms
-from main.models import e01Cadastros
+from main.models import e01Cadastros, a03Estados, a04Municipios, a05Bairros, a06Lograds
 
 
 class formDadosCliente(forms.Form):
@@ -77,3 +77,18 @@ class frmPesqLogradouro(forms.Form):
         label='Novo Logradouro', max_length=200, required=False)
     complemento = forms.CharField(label='Complemento', max_length=200, required=True,
                                   widget=forms.TextInput(attrs={'placeholder': 'Complemento'}))
+
+
+class formNovoEndereco(forms.Form):
+    regiao_choices = [(0, '---------'), ('Norte', 'Norte'), ('Nordeste', 'Nordeste'), (
+        'Centro Oeste', 'Centro Oeste'), ('Sul', 'Sul'), ('Sudeste', 'Sudeste')]
+    regiao = forms.ChoiceField(choices=regiao_choices, 
+        widget=forms.Select(attrs={'onchange': "carregarEstados(this.value);"}))
+    estado = forms.ModelChoiceField(queryset=a03Estados.objetos.none(),
+        widget=forms.Select(attrs={'onchange': "carregarCidades(this.value);"}))
+    cidade = forms.ModelChoiceField(queryset=a04Municipios.objetos.none(),
+        widget=forms.Select(attrs={'onchange': "carregarBairros(this.value);"}))
+    bairro = forms.ModelChoiceField(queryset=a05Bairros.objetos.none(),
+        widget=forms.Select(attrs={'onchange': "carregarLogradouros(this.value);"}))
+    logradouro = forms.ModelChoiceField(queryset=a06Lograds.objetos.none())
+    complemento = forms.CharField(label='Complemento', max_length=200, required=True)

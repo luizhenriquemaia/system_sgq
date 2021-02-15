@@ -26,5 +26,15 @@ urlpatterns = [
     path('deflocal/estado/<str:estadoesc>',
          views.estadoescolhido, name='estadoescolhido'),
     path('deflocal/mudaregiao', views.mudaregiao, name='mudaregiao'),
-    path('prosseguir/', views.prosseguir, name='prosseguir')
+    path('prosseguir/', views.prosseguir, name='prosseguir'),
+    path('cadastrar-novo-endereco/', views.cadastrar_novo_endereco,
+         name='cadastrar_novo_endereco'),
+    path('ajax/carregar-estados/<regiao>', views.carregar_estados,
+         name='ajax_carregar_estados'),
+    path('ajax/carregar-cidades/<estado>', views.carregar_cidades,
+         name='ajax_carregar_cidades'),
+    path('ajax/carregar-bairros/<cidade>', views.carregar_bairros,
+         name='ajax_carregar_bairros'),
+    path('ajax/carregar-logradouros/<bairro>', views.carregar_logradouros,
+         name='ajax_carregar_logradouros'),
 ]

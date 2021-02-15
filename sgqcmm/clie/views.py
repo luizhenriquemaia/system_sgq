@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, re
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from clie.forms import frmPesqCliente, formDadosCliente, frmLocalizacao, frmEscCliente, formDadosEmpresa
-from clie.forms import frmPesqMunicip, frmPesqBairro, frmPesqLogradouro
+from clie.forms import frmPesqMunicip, frmPesqBairro, frmPesqLogradouro, formNovoEndereco
 from main.funcoes import numpurotelefone, format_list_telefone, nomesequencia
 from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, a07TiposEnd, a09TiposFone
 from main.models import e01Cadastros, e02FonesCad, e03WebCad, e04EndCad, e06ContCad
@@ -354,6 +354,50 @@ def dados_cliente(request):
         form = formDadosCliente()
         return render(request, "clie/dados-cliente.html", {"form": form, "dadosCliente": dados_cliente})
 
+
+
+def cadastrar_novo_endereco(request):
+    codcliente = request.session['codcliente']
+    form = formNovoEndereco()
+    if request.method == "POST":
+        form = formNovoEndereco(request.POST)
+        if form.is_valid():
+            regiao = request.POST['regiao']
+            estado = request.POST['estado']
+            cidade = request.POST['cidade']
+            bairro = request.POST['bairro']
+            logradouro = request.POST['logradouro']
+            complemento = form.cleaned_data['complemento']
+            novo_endereco_cliente = e04EndCad(
+                id=e04EndCad.proxnumcad(e04EndCad),
+                cadastro=e01Cadastros.objetos.get(pk=codcliente),
+                tipend=a07TiposEnd.objetos.get(id=1),
+                lograd=a06Lograds.objetos.get(id=logradouro),
+                complend=complemento
+            )
+            #novo_endereco_cliente.save()
+            request.session['codendcliente'] = novo_endereco_cliente
+        else:
+            messages.info(request, "Erro ao validar os dados do formulário")
+            return render(request, "clie/cadastrar-novo-endereco.html", {"form": form})
+    return render(request,"clie/cadastrar-novo-endereco.html", {"form": form})
+
+
+def carregar_estados(request, regiao):
+    estados = a03Estados.objetos.filter(regiao=regiao)
+    return render(request, 'clie/carregar-estados.html', {'estados': estados})
+
+def carregar_cidades(request, estado):
+    cidades = a04Municipios.objetos.filter(estado_id=estado)
+    return render(request, 'clie/carregar-cidades.html', {'cidades': cidades})
+
+def carregar_bairros(request, cidade):
+    bairros = a05Bairros.objetos.filter(municipio_id=cidade)
+    return render(request, 'clie/carregar-bairros.html', {'bairros': bairros})
+
+def carregar_logradouros(request, bairro):
+    logradouros = a06Lograds.objetos.filter(bairro_id=bairro)
+    return render(request, 'clie/carregar-logradouros.html', {'logradouros': logradouros})
 
 
 def deflocal(request):

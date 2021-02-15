@@ -1,0 +1,102 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+<div class="content">
+    <div class="title-page">
+        <h4>Inserir Novo Endereço</h4>
+    </div>
+    <form method="POST" id="novo-endereco-form">
+        {% csrf_token %}
+        <div class="row form-field">
+            <div class="col s12">
+                <label>Região</label>
+                {{ form.regiao }}
+            </div>
+        </div>
+        <div class="row form-field">
+            <div class="col s12">
+                <label>Estado</label>
+                {{ form.estado }}
+            </div>
+        </div>
+        <div class="row form-field">
+            <div class="col s12">
+                <label>Cidade</label>
+                {{ form.cidade }}
+            </div>
+        </div>
+        <div class="row form-field">
+            <div class="col s12">
+                <label>Bairro</label>
+                {{ form.bairro }}
+            </div>
+        </div>
+        <div class="row form-field">
+            <div class="col s12">
+                <label>Logradouro</label>
+                {{ form.logradouro }}
+            </div>
+        </div>
+        <div class="row form-field">
+            <div class="col s12">
+                <label>Complemento</label>
+                {{ form.complemento }}
+            </div>
+        </div>
+        <br>
+        <br>
+        <button class="submit-ok submit-hover" name="proximo" type="submit" value="proximo">
+            <i class="material-icons">navigate_next</i>
+        </button>
+    </form>
+</div>
+<script>
+    function carregarEstados(value) {
+        if (value !== 0) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function(data) {
+                    if (this.readyState === 4 && this.status === 200) {
+                        document.getElementById("id_estado").innerHTML = this.response
+                    }
+                }
+                xhttp.open("GET", `../ajax/carregar-estados/${value}`, true)
+                xhttp.send()
+            }
+        }
+    function carregarCidades(value) {
+            if (value !== 0) {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function (data) {
+                    if (this.readyState === 4 && this.status === 200) {
+                        document.getElementById("id_cidade").innerHTML = this.response
+                    }
+                }
+                xhttp.open("GET", `../ajax/carregar-cidades/${value}`, true)
+                xhttp.send()
+            }
+        }
+    function carregarBairros(value) {
+            if (value !== 0) {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function (data) {
+                    if (this.readyState === 4 && this.status === 200) {
+                        document.getElementById("id_bairro").innerHTML = this.response
+                    }
+                }
+                xhttp.open("GET", `../ajax/carregar-bairros/${value}`, true)
+                xhttp.send()
+            }
+        }
+    function carregarLogradouros(value) {
+            if (value !== 0) {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function (data) {
+                    if (this.readyState === 4 && this.status === 200) {
+                        document.getElementById("id_logradouro").innerHTML = this.response
+                    }
+                }
+                xhttp.open("GET", `../ajax/carregar-logradouros/${value}`, true)
+                xhttp.send()
+            }
+        }
+</script>
+{% endblock content %}
