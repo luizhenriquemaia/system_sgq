@@ -1,21 +1,24 @@
-from pathlib import Path
 from csv import reader
-from io import StringIO
 from decimal import Decimal
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, reverse, redirect
+from io import StringIO
+from pathlib import Path
+
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from clie.forms import frmPesqCliente, formDadosCliente, frmLocalizacao, frmEscCliente, formDadosEmpresa
-from clie.forms import frmPesqMunicip, frmPesqBairro, frmPesqLogradouro, formNovoEndereco
-from main.funcoes import numpurotelefone, format_list_telefone, nomesequencia
-from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, a07TiposEnd, a09TiposFone
-from main.models import e01Cadastros, e02FonesCad, e03WebCad, e04EndCad, e06ContCad
- 
+from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
+                              redirect, render, reverse)
+from main.funcoes import format_list_telefone, nomesequencia, numpurotelefone
+from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
+                         a07TiposEnd, a09TiposFone, e01Cadastros, e02FonesCad,
+                         e03WebCad, e04EndCad, e06ContCad)
+
+from clie.forms import (formDadosCliente, formDadosEmpresa, formNovoEndereco,
+                        frmEscCliente, frmLocalizacao, frmPesqBairro,
+                        frmPesqCliente, frmPesqLogradouro, frmPesqMunicip)
+
 
 # Pesquisa cliente por nome, telefone ou e-mail
-def pesqcliente(request, sequencia):
-    request.session['sequencia'] = sequencia
-    request.session['marcador'] = 'clie:pesqcliente'
+def pesqcliente(request):
     if request.method == "POST":
         form = frmPesqCliente(request.POST)
         if form.is_valid():
@@ -171,7 +174,6 @@ def criar_novo_cliente(request, nome, telefone, email):
 
 
 def selecionar_cliente(request):
-    request.session['marcador'] = 'clie:selecionar_cliente'
     filtro_cliente = request.session['filtroclie']
     lista_clientes = e01Cadastros.possiveisclientes(e01Cadastros, filtro_cliente)
     escolhas_clientes = [('0', 'Adicionar novo cliente')]

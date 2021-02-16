@@ -11,7 +11,7 @@
 				{% if user.is_authenticated %}
 				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 				<ul  class="right hide-on-med-and-down">
-					<li class="tooltipped" data-position="bottom" data-tooltip="Novo Orçamento"><a href="/clientes/1"><i class="material-icons">create_new_folder</i></a></li>
+					<li class="tooltipped" data-position="bottom" data-tooltip="Novo Orçamento"><a href="/clientes/"><i class="material-icons">create_new_folder</i></a></li>
 					<li class="tooltipped" data-position="bottom" data-tooltip="Visitas Pendentes"><a href="/orcs/cronog-visitas/"><i class="material-icons">directions_car</i></a></li>
 					{% if user.is_staff %}
 						<li class="tooltipped" data-position="bottom" data-tooltip="Contratos Pendentes"><a href="/orcs/contratos-pendentes/"><i class="material-icons">content_paste</i></a></li>
@@ -22,7 +22,7 @@
 				</ul>
 			</nav>
 			<ul class="sidenav" id="mobile-demo">
-				<li><a href="/clientes/1">
+				<li><a href="/clientes/">
 					<i class="material-icons medium">create_new_folder</i>
 					<span>Novo Orçamento</span>
 				</a></li>

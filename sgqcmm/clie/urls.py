@@ -1,11 +1,11 @@
 from django.urls import path
-from . import views
 
+from . import views
 
 app_name = "clie"
 
 urlpatterns = [
-    path('<int:sequencia>', views.pesqcliente, name='pesqcliente'),
+    path('', views.pesqcliente, name='pesqcliente'),
     path('selecionar-cliente/', views.selecionar_cliente,
          name='selecionar_cliente'),
     path('dados-cliente/', views.dados_cliente, name='dados_cliente'),
