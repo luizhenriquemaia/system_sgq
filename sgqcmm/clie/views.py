@@ -209,12 +209,13 @@ def dados_empresa(request, codempresa):
             cod_endereco = int(form.cleaned_data['endereco'])
             if cod_endereco == 0:
                 # Seguir para inclusao do endereco
-                request.session['regiao'] = 'Centro Oeste'
-                request.session['siglauf'] = 'GO'
-                request.session['codmuni'] = 94
-                request.session['codbair'] = 100
-                request.session['codlogr'] = 3
-                return HttpResponseRedirect(reverse('clie:deflocal'))
+                #request.session['regiao'] = 'Centro Oeste'
+                #request.session['siglauf'] = 'GO'
+                #request.session['codmuni'] = 94
+                #request.session['codbair'] = 100
+                #request.session['codlogr'] = 3
+                #return HttpResponseRedirect(reverse('clie:deflocal'))
+                return HttpResponseRedirect(reverse('clie:cadastrar_novo_endereco'))
             else:
                 # Continua usando o endereco selecionado
                 lograd_empresa = e04EndCad.objetos.get(id=int(cod_endereco))
@@ -327,12 +328,13 @@ def dados_cliente(request):
             cod_endereco = int(form.cleaned_data['endereco'])
             if cod_endereco == 0:
                 # Seguir para inclusao do endereco
-                request.session['regiao'] = 'Centro Oeste'
-                request.session['siglauf'] = 'GO'
-                request.session['codmuni'] = 94
-                request.session['codbair'] = 100
-                request.session['codlogr'] = 3
-                return HttpResponseRedirect(reverse('clie:deflocal'))
+                #request.session['regiao'] = 'Centro Oeste'
+                #request.session['siglauf'] = 'GO'
+                #request.session['codmuni'] = 94
+                #request.session['codbair'] = 100
+                #request.session['codlogr'] = 3
+                return HttpResponseRedirect(reverse('clie:cadastrar_novo_endereco'))
+                #return HttpResponseRedirect(reverse('clie:deflocal'))
             else:
                 # Continua usando o endereco selecionado
                 logrCli = e04EndCad.objetos.get(id=int(cod_endereco))
@@ -349,7 +351,7 @@ def dados_cliente(request):
                 request.session['siglauf'] = siglaUf
                 request.session['regiao'] = a03Estados.objetos.get(
                     pk=siglaUf).regiao
-                return HttpResponseRedirect(reverse('clie:prosseguir'))
+                return HttpResponseRedirect(reverse('orcs:novo_orcamento'))
     else:
         form = formDadosCliente()
         return render(request, "clie/dados-cliente.html", {"form": form, "dadosCliente": dados_cliente})
@@ -357,7 +359,8 @@ def dados_cliente(request):
 
 
 def cadastrar_novo_endereco(request):
-    codcliente = request.session['codcliente']
+    codigo_cliente = request.session['codcliente']
+    nome_cliente = e01Cadastros.objetos.get(id=codigo_cliente).descrcad
     if request.POST:
         form = formNovoEndereco(request.POST)
         if form.is_valid():
@@ -392,7 +395,7 @@ def cadastrar_novo_endereco(request):
             complemento = form.cleaned_data['complemento']
             novo_endereco_cliente = e04EndCad(
                 id=e04EndCad.proxnumcad(e04EndCad),
-                cadastro=e01Cadastros.objetos.get(pk=codcliente),
+                cadastro=e01Cadastros.objetos.get(id=codigo_cliente),
                 tipend=a07TiposEnd.objetos.get(id=1),
                 lograd=logradouro,
                 complend=complemento
@@ -400,14 +403,14 @@ def cadastrar_novo_endereco(request):
             novo_endereco_cliente.save()
             request.session['codendcliente'] = novo_endereco_cliente.id
             messages.info(request, "Endereço cadastrado")
-            return render(request, "clie/cadastrar-novo-endereco.html", {"form": form})
+            return HttpResponseRedirect(reverse('orcs:novo_orcamento'))
         else:
             #print(form.errors) #Print errors if there is one
             messages.info(request, "Erro ao validar os dados do formulário")
             return render(request, "clie/cadastrar-novo-endereco.html", {"form": form})
     else:
         form = formNovoEndereco()
-        return render(request,"clie/cadastrar-novo-endereco.html", {"form": form})
+        return render(request,"clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente})
 
 
 def carregar_estados(request, regiao):
@@ -427,347 +430,3 @@ def carregar_logradouros(request, bairro):
     print(a06Lograds.objetos.all())
     return render(request, 'clie/carregar-logradouros.html', {'logradouros': logradouros})
 
-
-def deflocal(request):
-    form = frmLocalizacao(request.POST)
-    seqorc = request.session['sequencia']
-    nomeseq = nomesequencia(seqorc)
-    codcliente = request.session['codcliente']
-    nomecliente = e01Cadastros.nometratcliente(e01Cadastros, codcliente)
-    siglauf = request.session['siglauf']
-    nomeuf = a03Estados.nomeestado(a03Estados, siglauf)
-    codmunic = request.session['codmuni']
-    nomemunic = a04Municipios.nomemuncipio(a04Municipios, codmunic)
-    codbairro = request.session['codbair']
-    nomebairro = a05Bairros.nomebairro(a05Bairros, codbairro)
-    codlograd = request.session['codlogr']
-    nomelograd = a06Lograds.nomelogradouro(a06Lograds, codlograd)
-    parametros = {
-        'sequencia': seqorc,
-        'nomeseq': nomeseq,
-        'codcliente': codcliente,
-        'nomecliente': nomecliente,
-        'regiao': request.session['regiao'],
-        'siglauf': siglauf,
-        'nomeuf': nomeuf,
-        'codmuni': codmunic,
-        'nomemuni': nomemunic,
-        'codbair': codbairro,
-        'nomebair': nomebairro,
-        'codlogr': codlograd,
-        'nomelogr': nomelograd
-    }
-    if codmunic == 0:
-        return HttpResponseRedirect(reverse('clie:mudamunicipio', args=['A-B-C.1']))
-    if codbairro == 0:
-        return HttpResponseRedirect(reverse('clie:mudabairro', args=['A-B-C.1']))
-    if codlograd == 0:
-        return HttpResponseRedirect(reverse('clie:mudalogradouro'))
-    if request.method == "POST":
-        if form.is_valid():
-            if codlograd > 0 and form.cleaned_data['complemento']:
-                # Cadastrar novo endereco para cliente
-                complend = form.cleaned_data['complemento']
-                nvcodend = e04EndCad.proxnumcad(e04EndCad)
-                nvendclie = e04EndCad(
-                    id=nvcodend,
-                    cadastro=e01Cadastros.objetos.get(pk=codcliente),
-                    tipend=a07TiposEnd.objetos.get(pk=1),
-                    lograd=a06Lograds.objetos.get(pk=codlograd),
-                    complend=complend
-                )
-                nvendclie.save()
-                request.session['codendcliente'] = nvcodend
-
-            if e01Cadastros.objetos.get(id=codcliente).juridica == 1:
-                # cliente != de empresa
-                codorcam = request.session['codorcam']
-                return HttpResponseRedirect(reverse('orcs:editar_contrato', args=(codorcam, )))
-            else:
-                request.session['marcador'] = 'clie:deflocal'
-                return HttpResponseRedirect(reverse('clie:prosseguir'))
-    else:
-        form = frmPesqBairro(request.POST)
-        request.session['marcador'] = 'clie:deflocal'
-    return render(request, "clie/formescendereco.html", {"form": form, "parametros": parametros})
-
-
-def mudaregiao(request):
-    request.session['marcador'] = 'clie:deflocal/mudaregiao'
-    seqorc = request.session['sequencia']
-    nomeseq = nomesequencia(seqorc)
-    codcliente = request.session['codcliente']
-    nomecliente = e01Cadastros.nometratcliente(e01Cadastros, codcliente)
-    parametros = {
-        'sequencia': seqorc,
-        'nomeseq': nomeseq,
-        'codcliente': codcliente,
-        'nomecliente': nomecliente,
-        'regiao': '',
-        'siglauf': '',
-        'codmuni': 0,
-        'codbair': 0,
-        'codlogr': 0
-    }
-    return render(request, "clie/formmudaregiao.html", {"parametros": parametros})
-
-
-def mudaestado(request, regiao):
-    request.session['marcador'] = 'clie:deflocal/mudaestado/' + regiao
-    regiaoform = regiao.replace("_", " ")
-    seqorc = request.session['sequencia']
-    nomeseq = nomesequencia(seqorc)
-    codcliente = request.session['codcliente']
-    request.session['regiao'] = regiaoform
-    nomecliente = e01Cadastros.nometratcliente(e01Cadastros, codcliente)
-    parametros = {
-        'sequencia': seqorc,
-        'nomeseq': nomeseq,
-        'codcliente': codcliente,
-        'nomecliente': nomecliente,
-        'regiao': regiaoform,
-        'siglauf': '',
-        'codmuni': 0,
-        'codbair': 0,
-        'codlogr': 0
-    }
-    listaestado = a03Estados.objetos.filter(regiao=regiaoform)
-    return render(request, "clie/formmudaestado.html", {"parametros": parametros, "listaestado": listaestado})
-
-
-def estadoescolhido(request, estadoesc):
-    request.session['marcador'] = 'clie:estado/' + estadoesc
-    # Seguir com o municipio selecionado
-    request.session['siglauf'] = estadoesc
-    request.session['codmuni'] = 0
-    request.session['codbair'] = 0
-    request.session['codlogr'] = 0
-    return HttpResponseRedirect(reverse('clie:deflocal'))
-
-
-def mudamunicipio(request, filtro):
-    request.session['marcador'] = 'clie:mudamunicipio/' + filtro
-    form = frmPesqMunicip(request.POST)
-    seqorc = request.session['sequencia']
-    nomeseq = nomesequencia(seqorc)
-    codcliente = request.session['codcliente']
-    nomecliente = e01Cadastros.nometratcliente(e01Cadastros, codcliente)
-    siglauf = request.session['siglauf']
-    nomeuf = a03Estados.nomeestado(a03Estados, siglauf)
-    codmunic = request.session['codmuni']
-    nomemunic = a04Municipios.nomemuncipio(a04Municipios, codmunic)
-    listamunicip = a04Municipios.municipiosestado(a04Municipios, siglauf, filtro)
-    parametros = {
-        'sequencia': seqorc,
-        'nomeseq': nomeseq,
-        'codcliente': codcliente,
-        'nomecliente': nomecliente,
-        'regiao': request.session['regiao'],
-        'siglauf': siglauf,
-        'nomeuf': nomeuf,
-        'codmuni': codmunic,
-        'nomemuni': nomemunic,
-        'filtro': filtro,
-    }
-    if request.method == "POST":
-        # Metodo POST Ok
-        if form.is_valid():
-            if form.cleaned_data['pesqmunicip']:
-                pesqmunicip = form.cleaned_data['pesqmunicip']
-                request.session['pesqmunicip'] = pesqmunicip
-                parametros['nomemuni'] = pesqmunicip
-                request.session['nomemuni'] = pesqmunicip
-                parametros['codmuni'] = 0
-                listamunicip = a04Municipios.municipiosestado(a04Municipios, siglauf, 'like.' + pesqmunicip)
-    else:
-        form = frmPesqMunicip(request.POST)
-    return render(request, "clie/formmudamunicipio.html", {"form": form, "parametros": parametros,
-                                                           "listamunicip": listamunicip})
-
-
-def municipioescolhido(request, municipesc):
-    request.session['marcador'] = 'clie:municipio/' + str(municipesc)
-    if municipesc == 0:
-        # Incluir municipio
-        siglauf = request.session['siglauf']
-        nvcodmun = a04Municipios.proxnumcad(a04Municipios)
-        novomun = a04Municipios(
-            id=nvcodmun,
-            estado=a03Estados.objetos.get(pk=siglauf),
-            municipio=request.session['nomemuni'],
-            distfab=0
-        )
-        novomun.save()
-        request.session['codmuni'] = nvcodmun
-        request.session['codbair'] = 0
-        request.session['codlogr'] = 0
-        return HttpResponseRedirect(reverse('clie:deflocal'))
-    else:
-        # Seguir com o municipio selecionado
-        request.session['codmuni'] = municipesc
-        request.session['codbair'] = 0
-        request.session['codlogr'] = 0
-        return HttpResponseRedirect(reverse('clie:deflocal'))
-
-
-def mudabairro(request, filtro):
-    request.session['marcador'] = 'clie:mudabairro/' + filtro
-    form = frmPesqBairro(request.POST)
-    seqorc = request.session['sequencia']
-    nomeseq = nomesequencia(seqorc)
-    codcliente = request.session['codcliente']
-    nomecliente = e01Cadastros.nometratcliente(e01Cadastros, codcliente)
-    siglauf = request.session['siglauf']
-    nomeuf = a03Estados.nomeestado(a03Estados, siglauf)
-    codmunic = request.session['codmuni']
-    nomemunic = a04Municipios.nomemuncipio(a04Municipios, codmunic)
-    codbairro = request.session['codbair']
-    nomebairro = a05Bairros.nomebairro(a05Bairros, codbairro)
-    listabairros = a05Bairros.bairrosmunicipio(a05Bairros, codmunic, filtro)
-    parametros = {
-        'sequencia': seqorc,
-        'nomeseq': nomeseq,
-        'codcliente': codcliente,
-        'nomecliente': nomecliente,
-        'regiao': request.session['regiao'],
-        'siglauf': siglauf,
-        'nomeuf': nomeuf,
-        'codmuni': codmunic,
-        'nomemuni': nomemunic,
-        'codbair': codbairro,
-        'nomebair': nomebairro,
-        'filtro': filtro,
-    }
-    if request.method == "POST":
-        # Metodo POST Ok
-        if form.is_valid():
-            if form.cleaned_data['pesqbairro']:
-                pesqbairro = form.cleaned_data['pesqbairro']
-                request.session['pesqbairro'] = pesqbairro
-                parametros['nomebair'] = pesqbairro
-                request.session['nomebair'] = pesqbairro
-                parametros['codbair'] = 0
-                listabairros = a05Bairros.bairrosmunicipio(a05Bairros, codmunic, 'like.' + pesqbairro)
-    else:
-        form = frmPesqBairro(request.POST)
-    return render(request, "clie/formmudabairro.html", {"form": form,
-                                                        "parametros": parametros,
-                                                        "listabairros": listabairros})
-
-
-def bairroescolhido(request, bairroesc):
-    request.session['marcador'] = 'clie:bairro/' + str(bairroesc)
-    if bairroesc == 0:
-        # Incluir bairro
-        codmuni = request.session['codmuni']
-        nvcodbair = a05Bairros.proxnumcad(a05Bairros)
-        novobairro = a05Bairros(
-            id=nvcodbair,
-            municipio=a04Municipios.objetos.get(pk=codmuni),
-            bairro=request.session['nomebair'],
-            distfab=0
-        )
-        novobairro.save()
-        request.session['codbair'] = nvcodbair
-        request.session['codlogr'] = 0
-        return HttpResponseRedirect(reverse('clie:deflocal'))
-    else:
-        # Seguir com o bairro selecionado
-        request.session['codbair'] = bairroesc
-        request.session['codlogr'] = 0
-        return HttpResponseRedirect(reverse('clie:deflocal'))
-
-
-def mudalogradouro(request):
-    request.session['marcador'] = 'clie:mudalogradouro'
-    form = frmPesqLogradouro(request.POST)
-    seqorc = request.session['sequencia']
-    nomeseq = nomesequencia(seqorc)
-    codcliente = request.session['codcliente']
-    nomecliente = e01Cadastros.nometratcliente(e01Cadastros, codcliente)
-    siglauf = request.session['siglauf']
-    nomeuf = a03Estados.nomeestado(a03Estados, siglauf)
-    codmunic = request.session['codmuni']
-    nomemunic = a04Municipios.nomemuncipio(a04Municipios, codmunic)
-    codbairro = request.session['codbair']
-    nomebairro = a05Bairros.nomebairro(a05Bairros, codbairro)
-    codlograd = request.session['codlogr']
-    nomelograd = a06Lograds.nomelogradouro(a06Lograds, codlograd)
-    listalograd = a06Lograds.logrsbairro(a06Lograds, codbairro)
-    parametros = {
-        'sequencia': seqorc,
-        'nomeseq': nomeseq,
-        'codcliente': codcliente,
-        'nomecliente': nomecliente,
-        'regiao': request.session['regiao'],
-        'siglauf': siglauf,
-        'nomeuf': nomeuf,
-        'codmuni': codmunic,
-        'nomemuni': nomemunic,
-        'codbair': codbairro,
-        'nomebair': nomebairro,
-        'codlogr': codlograd,
-        'nomelogr': nomelograd,
-        'listalograd': listalograd
-    }
-    if request.method == "POST":
-        # Metodo POST Ok
-        if form.is_valid():
-            logradform = int(form.cleaned_data['codlograd'])
-            if logradform == 0 and form.cleaned_data['novolograd']:
-                # Cadastrar novo logradouro
-                nvcodlogr = a06Lograds.proxnumcad(a06Lograds)
-                nvlograd = a06Lograds(
-                    id=nvcodlogr,
-                    bairro=a05Bairros.objetos.get(pk=codbairro),
-                    logradouro=form.cleaned_data['novolograd'],
-                    distfab=0
-                )
-                nvlograd.save()
-                codlograd = nvcodlogr
-                request.session['codlogr'] = nvcodlogr
-                parametros['codlogr'] = nvcodlogr
-                parametros['nomelogr'] = nvlograd.logradouro
-            if codlograd > 0 and form.cleaned_data['complemento']:
-                try:
-                    # se não tiver tipos de endereços cadastrados
-                    a07TiposEnd.objetos.get(pk=1)
-                except:
-                    csv_file = Path.cwd().joinpath("seeds_db", 'main_a07tiposend.csv')
-                    data_set = csv_file.read_text(encoding='UTF-8')
-                    io_string = StringIO(data_set)
-                    for count, column in enumerate(reader(io_string, delimiter=',', quotechar="|")):
-                        tipo_endereço = a07TiposEnd(
-                            id=count + 1,
-                            tend=column[1].strip(' "'),
-                        )
-                        tipo_endereço.save()
-                # Cadastrar novo endereco para cliente
-                complend = form.cleaned_data['complemento']
-                nvcodend = e04EndCad.proxnumcad(e04EndCad)
-                nvendclie = e04EndCad(
-                    id=nvcodend,
-                    cadastro=e01Cadastros.objetos.get(pk=codcliente),
-                    tipend=a07TiposEnd.objetos.get(pk=1),
-                    lograd=a06Lograds.objetos.get(pk=codlograd),
-                    complend=complend
-                )
-                nvendclie.save()
-                request.session['codendcliente'] = nvcodend
-            if e01Cadastros.objetos.get(id=codcliente).juridica == 1:
-                # cliente != de empresa
-                codorcam = request.session['codorcam']
-                return HttpResponseRedirect(reverse('orcs:editar_contrato', args=(codorcam, )))
-            else:
-                request.session['marcador'] = 'clie:deflocal'
-                return HttpResponseRedirect(reverse('clie:prosseguir'))
-    else:
-        form = frmPesqLogradouro(request.POST)
-    return render(request, "clie/formmudalograd.html", {"form": form, "parametros": parametros})
-
-
-def prosseguir(request):
-    seqorc = request.session['sequencia']
-    if seqorc == 1:
-        return HttpResponseRedirect(reverse('orcs:novo_orcamento'))
-    return HttpResponseRedirect(reverse('main:inicio'))
