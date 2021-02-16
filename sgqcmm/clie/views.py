@@ -88,7 +88,7 @@ def pesqcliente(request):
                     return HttpResponseRedirect(reverse('clie:dados_cliente'))
     else:
         form = formPesqCliente()
-    return render(request, "clie/formpesqcliente.html", {"form": form})
+    return render(request, "clie/pesquisar-cliente.html", {"form": form})
 
 
 def criar_novo_cliente(request, nome, telefone, email):
