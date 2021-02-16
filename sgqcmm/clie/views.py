@@ -13,14 +13,13 @@ from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          e03WebCad, e04EndCad, e06ContCad)
 
 from clie.forms import (formDadosCliente, formDadosEmpresa, formNovoEndereco,
-                        frmEscCliente, frmLocalizacao, frmPesqBairro,
-                        frmPesqCliente, frmPesqLogradouro, frmPesqMunicip)
+                        formEscCliente, formPesqCliente)
 
 
 # Pesquisa cliente por nome, telefone ou e-mail
 def pesqcliente(request):
     if request.method == "POST":
-        form = frmPesqCliente(request.POST)
+        form = formPesqCliente(request.POST)
         if form.is_valid():
             nomecliente = form.cleaned_data['nome']
             fonepesq = form.cleaned_data['fone']
@@ -31,7 +30,7 @@ def pesqcliente(request):
                 fonepuro = numpurotelefone(fonepesq)
                 if len(fonepuro) < 10:
                     messages.info(request, 'Numero de telefone inválido.')
-                    form = frmPesqCliente(request.POST)
+                    form = formPesqCliente(request.POST)
                     return render(request, "clie/formpesqcliente.html", {"form": form})
                 cadfone = int(e02FonesCad.numjacadastrado(e02FonesCad, fonepuro))
             else:
@@ -88,8 +87,7 @@ def pesqcliente(request):
                     criar_novo_cliente(request, nomecliente, fonepesq, emailpesq)
                     return HttpResponseRedirect(reverse('clie:dados_cliente'))
     else:
-        # Metodo post nao verificado, ou formulario nao validado
-        form = frmPesqCliente(request.POST)
+        form = formPesqCliente()
     return render(request, "clie/formpesqcliente.html", {"form": form})
 
 
@@ -180,7 +178,7 @@ def selecionar_cliente(request):
     for cliente in lista_clientes:
         escolhas_clientes.append(tuple((cliente.id, cliente.descricao)))
     if request.method == "POST":
-        form = frmEscCliente(request.POST, escolhas_clientes=escolhas_clientes)
+        form = formEscCliente(request.POST, escolhas_clientes=escolhas_clientes)
         if form.is_valid():
             cod_cliente = int(request.POST['clientes'])
             if cod_cliente == 0:
@@ -193,7 +191,7 @@ def selecionar_cliente(request):
                 request.session['codcliente'] = cod_cliente
             return HttpResponseRedirect(reverse('clie:dados_cliente'))
     else:
-        form = frmEscCliente(escolhas_clientes=escolhas_clientes)
+        form = formEscCliente(escolhas_clientes=escolhas_clientes)
     return render(request, "clie/selecionar-cliente.html", {"form": form, "listaClientes": lista_clientes})
 
 
@@ -431,4 +429,3 @@ def carregar_logradouros(request, bairro):
     logradouros = a06Lograds.objetos.filter(bairro_id=bairro).order_by('logradouro')
     print(a06Lograds.objetos.all())
     return render(request, 'clie/carregar-logradouros.html', {'logradouros': logradouros})
-

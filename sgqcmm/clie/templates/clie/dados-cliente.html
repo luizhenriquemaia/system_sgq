@@ -78,20 +78,23 @@
 					value="{{ dadosCliente.novoemail }}" {% endif %}>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col s12">
-					{% for endereco in dadosCliente.enderecos %}
+			{% for endereco in dadosCliente.enderecos %}
+				<div class="row">
+					<div class="col s12">
 						<label class="black-text">
 							<input class="with-gap" name="endereco" type="radio" value="{{endereco.id}}" required />
 							<span>{{endereco.logradouro}}, {{endereco.complend}}, {{endereco.bairro}},
 								{{endereco.municipio}}-{{endereco.estado_id}}</span>
 						</label>
-					{% endfor %}
+					</div>
+				</div>
+			{% endfor %}
+			<div class="row">
+				<div class="col s12">
 					<label>
 						<input class="with-gap" name="endereco" type="radio" value="0" required />
 						<span class="black-text">Incluir novo endereco</span>
 					</label>
-
 				</div>
 			</div>
 			<br>

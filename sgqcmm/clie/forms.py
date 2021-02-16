@@ -32,52 +32,20 @@ class formDadosEmpresa(forms.Form):
                                widget=forms.TextInput(attrs={'placeholder': 'Logradouro e Complemento'}))
 
 
-class frmPesqCliente(forms.Form):
-    # Possibilita pesquisar um cliente na base pelo nome, telefone ou e-mail
-    nome = forms.CharField(label='Nome', max_length=200, required=True,
-                           widget=forms.TextInput(attrs={'placeholder': 'Nome do Cliente'}))
-    fone = forms.CharField(label='Telefone', max_length=20, required=False,
+class formPesqCliente(forms.Form):
+    nome = forms.CharField(max_length=200, required=True)
+    fone = forms.CharField(max_length=20, required=False,
                            widget=forms.TextInput(attrs={'placeholder': '(dd) nnnnn-nnnn'}))
-    email = forms.EmailField(label='E-mail', required=False)
+    email = forms.EmailField(required=False)
 
 
-class frmEscCliente(forms.Form):
+class formEscCliente(forms.Form):
     def __init__(self, *args, **kwargs):
         escolhas_cliente = kwargs.pop('escolhas_clientes')
         super().__init__(*args, **kwargs)
         self.fields['clientes'].choices = escolhas_cliente
     clientes = forms.ChoiceField(widget=forms.RadioSelect(attrs={'class': 'with-gap'}),
                                  choices=())
-
-
-class frmLocalizacao(forms.Form):
-    # Define um local vinculado a um cliente
-    complemento = forms.CharField(label='Complemento', max_length=200, required=True,
-                                  widget=forms.TextInput(attrs={'placeholder': 'Complemento'}))
-
-
-class frmPesqMunicip(forms.Form):
-    pesqmunicip = forms.CharField(label='Pesquisar Municipio', max_length=200, required=True,
-                                  widget=forms.TextInput(attrs={'placeholder': 'Pesquisar Municipio'}))
-    novomunicip = forms.CharField(label='Novo Municipio', max_length=200, required=False,
-                                  widget=forms.TextInput(attrs={'placeholder': 'Incluir Municipio'}))
-
-
-class frmPesqBairro(forms.Form):
-    pesqbairro = forms.CharField(label='Pesquisar Bairro', max_length=200, required=True,
-                                 widget=forms.TextInput(attrs={'placeholder': 'Pesquisar Bairro'}))
-    novobairro = forms.CharField(label='Novo Bairro', max_length=200, required=False,
-                                 widget=forms.TextInput(attrs={'placeholder': 'Incluir Bairro'}))
-
-
-class frmPesqLogradouro(forms.Form):
-    codlograd = forms.CharField(
-        label='Codigo do Logradouro', max_length=20, required=True)
-    novolograd = forms.CharField(
-        label='Novo Logradouro', max_length=200, required=False)
-    complemento = forms.CharField(label='Complemento', max_length=200, required=True,
-                                  widget=forms.TextInput(attrs={'placeholder': 'Complemento'}))
-
 
 class formNovoEndereco(forms.Form):
     regiao_choices = [(0, ''), ('Norte', 'Norte'), ('Nordeste', 'Nordeste'), (
