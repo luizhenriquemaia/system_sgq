@@ -1,0 +1,61 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+	{% if user.is_authenticated %}
+		<div class="content">
+			<div class="title-page">
+				<h4>
+				Obras Pendentes
+				</h4>
+			</div>
+			<div class="endereco-orcamento">
+				<div class="divider"></div>
+			</div>
+			{% if obras %}
+				<div class="row" style="font-weight:bold; text-align:center;">
+				<div class="col s2">
+					Número Orc.
+				</div>
+				<div class="col s2">
+					Data
+				</div>
+				<div class="col s3">
+					Cliente
+				</div>
+				<div class="col s3">
+					Pagamento
+				</div>
+				<div class="col s2">
+					Vendedor(a)
+				</div>
+				</div>
+				<div class="divider"></div>
+				<br>
+				{% for obra in obras %}
+				<div class="row" style="text-align:center;">
+					<div class="col s2">
+					{{ obra.numero_orc }}
+					</div>
+					<div class="col s2">
+					{{ obra.data_orc }}
+					</div>
+					<div class="col s3">
+					{{ obra.cliente }}
+					</div>
+					<div class="col s3">
+					{{ obra.pagamento }}
+					</div>
+					<div class="col s2">
+					{{ obra.vendedor }}
+					</div>
+				</div>
+				{% endfor %}
+				<div class="divider"></div>
+			{% endif %}
+			<br>
+			<br>
+			<div class="section">
+			<h6><a href="../../inicio"><i class="small material-icons">reply_all</i></a></h6>
+			</div>
+		</div>
+	{% endif %}
+{% endblock content %}

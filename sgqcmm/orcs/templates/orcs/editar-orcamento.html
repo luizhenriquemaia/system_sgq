@@ -1,0 +1,267 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+		<div id="content-for-hidden">
+			<div class="content">
+				<div class="title-page">
+					<h4>Orçamento para {{orcamento.desccliente}}</h4>
+				</div>
+				<div class="endereco-orcamento">
+					{{ orcamento.endereco }}
+					<div class="divider"></div>
+				</div>
+				{% if eaporcam %}
+					<h5 style="text-align:center;">Serviços</h5>
+					<br>
+					<div class="row" style="text-align: center; font-weight:bold;">
+						<div class="col s1" style="text-align: left;">Cód.</div>
+						<div class="col s1"></div>
+						<div class="col s2" style="text-align: left;">Descrição</div>
+						<div class="col s1">Qtd.</div>
+						<div class="col s1">Unid.</div>
+						<div class="col s2">Vlr. Unit.</div>
+						<div class="col s2">
+							<a href="./atualizar-custos">
+								Vlr. Total
+							</a>
+						</div>
+						<div class="col s1"></div>
+						<div class="col s1"></div>
+					</div>
+					<div class="divider"></div>
+					<br>
+					{% for itemeap in eaporcam %}
+						<div class="row" style="text-align: center;">
+							<div class="col s1" style="text-align: left;">
+								{{itemeap.codeap}}
+							</div>
+							<div class="col s1" style="font-weight:bold; text-align: right;">
+								{% if itemeap.tipo == 1 %}
+									<a href="./detalhar-serv/{{itemeap.id}}"><i class="material-icons">unfold_more</i></a>
+								{% endif %}
+							</div>
+							<div class="col s2" style="text-align: left;">
+								<a href="./editar-eap/{{ itemeap.id }}">{{itemeap.descitem}}</a>
+							</div>
+							<div class="col s1">{{itemeap.qtdorc}}</div>
+							<div class="col s1">{{itemeap.unidade}}</div>
+							<div class="col s2">{{itemeap.vlrunit}}</div>
+							<div class="col s2">{{itemeap.vlrtot}}</div>
+							<div class="col s1">
+								{% if itemeap.tipo == 1 %}
+									<a href="./adicionar-desconto/{{itemeap.id}}">
+										<i class="material-icons">money_off</i>
+									</a>
+								{% endif %}
+							</div>
+							<div class="col s1" style="font-weight:bold;">
+								<a href="./excluir-serv/{{itemeap.codeap}}">
+									<i class="material-icons">delete</i>
+								</a>
+							</div>
+						</div>
+					{% endfor %}
+				{% endif %}
+				<br>
+				<form method="POST">
+					{% csrf_token %}
+					<div class="row">
+						<div class="col s7">
+							<label>Descrição</label>
+							{{ form.descricao }}
+						</div>
+						<div class="col s2">
+							<label>Codigo Eap</label>
+							{{ form.codigo_eap }}
+						</div>
+						<div class="col s2">
+							<label>Tipo de Eap</label>
+							{{ form.tipo }}
+						</div>
+					</div>
+					<button class="submit-ok submit-hover" name="btnProximo" type="submit" value="btnAlterar">
+						<i class="material-icons">check</i>
+					</button>
+				</form>
+				<div class="divider"></div>
+				<br>
+				{% if insumos %}
+					<br>
+					<h5 style="text-align:center;">Lista de Insumos</h5>
+					<br>
+					<table>
+						<tr>
+							<th style="text-align: center">Código</th>
+							<th style="text-align: center">Descrição</th>
+							<th style="text-align: center">Unid.</th>
+							<th style="text-align: center">Quant. Prod.</th>
+							<th style="text-align: center">Cst. Prod.</th>
+							<th style="text-align: center">Vlr. Total</th>
+						</tr>
+						{% for insumo in insumos %}
+							<tr style="text-align: right">
+								<td style="text-align: center">{{insumo.codigo}}</td>
+								<td style="text-align: left">
+									<a href="../../atualizar-dados-insumo/{{insumo.codigo}}">
+										<strong>{{insumo.descricao}}</strong>
+									</a>
+								</td>
+								<td style="text-align: center">{{insumo.undBas}}</td>
+								<td>{{insumo.qtdProd}}</td>
+								<td>{{insumo.cstUnPr}}</td>
+								<td>{{insumo.vlrTotal}}</td>
+							</tr>
+						{% endfor %}
+					</table>
+				{% endif %}
+				<br>
+				<br>
+				<h5 style="text-align:center;">Incluir Serviço</h5>
+				<div class="row">
+					<div class="col s3 m3">
+						<div class="card">
+							<div class="card-image">
+								{% load staticfiles %}
+								<img src="{% static 'orcs/media/card-veneziana.png' %}">
+								<span class="card-title"></span>
+							</div>
+							<div class="card-content">
+								<p>Venezianas Industriais em Policarbonato</p>
+							</div>
+							<div class="card-action" style="text-align:center;">
+								<a href="../../venezianas/{{ orcamento.codorcamento }}/" style="color:#138C11;"><i class="medium material-icons">add</i></a>
+							</div>
+						</div>
+					</div>
+					<div class="col s3 m3">
+						<div class="card">
+							<div class="card-image">
+								{% load staticfiles %}
+								<img src="{% static 'orcs/media/card-policarbonato-plano-fix.png' %}">
+								<span class="card-title"></span>
+							</div>
+							<div class="card-content">
+								<p>Cobertura Plana Fixa em Perfil Multi-Click (Multi-Telha)</p>
+							</div>
+							<div class="card-action" style="text-align:center;">
+								<a href="../../multi-click-plano-fixo/{{ orcamento.codorcamento }}/" style="color:#138C11;"><i
+										class="medium material-icons">add</i></a>
+							</div>
+						</div>
+					</div>
+					<div class="col s3 m3">
+						<div class="card">
+							<div class="card-image">
+								{% load staticfiles %}
+								<img src="{% static 'orcs/media/card-policarbonato-plano-fix.png' %}">
+								<span class="card-title"></span>
+							</div>
+							<div class="card-content">
+								<p>Cobertura Fixa em Telha Trapezoidal e Isotelha</p>
+							</div>
+							<div class="card-action" style="text-align:center;">
+								<a href="../../telha-trap-fixo/{{ orcamento.codorcamento }}/" style="color:#138C11;"><i
+										class="medium material-icons">add</i></a>
+							</div>
+						</div>
+					</div>
+					<div class="col s3 m3">
+						<div class="card">
+							<div class="card-image">
+								{% load staticfiles %}
+								<img src="{% static 'orcs/media/card-policarbonato-plano-fix.png' %}">
+								<span class="card-title"></span>
+							</div>
+							<div class="card-content">
+								<p>Cobertura Plana Fixa em Policarbonato Alveolar</p>
+							</div>
+							<div class="card-action" style="text-align:center;">
+								<a href="../../poli-plano-fix/{{ orcamento.codorcamento }}/" style="color:#138C11;"><i class="medium material-icons">add</i></a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s3 m3">
+						<div class="card">
+							<div class="card-image">
+								{% load staticfiles %}
+								<img src="{% static 'orcs/media/card-policarbonato-plano-ret.png' %}">
+								<span class="card-title"></span>
+							</div>
+							<div class="card-content">
+								<p>Cobertura Plana Retrátil em Policarbonato Alveolar</p>
+							</div>
+							<div class="card-action" style="text-align:center;">
+								<a href="../../poli-plano-ret/{{ orcamento.codorcamento }}/" style="color:#138C11;"><i
+										class="medium material-icons">add</i></a>
+							</div>
+						</div>
+					</div>
+					<div class="col s3 m3 ">
+						<div class="card">
+							<div class="card-image">
+								{% load staticfiles %}
+								<img src="{% static 'orcs/media/card-policarbonato-arco-fix.png' %}">
+								<span class="card-title"></span>
+							</div>
+							<div class="card-content">
+								<p>Cobertura em Arco Fixa em Policarbonato Alveolar</p>
+							</div>
+							<div class="card-action" style="text-align:center;">
+								<a href="../../poli-curvo-fix/{{ orcamento.codorcamento }}/" style="color:#138C11;"><i class="medium material-icons">add</i></a>
+							</div>
+						</div>
+					</div>
+					<div class="col s3 m3">
+						<div class="card">
+							<div class="card-image">
+								{% load staticfiles %}
+								<img src="{% static 'orcs/media/card-policarbonato-arco-fix.png' %}">
+								<span class="card-title"></span>
+							</div>
+							<div class="card-content">
+								<p>Cobertura em Arco Retrátil em Policarbonato Alveolar</p>
+							</div>
+							<div class="card-action" style="text-align:center;">
+								<a href="../../poli-curvo-ret/{{ orcamento.codorcamento }}/" style="color:#138C11;"><i class="medium material-icons">add</i></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="content-menu">
+			<p>
+				<a href="../../inserir-deslocamento/{{orcamento.codorcamento}}">Inserir Deslocamento e Hospedagem</a>
+			</p>
+			<p>
+				<a href="../../marcar-visita/{{orcamento.codorcamento}}">Marcar Visita</a>
+			</p>
+			<p>
+				<a href="../../editar-proposta/{{orcamento.codorcamento}}">Gerar Proposta</a>
+			</p>
+			<p>
+				<a href="../../alterar-status/{{orcamento.codorcamento}}">Alterar Staus do Orçamento</a>
+			</p>
+			<p>
+				<a href="../../editar-contrato/{{orcamento.codorcamento}}">Editar Contrato</a>
+			</p>
+			{% if user.is_staff %}
+				<div id="popup-delete" onclick="confirmacaoDeletar(this)">
+					<span>Deletar Orçamento</span>
+					<span class="popup-text">Você deseja realmente deletar o orçamento {{ orcamento.codorcamento }}?</span>
+					<a href="../../excluir-orcamento/{{ orcamento.codorcamento }}">
+						<button class="popup-button-sim">Sim</button>
+					</a>
+					<button class="popup-button-nao">Não</button>
+				</div>
+			{% endif %}
+		</div>
+		<button class="responsible-button" onclick="menuSandwich(this)">
+			<div class="sandwich-line1"></div>
+			<div class="sandwich-line2"></div>
+			<div class="sandwich-line3"></div>
+		</button>
+		{% load staticfiles %}
+		<script src="{% static 'main/js/menuPagina.js' %}" type="text/javascript"></script>
+{% endblock content %}

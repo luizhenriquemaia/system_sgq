@@ -1,0 +1,243 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+  {% if user.is_authenticated %}
+  <div class="content">
+    <div class="title-page">
+      <h4>Orçamento para {{orcamento.nomecliente}}</h4>
+    </div>
+    <div class="endereco-orcamento">
+      {{orcamento.endereco}}
+      <div class="divider"></div>
+    </div>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-field">
+        <div class="row">
+          <div class="col s12">
+            <p class="title-forms-fields">Especificação de Materiais</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Chapa</label>
+            {{ form.combPolicarbonato }}
+          </div>
+          <div class="col s6">
+            <label>Perfil União</label>
+            {{ form.combPerfUn }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Perfil Arremate</label>
+            {{ form.combPerfAr }}
+          </div>
+          <div class="col s6">
+            <label>Perfil U</label>
+            {{ form.combPerfU }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Perfil Guarnição</label>
+            {{ form.combPerfGuar }}
+          </div>
+          <div class="col s6">
+            <label>Perfil Gaxeta</label>
+            {{ form.combPerfGax }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s4">
+            <label>Fita Vent Tape</label>
+            {{ form.combFitaVent }}
+          </div>
+          <div class="col s4">
+            <label>Fita de Alumínio</label>
+            {{ form.combFitaAlum }}
+          </div>
+          <div class="col s4">
+            <label>Selante</label>
+            {{ form.comb_selante }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Perfil Estrutural Externo</label>
+            {{ form.combPerfEsExterno }}
+          </div>
+          <div class="col s6">
+            <label>Perfil Estrutural Interno</label>
+            {{ form.combPerfEsInterno }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Rufo</label>
+            {{ form.combRufo }}
+          </div>
+          <div class="col s6">
+            <label>Calha</label>
+            {{ form.combCalha }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Tipo de Pintura</label>
+            {{ form.combPintura }}
+          </div>
+          <div class="col s6 input-field" style="margin-top:20px;">
+            {{ form.quantPintura }}
+            <label for="id_quantPintura">Quantidade Pintura (m²)</label>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col s12">
+            <p class="title-forms-fields">Especificações Cobertura Retrátil</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Tipo de Motor</label>
+            {{ form.combMotores }}
+          </div>
+          <div class="col s6 input-field" style="margin-top:20px;">
+            {{ form.quantMotores }}
+            <label for="id_quantMotores">Quantidade Motores</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6 input-field">
+            {{ form.quantModulos }}
+            <label for="id_quantModulos">Quantidade Total Módulos</label>
+          </div>
+          <div class="col s6 input-field">
+            {{ form.quantModMoveis }}
+            <label for="id_quantModMoveis">Quantidade Módulos Móveis</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Direção do Movimento</label>
+            {{ form.direcMovimento }}
+          </div>
+          <div class="col s6">
+            <label>Cantoneiras</label>
+            {{ form.combCantoneira }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Perfil Cantoneiras</label>
+            {{ form.combPerfCant }}
+          </div>
+          <div class="col s6">
+            <label>Roldanas</label>
+            {{ form.combRoldanas }}
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col s12">
+            <p class="title-forms-fields">Medidas</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 offset-s1 input-field">
+            {{ form.compPoli }}
+            <label for="id_compPoli">Comprimento</label>
+          </div>
+          <div class="col s2 input-field">
+            {{ form.largPoli }}
+            <label for="id_largPoli">Largura</label>
+          </div>
+          <div class="col s2 input-field">
+            {{ form.declPoli }}
+            <label for="id_declPoli">Declividade</label>
+          </div>
+          <div class="col s2 input-field">
+            {{ form.repetPoli }}
+            <label for="id_repetPoli">Repetições</label>
+          </div>
+          <div class="col s2 input-field">
+            {{ form.distApoios }}
+            <label for="id_distApoios">Distancia Apoios</label>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col s12">
+            <p class="title-forms-fields">Parâmetros de Drenagem</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s3">
+            <label>Montante</label>
+            {{ form.montante }}
+          </div>
+          <div class="col s3">
+            <label>Jusante</label>
+            {{ form.jusante }}
+          </div>
+          <div class="col s3">
+            <label>Lateral Esquerda</label>
+            {{ form.latEsq }}
+          </div>
+          <div class="col s3">
+            <label>Lateral Direita</label>
+            {{ form.latDir }}
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col s12">
+            <p class="title-forms-fields">Funcionários</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s3 input-field">
+            {{ form.diasSerralheiro }}
+            <label for="id_diasObra">Quantidade de Dias Serralheiro</label>
+          </div>
+          <div class="col s3 input-field">
+            {{ form.quantSerralheiros }}
+            <label for="id_quantFunc">Quantidade de Serralheiros</label>
+          </div>
+          <div class="col s3 input-field">
+            {{ form.diasAuxiliar }}
+            <label for="id_diasObra">Quantidade de Dias Auxiliar</label>
+          </div>
+          <div class="col s3 input-field">
+            {{ form.quantAuxiliares }}
+            <label for="id_quantFunc">Quantidade de Auxiliares</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <p class="title-forms-fields">Outros Parâmetros</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s3">
+            <label>Dificuldade da Obra</label>
+            {{ form.dificuldade }}
+          </div>
+          <div class="col s3">
+            <label>
+              {{ form.apEstr }}
+              <span class="checkbox-grid" style="font-size:12px;">Considerar aproveitamento de estrutura</span>
+            </label>
+          </div>
+        </div>
+        <br>
+        <br>
+      <div class="row">
+				<div class="col s1 offset-s12" style="padding:0px;">
+					<button class="submit-hover" name="btnProximo" type="submit" style="padding: 15px 20px 15px 20px;"><i class="material-icons">navigate_next</i></button>
+				</div>
+			</div>
+    </form>
+  </div>
+{% endif %}
+{% endblock content %}

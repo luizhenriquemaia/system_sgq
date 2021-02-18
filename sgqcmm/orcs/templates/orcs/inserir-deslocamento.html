@@ -1,0 +1,59 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+  {% if user.is_authenticated %}
+  <div class="content">
+    <div class="title-page">
+      <h4>Transporte e Hospedagem</h4>
+    </div>
+    <div class="endereco-orcamento">
+      <div class="divider"></div>
+    </div>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col s12">
+          <p class="title-forms-fields">Combustível</p>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col s4 input-field">
+          {{ form.quantKm }}
+          <label>Distância em Km</label>
+        </div>
+        <div class="col s4 input-field">
+          {{ form.quantDias }}
+          <label>Quantidade de Dias</label>
+        </div>
+        <div class="col s4">
+          <label>Tipo de Veículo</label>
+          {{ form.combVeiculo }}
+        </div>
+      </div>
+      <br>
+      <br>
+      <div class="row">
+        <div class="col s12">
+          <p class="title-forms-fields">Hospedagem e Passagem</p>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col s6 input-field">
+          {{ form.quantHosp }}
+          <label>Dias de Hospedagem</label>
+        </div>
+        <div class="col s6 input-field">
+          {{ form.quantPassagens }}
+          <label>Quantidade de Passagens</label>
+        </div>
+      </div>
+      <br>
+      <br>
+      <button class="submit-ok submit-hover" name="btnInserir" type="submit" value="btnInserir">
+        <i class="material-icons">navigate_next</i>
+      </button>
+    </form>
+  </div>
+  {% endif %}
+{% endblock content %}

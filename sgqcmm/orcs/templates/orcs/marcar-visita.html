@@ -1,0 +1,49 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+	<div class="content">
+		<div class="title-page">
+			<h4>Marcar Visita com {{orcamento.nomecliente}}</h4>
+		</div>		
+		<div class="endereco-orcamento">
+			{{orcamento.endereco}}
+			<p>
+				<label class="black-text">Telefones:</label>
+				{% for telefone in telefones %}
+					&nbsp {{ telefone }}
+				{% endfor %}
+			</p>
+			<div class="divider"></div>
+		</div>
+		<form method="POST">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col s12">
+					<p class="title-forms-fields">Disponibilidade e Tipo de Cobertura</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s6">
+					<label>Data</label>
+					{{ form.dataVisita }}
+				</div>
+				<div class="col s6">
+					<label>Hora</label>
+					{{ form.horaVisita }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12">
+					<label>Tipo de Formulário</label>
+					{{ form.combTiposVisita }}
+				</div>
+			</div>
+			<br>
+			<br>
+			<button class="submit-ok submit-hover" name="btnConfirmar" type="submit" value="btnConfirmar">
+				<i class="material-icons">navigate_next</i>
+			</button>
+		</form>
+		</div>
+	{% load staticfiles %}
+		<script src="{% static 'orcs/js/orcsFunctions.js' %}" type="text/javascript"></script>
+{% endblock content %}

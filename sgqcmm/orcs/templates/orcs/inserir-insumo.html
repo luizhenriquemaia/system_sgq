@@ -1,0 +1,51 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+  {% if user.is_authenticated %}
+  <div class="content">
+    <div class="title-page">
+      <h4>Inserir Insumo no Orçamento do {{orcamento.nomecliente}}</h4>
+    </div>
+    <div class="endereco-orcamento">
+      {{ orcamento.endereco }}
+      <div class="divider"></div>
+    </div>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col s11">
+          <label>Insumo</label>
+          {{ form.combInsumo }}
+        </div>
+        <div class="col s1">
+          <a class="link-button" href="../../cad-insumo/">
+            <span class="add-signal-vert1"></span>
+            <span class="add-signal-horiz1"></span>
+            <p class="add-text">CADASTRAR</p>
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <label>Quantidade</label>
+          {{ form.quantInsumo }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <label>Atividade Padrão</label>
+          {{ form.combAtvPad }}
+        </div>
+      </div>
+      <br>
+      <br>
+      <button class="submit-ok submit-hover" name="btnInserir" type="submit" value="btnInserir">
+        <i class="material-icons">navigate_next</i>
+      </button>
+      <div class="divider"></div>
+      <br>
+      <br>
+      <a href="../../preorcamento/{{orcamento.codorcamento}}" style="text-align: left;"><i class="medium material-icons">reply_all</i></a>
+    </form> 
+  </div>
+{% endif %}
+{% endblock content %}

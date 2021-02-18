@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+		{% extends "main/basePage.html" %}
+		{% block content %}
+		{% if user.is_authenticated %}
+		<div id="interface">
+			<div class="divider"></div>
+			<div class="section">
+				<h5>&nbsp Adicionar Item ao Orçamento</h5>
+			</div>
+			<div class="divider"></div>
+			<div class="section">
+				<h5>&nbsp Preencher Cronograma</h5>
+			</div>
+			<div class="divider"></div>
+			<div class="section">
+				<h5>&nbsp Analizar Mão de Obra</h5>
+			</div>
+			<div class="divider"></div>
+			<div class="section">
+				<h5>&nbsp Analizar Serviços de Terceiros</h5>
+			</div>
+			<div class="divider"></div>
+			<div class="section">
+				<h5>&nbsp Analizar Memorial de Cálculo e Quantitativos</h5>
+			</div>
+			<div class="divider"></div>
+			<div class="section">
+				<h5>&nbsp Verificar Preços dos Materiais Já em Estoque</h5>
+			</div>
+			<div class="divider"></div>
+			<div class="section">
+				<h5>&nbsp Verificar Preços dos Materiais a Serem Produzidos</h5>
+			</div>
+			<div class="divider"></div>
+			<div class="section">
+				<h5>&nbsp Verificar Preços dos Materiais a Serem Adquiridos</h5>
+			</div>
+			<div class="divider"></div>
+			<div class="section">
+				<h5>&nbsp Resumo Final do Orçamento</h5>
+			</div>
+			<div class="divider"></div>
+			<div class="section">
+				<h5>&nbsp Transformar em Proposta Comercial</h5>
+			</div>
+		</div>
+	{% endif %}
+	{% endblock content %}
+</html>

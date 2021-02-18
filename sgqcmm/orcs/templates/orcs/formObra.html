@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	{% extends "main/basePage.html" %}
+	{% block content %}
+	<div class="container">
+		<br>
+		<form method="POST">
+			{% csrf_token %}
+			{{ form.as_p }}
+			<button class="btn red darken-4" name="proximo" type="submit" style="float: right">Próximo</button>
+			{% if messages %}
+				{% for message in messages %}
+					<script>M.toast({html: "{{message}}", classes: 'black rounded', displayLength:2000});</script>
+				{% endfor %}
+			{% endif %}
+		</form>
+	</div>
+	{% endblock content %}
+</html>

@@ -15,6 +15,8 @@ from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
 from clie.forms import (formDadosCliente, formDadosEmpresa, formNovoEndereco,
                         formEscCliente, formPesqCliente)
 
+from orcs.forms import formSelecionarEmpresa
+
 
 # Pesquisa cliente por nome, telefone ou e-mail
 def pesqcliente(request):
@@ -133,7 +135,6 @@ def criar_novo_cliente(request, nome, telefone, email):
                 estado_id=column[5].strip(' "')
             )
             city.save()
-    
     try:
         #teste para ver se existem tipos de telefones cadastrados
         a09TiposFone.objetos.get(id=1)
@@ -208,13 +209,6 @@ def dados_empresa(request, codempresa):
             empresa.genero = request.POST['genero']
             cod_endereco = int(form.cleaned_data['endereco'])
             if cod_endereco == 0:
-                # Seguir para inclusao do endereco
-                #request.session['regiao'] = 'Centro Oeste'
-                #request.session['siglauf'] = 'GO'
-                #request.session['codmuni'] = 94
-                #request.session['codbair'] = 100
-                #request.session['codlogr'] = 3
-                #return HttpResponseRedirect(reverse('clie:deflocal'))
                 return HttpResponseRedirect(reverse('clie:cadastrar_novo_endereco'))
             else:
                 # Continua usando o endereco selecionado
@@ -327,15 +321,9 @@ def dados_cliente(request):
             # Verificar se deve cadastrar novo endereco
             cod_endereco = int(form.cleaned_data['endereco'])
             if cod_endereco == 0:
-                # Seguir para inclusao do endereco
-                #request.session['regiao'] = 'Centro Oeste'
-                #request.session['siglauf'] = 'GO'
-                #request.session['codmuni'] = 94
-                #request.session['codbair'] = 100
-                #request.session['codlogr'] = 3
                 return HttpResponseRedirect(reverse('clie:cadastrar_novo_endereco'))
-                #return HttpResponseRedirect(reverse('clie:deflocal'))
             else:
+                form_selecionar_empresa = formSelecionarEmpresa(request.POST)
                 # Continua usando o endereco selecionado
                 logrCli = e04EndCad.objetos.get(id=int(cod_endereco))
                 codlogrclie = logrCli.lograd_id
@@ -351,10 +339,19 @@ def dados_cliente(request):
                 request.session['siglauf'] = siglaUf
                 request.session['regiao'] = a03Estados.objetos.get(
                     pk=siglaUf).regiao
+                try:
+                    empresa_orcamento = request.POST['empresa']
+                    request.session['empresa_orcamento'] = empresa_orcamento
+                except:
+                    messages.info(request, "Selecione a empresa para prosseguir")
+                    return render(request, "clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente,
+                                                                                "formSelecionarEmpresa": form_selecionar_empresa})
                 return HttpResponseRedirect(reverse('orcs:novo_orcamento'))
     else:
         form = formDadosCliente()
-        return render(request, "clie/dados-cliente.html", {"form": form, "dadosCliente": dados_cliente})
+        form_selecionar_empresa = formSelecionarEmpresa()
+        return render(request, "clie/dados-cliente.html", {"form": form, "dadosCliente": dados_cliente,
+                                                            "formSelecionarEmpresa": form_selecionar_empresa})
 
 
 
@@ -400,6 +397,12 @@ def cadastrar_novo_endereco(request):
                 lograd=logradouro,
                 complend=complemento
             )
+            try:
+                empresa_orcamento = request.POST['empresa']
+            except:
+                messages.info(request, "Selecione a empresa para prosseguir")
+                return render(request, "clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente,
+                                                                            "formSelecionarEmpresa": form_selecionar_empresa})
             novo_endereco_cliente.save()
             request.session['codendcliente'] = novo_endereco_cliente.id
             messages.info(request, "Endereço cadastrado")
@@ -407,10 +410,13 @@ def cadastrar_novo_endereco(request):
         else:
             #print(form.errors) #Print errors if there is one
             messages.info(request, "Erro ao validar os dados do formulário")
-            return render(request, "clie/cadastrar-novo-endereco.html", {"form": form})
+            return render(request, "clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente,
+                                                                        "formSelecionarEmpresa": form_selecionar_empresa})
     else:
         form = formNovoEndereco()
-        return render(request,"clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente})
+        form_selecionar_empresa = formSelecionarEmpresa()
+        return render(request,"clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente,
+                                                                    "formSelecionarEmpresa": form_selecionar_empresa})
 
 
 def carregar_estados(request, regiao):

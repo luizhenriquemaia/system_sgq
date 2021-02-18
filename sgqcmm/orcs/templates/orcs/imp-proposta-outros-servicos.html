@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    {% load static %}
+    <link href="{% static 'orcs/css/impressaoProposta.css' %}" rel="stylesheet"/>
+    <title>SGQ CAMAMAR</title>
+  </head>
+  <body class="proposta">
+    <div class="page_timbrado">
+      <div class="area_escrita">
+        <div class="titulo">
+          <h1>Proposta Comercial</h1>
+        </div>
+        <p class="data-a-esquerda">Goiânia - GO, {{ today }}.</p>
+        <br>
+        <div class="area_saudacoes" style="margin-top:20mm;">
+          {% if dadosProposta.empresa %}
+            {% if dadosProposta.genero_empresa == 0 %}
+              <p style="text-align:left;">À</p>
+            {% else %}
+              <p style="text-align:left;">Ao</p>
+            {% endif %}
+            <p style="text-align:left;">{{ dadosProposta.empresa }}</p>
+            <p style="text-align:left;">Att.: {{ dadosProposta.tratamento }} {{ dadosProposta.cliente }}</p>
+            <p style="text-align:left;">End. Obra: {{ dadosProposta.enderecoObra }}</p>
+          {% else %}
+            {% if dadosProposta.genero == 0 %}
+              <p style="text-align:left;">À</p>
+            {% else %}
+              <p style="text-align:left;">Ao</p>
+            {% endif %}
+            <p style="text-align:left;">{{ dadosProposta.tratamento }} {{ dadosProposta.cliente }}</p>
+            <p style="text-align:left;">End. Obra: {{ dadosProposta.enderecoObra }}</p>
+          {% endif %}
+        </div>
+        <br>
+        <br>
+        <div class="texto-comum">
+		  {% if insumos %}
+			  <p>
+				Conforme a solicitação viemos por meio desta apresentar a proposta de
+				preços para fornecimento de material e mão de obra especializada para
+				a execução de:
+			  </p>
+		  {% else %}
+			  <p>
+				Conforme a solicitação viemos por meio desta apresentar a proposta de
+				preços para fornecimento de mão de obra especializada para
+				a execução de:
+			  </p>
+		  {% endif %}
+          <br>
+          <table id="table-itensEap">
+            <tr>
+              <th style="width:8%;">Item</th>
+              <th style="width:92%;">Descrição</th>
+            </tr>
+            {% for descricao in listDescricoesOrc %}
+              <tr>
+                <td>{{ descricao.codEap }}</td>
+                <td>{{ descricao.descricao }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="page_timbrado">
+      <div class="area_escrita">
+		{% if insumos %}
+			<div class="subtitulo" style="margin-top:25mm;">
+			  Insumos
+			</div>
+			<div class="texto-subtitulo">
+			  <ul style="padding-top:0;padding-bottom:0;margin-bottom:0;">
+				{% for insumo in insumos %}
+				  <li class="lista-insumos">{{ insumo.descricao }}</li>
+				{% endfor %}
+			  </ul>
+			</div>
+			<div class="subtitulo">
+			  Valores Propostos
+			</div>
+		{% else %}
+			<div class="subtitulo" style="margin-top: 25mm">
+			  Valores Propostos
+			</div>
+		{% endif %}
+        <div class="texto-subtitulo">
+          <table id="valores-propostos">
+            <tr>
+              <th style="width:80%;">Descrição</th>
+              <th style="width:20%;">Valor</th>
+            </tr>
+            {% for eap in eapProp %}
+              <tr>
+                <td>
+                  {{ eap.descricao }}
+                </td>
+                <td style="text-align:left;">
+                  R$ {{ eap.valor }}
+                </td>
+              </tr>
+            {% endfor %}
+            <tr>
+              <td style="font-weight:bold;">À vista em dinheiro e/ou transferencia bancária</td>
+              <td style="text-align:left; font-weight:bold;">R$ {{ totalProposta }}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="subtitulo">
+          Condições de Pagamento
+        </div>
+        <div class="texto-subtitulo">
+          50% de entrada e o restante na finalização da obra. Outras formas de pagamento sob consulta.
+        </div>
+      </div>
+    </div>
+    <div class="page_timbrado">
+      <div class="area_escrita">
+        <div class="subtitulo" style="margin-top:25mm;">
+          Prazo de Execução da Obra
+        </div>
+        <div class="texto-subtitulo">
+          Até {{ dadosProposta.prazoObra }} dias úteis sem chuva, após a assinatura do contrato e o recebimento da entrada.
+        </div>
+        <div class="subtitulo">
+          Prazo de Validade da Proposta
+        </div>
+        <div class="texto-subtitulo">
+          Proposta válida até {{ dadosProposta.prazoValidade }}.
+        </div>
+        <div class="subtitulo">
+          <p>Informações Gerais</p>
+        </div>
+        <div class="texto-subtitulo">
+          <ul>
+            <li>Para calhas e rufos zincados foram considerados apenas pintura da face externa dos mesmos;</li>
+            <li>Todos os impostos já inclusos no preço;</li>
+            <li>Transporte de todos os materiais por conta da contratada
+            no perímetro urbano de Goiânia - GO;</li>
+            <li>Sujeito a aprovação de crédito;</li>
+            <li>Valores sujeitos a reajustamento após validade da proposta;</li>
+          </ul>
+        </div>
+        <br>
+        <div class="area_saudacoes">
+          <p>
+            Agradecemos pela atenção dispensada, despedimo-nos com estima e consideração.
+          </p>
+        </div>
+        <div class="area_assinatura">
+          <p>{{ dadosProposta.vendedor }}</p>
+          <p>CAMAMAR COMÉRCIO LTDA.</p>
+          <p>(62) 3274-1030 / {{ dadosProposta.telefoneVendedor }}</p>
+          <p style="font-size:12px;">{{ dadosProposta.email_vendedor }}</p>
+        </div>
+        <div class="area_aprovacao_proposta">
+          <p style="font-weight:bold;text-align:center;">Aprovação da Proposta</p>
+          <p>
+            Confirmo a aprovação da proposta, transformando-a em pedido comercial
+            aprovado, de acordo com suas especificações descritas.
+          </p>
+          <hr>
+          <p style="text-align:center; font-size: 12px;">Carimbo e assinatura por extenso</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

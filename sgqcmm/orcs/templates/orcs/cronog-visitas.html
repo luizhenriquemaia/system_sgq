@@ -1,0 +1,71 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+  <div class="content">
+    <div class="title-page">
+      <h4>
+        Cronograma de Visitas Pendentes
+      </h4>
+    </div>
+    <div class="endereco-orcamento">
+      <div class="divider"></div>
+    </div>
+    {% if visitas %}
+    <div class="row" style="font-weight:bold; text-align:center;">
+      <div class="col s2">
+        Data
+      </div>
+      <div class="col s1">
+        Hora
+      </div>
+      <div class="col s2">
+        Orçamento
+      </div>
+      <div class="col s3">
+        Cliente
+      </div>
+      <div class="col s1">
+        Imprimir
+      </div>
+      <div class="col s2">
+        Remarcar
+      </div>
+      <div class="col s1">
+         Visitado
+      </div>
+    </div>
+    <div class="divider"></div>
+    <br>
+    {% for visita in visitas %}
+      <div class="row" style="text-align:center;">
+        <div class="col s2">
+          {{ visita.data }}
+        </div>
+        <div class="col s1">
+          {{ visita.hora }}
+        </div>
+        <div class="col s2" style="font-weight:bold;">
+          <a href="/sgqcmm/orcs/preorcamento/{{ visita.orcamento }}">{{ visita.orcamento }}</a>
+        </div>
+        <div class="col s3">
+          {{ visita.cliente }}
+        </div>
+        <div class="col s1">
+          <a href="/sgqcmm/orcs/imp-visita/{{ visita.orcamento }}" target="_blank"><i class="material-icons">print</i></a>
+        </div>
+        <div class="col s2">
+          <a href="/sgqcmm/orcs/remarcar-visita/{{ visita.codVisita }}"><i class="material-icons">update</i></a>
+        </div>
+        <div class="col s1">
+          <a href="/sgqcmm/orcs/visita-efetuada/{{ visita.codVisita }}"><i class="material-icons">done</i></a>
+        </div>
+      </div>
+    {% endfor %}
+    <div class="divider"></div>
+  {% endif %}
+  <br>
+  <br>
+  <div class="section">
+    <h6><a href="../../inicio"><i class="small material-icons">reply_all</i></a></h6>
+  </div>
+  </div>
+{% endblock content %}
