@@ -4,7 +4,7 @@
     <div class="title-page">
         <h4>Inserir Novo Endereço Para {{ cliente }}</h4>
     </div>
-    <form method="POST" id="novo-endereco-form">
+    <form method="POST" onsubmit=showModal(event) id="novo-endereco-form">
         {% csrf_token %}
         <div class="row form-field">
             <div class="col s12">
@@ -55,6 +55,16 @@
         <button class="submit-ok submit-hover" name="proximo" type="submit" value="proximo">
             <i class="material-icons">navigate_next</i>
         </button>
+        <div class="modal" id="modalEmpresa">
+            <div class="modal-content">
+                <span class="close-modal" onclick=hiddeModal()>
+                    <i class="material-icons small">close</i>
+                </span>
+                <p>Selecione a empresa a qual o orçamento se refere</p>
+                {{ formSelecionarEmpresa.empresa }}
+                <button class="ok-modal" onclick=checkSelectCompany()>Ok</button>
+            </div>
+        </div>
     </form>
 </div>
 <script>
@@ -108,6 +118,21 @@
             } else {
                 document.getElementById("id_logradouro").innerHTML = ""
             }
+        }
+    }
+    
+    function showModal(e) {
+            e.preventDefault()
+            document.getElementById("modalEmpresa").classList.toggle("modal-show")
+        }
+    const hiddeModal = () => {
+        document.getElementById("modalEmpresa").classList.toggle("modal-show")
+    }
+    const checkSelectCompany = () => {
+        if (document.getElementById("empresa_id") === null) {
+            alert("selecione uma empresa válida ou peça para o seu supervisor inserir uma nova empresa")
+        } else {
+            document.getElementById("formClient").submit()
         }
     }
 </script>

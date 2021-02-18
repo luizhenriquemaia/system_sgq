@@ -4,7 +4,7 @@
 		<div class="title-page">
 			<h4>Solicitante</h4>
 		</div>
-		<form method="POST">
+		<form method="POST" onsubmit=showModal(event) id="formClient">
 			{% csrf_token %}
 			<div class="row">
 				<div class="col s2 input-field">
@@ -102,8 +102,45 @@
 			<button class="submit-ok submit-hover" name="proximo" type="submit" value="proximo">
 				<i class="material-icons">navigate_next</i>
 			</button>
+			<div class="modal" id="modalEmpresa">
+				<div class="modal-content">
+					<span class="close-modal" onclick=hiddeModal()>
+						<i class="material-icons small">close</i>
+					</span>
+					<p>Selecione a empresa a qual o orçamento se refere</p>
+					{{ formSelecionarEmpresa.empresa }}
+					<button class="ok-modal" onclick=checkSelectCompany()>Ok</button>
+				</div>
+			</div>
 		</form>
 	</div>
+	<script>
+		function showModal(e) {
+			e.preventDefault()
+			let addressRadio = document.getElementsByName("endereco")
+			let valueSelectedRadio = 100
+			for (var i = 0; i < addressRadio.length; i++){
+				if (addressRadio[i].checked) {
+					valueSelectedRadio = addressRadio[i].value
+				}
+			}
+			if (parseInt(valueSelectedRadio) > 0) {
+				document.getElementById("modalEmpresa").classList.toggle("modal-show")
+			} else {
+				document.getElementById("formClient").submit()
+			}
+		}
+		const hiddeModal = () => {
+			document.getElementById("modalEmpresa").classList.toggle("modal-show")
+		}
+		const checkSelectCompany = () => {
+			if (document.getElementById("empresa_id") === null) {
+				alert("selecione uma empresa válida ou peça para o seu supervisor inserir uma nova empresa")
+			} else {
+				document.getElementById("formClient").submit()
+			}
+		}
+	</script>
 {% endblock content %}
 {% block footer %}
 <footer>

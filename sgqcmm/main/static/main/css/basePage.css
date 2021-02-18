@@ -251,9 +251,6 @@ table th{
   margin-bottom: 102px;
 }
 
-
-
-
 img.logo_nav{
   vertical-align: middle;
   width: 230px;
@@ -548,6 +545,84 @@ a.link-button:hover p.add-text {
   opacity: 1;
 }
 
+.modal {
+  margin-top: 80px;
+  z-index: 1;
+  top: 0;
+  animation-name: animationModalShow;
+  animation-duration: 0.4s
+}
+
+.modal-show {
+  display: block;
+}
+
+.close-modal {
+  position: absolute;
+  right: 0;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  color: #8b1014;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-content {
+  margin-bottom: 90px;
+}
+
+.modal-content p {
+  margin-top: 1.5em;
+}
+
+.ok-modal {
+  position: absolute;
+  font-weight: 600;
+  bottom: 0;
+  right: 0;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  height: 60px;
+  width: 60px;
+  padding: 15px;
+  background-color: #138C11;
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+  transition:.8s ease all;
+  outline:none;
+  box-shadow: 0 1.5px 4px rgba(0, 0, 0, .24), 0 1.5px 6px rgba(0, 0, 0, .12);
+}
+
+.ok-modal:hover{
+  background:#FFFFFF;
+  color:#138C11;
+}
+
+.ok-modal:before, .ok-modal:after{
+	content:'';
+  position:absolute;
+  top:0;
+  right:0;
+  height:2px;
+  width:0;
+  background: #138C11;
+  transition:.4s ease all;
+}
+
+.ok-modal:after{
+  right:inherit;
+  top:inherit;
+  left:0;
+  bottom:0;
+}
+
+.ok-modal:hover:before,  .ok-modal:hover:after{
+  width:100%;
+  transition:.8s ease all;
+}
+
+
 /* set in up the color of focus input elements */
 input[type=text]:not(.browser-default):focus:not([readonly]) + label,
 input[type=text]:not(.browser-default):focus:not([readonly]),
@@ -560,4 +635,11 @@ textarea.materialize-textarea:focus:not([readonly]) {
   border-color: var(--primary);
   box-shadow: none;
   color: var(--primary);
+}
+
+
+/* animations */
+@keyframes animationModalShow {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
 }
