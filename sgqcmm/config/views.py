@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render
 
-from config.forms import formEmpresas
+#from config.forms import formEmpresas
 
 
 def inicio(request):

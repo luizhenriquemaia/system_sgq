@@ -120,8 +120,8 @@ def inicio(request):
                                                 "form": formPesqPorCliente})
 
 
-def appsdisp(request):
-    return render(request, "main/appsdisp.html")
+def apps_disponiveis(request):
+    return render(request, "main/apps-disponiveis.html")
 
 
 def logout_request(request):
