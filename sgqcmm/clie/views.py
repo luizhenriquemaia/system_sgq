@@ -12,10 +12,9 @@ from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          a07TiposEnd, a09TiposFone, e01Cadastros, e02FonesCad,
                          e03WebCad, e04EndCad, e06ContCad)
 
-from clie.forms import (formDadosCliente, formDadosEmpresa, formNovoEndereco,
+from clie.forms import (formSelecionarEmpresa, formDadosCliente, formDadosEmpresa, formNovoEndereco,
                         formEscCliente, formPesqCliente)
 
-from orcs.forms import formSelecionarEmpresa
 
 
 # Pesquisa cliente por nome, telefone ou e-mail
@@ -401,8 +400,7 @@ def cadastrar_novo_endereco(request):
                 empresa_orcamento = request.POST['empresa']
             except:
                 messages.info(request, "Selecione a empresa para prosseguir")
-                return render(request, "clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente,
-                                                                            "formSelecionarEmpresa": form_selecionar_empresa})
+                return render(request, "clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente})
             novo_endereco_cliente.save()
             request.session['codendcliente'] = novo_endereco_cliente.id
             messages.info(request, "Endereço cadastrado")
@@ -410,13 +408,10 @@ def cadastrar_novo_endereco(request):
         else:
             #print(form.errors) #Print errors if there is one
             messages.info(request, "Erro ao validar os dados do formulário")
-            return render(request, "clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente,
-                                                                        "formSelecionarEmpresa": form_selecionar_empresa})
+            return render(request, "clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente})
     else:
         form = formNovoEndereco()
-        form_selecionar_empresa = formSelecionarEmpresa()
-        return render(request,"clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente,
-                                                                    "formSelecionarEmpresa": form_selecionar_empresa})
+        return render(request,"clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente})
 
 
 def carregar_estados(request, regiao):
@@ -433,5 +428,4 @@ def carregar_bairros(request, cidade):
 
 def carregar_logradouros(request, bairro):
     logradouros = a06Lograds.objetos.filter(bairro_id=bairro).order_by('logradouro')
-    print(a06Lograds.objetos.all())
     return render(request, 'clie/carregar-logradouros.html', {'logradouros': logradouros})

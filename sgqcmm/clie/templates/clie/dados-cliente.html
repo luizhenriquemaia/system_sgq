@@ -115,24 +115,13 @@
 		</form>
 	</div>
 	<script>
-		function showModal(e) {
+		const showModal = (e) => {
 			e.preventDefault()
-			let addressRadio = document.getElementsByName("endereco")
-			let valueSelectedRadio = 100
-			for (var i = 0; i < addressRadio.length; i++){
-				if (addressRadio[i].checked) {
-					valueSelectedRadio = addressRadio[i].value
-				}
-			}
-			if (parseInt(valueSelectedRadio) > 0) {
-				document.getElementById("modalEmpresa").classList.toggle("modal-show")
-			} else {
-				document.getElementById("formClient").submit()
-			}
-		}
-		const hiddeModal = () => {
 			document.getElementById("modalEmpresa").classList.toggle("modal-show")
 		}
+
+		const hiddeModal = () => document.getElementById("modalEmpresa").classList.toggle("modal-show")
+
 		const checkSelectCompany = () => {
 			if (document.getElementById("empresa_id") === null) {
 				alert("selecione uma empresa válida ou peça para o seu supervisor inserir uma nova empresa")

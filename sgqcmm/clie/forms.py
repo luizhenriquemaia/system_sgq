@@ -1,5 +1,9 @@
 from django import forms
-from main.models import e01Cadastros, a03Estados, a04Municipios, a05Bairros, a06Lograds
+from main.models import e01Cadastros, b01Empresas, a03Estados, a04Municipios, a05Bairros, a06Lograds
+
+
+class formSelecionarEmpresa(forms.Form):
+    empresa = forms.ModelChoiceField(queryset=b01Empresas.objetos.filter(juridica=True), required=False)
 
 
 class formDadosCliente(forms.Form):

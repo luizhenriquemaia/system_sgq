@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'clie',
     'orcs',
     'proc',
+    'config',
 ]
 
 MIDDLEWARE = [

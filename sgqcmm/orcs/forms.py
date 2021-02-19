@@ -1,11 +1,9 @@
 from django import forms
 from django.db.models import Q
 from main.models import (a10CatsInsumos, a11Insumos, a15AtvsPad, a19PlsPgtos,
-                         a20StsOrcs, b01Empresas, c01Usuarios, e06ContCad)
+                         a20StsOrcs, c01Usuarios, e06ContCad)
 
 
-class formSelecionarEmpresa(forms.Form):
-    empresa = forms.ModelChoiceField(queryset=b01Empresas.objetos.filter(juridica=True), required=False)
 
 
 class formAdicionarDesconto(forms.Form):
