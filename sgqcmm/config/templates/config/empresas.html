@@ -5,13 +5,201 @@
         <h4>Configurações Gerais do Sistema</h4>
     </div>
     <div class="divider"></div>
-    <br>
+    <h5 class="title-table">Empresas Cadastradas</h5>
+    <table>
+        <thead>
+            <th>Id</th>
+            <th>Razão</th>
+            <th>CNPJ</th>
+            <th>I.E.</th>
+            <th>Endereço</th>
+        </thead>
+        <tbody>
+        {% for empresa in empresasCadastradas %}
+            <tr>
+                <td data-lable="Numero">
+                    <a href="./{{empresa.id}}">{{empresa.id}}</a>
+                </td>
+                <td>
+                    {{empresa.razao}}
+                </td>
+                <td>
+                    {{empresa.cnpj}}
+                </td>
+                <td>
+                    {{empresa.inscest}}
+                </td>
+                <td>
+                    {{empresa.endereco}}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br><br>
+    <div class="row">
+        <div class="col s1 offset-s12" style="padding:0px;">
+            <button class="submit-hover" name="btnAddEmpresa" style="padding: 15px 20px 15px 20px;" onclick=showModal()>
+                <i class="material-icons">add</i></button>
+        </div>
+    </div>
+    <div class="modal" id="modalNovoEndereco">
+        <div class="modal-content">
+            <span class="close-modal" onclick=showModal()>
+                <i class="material-icons small">close</i>
+            </span>
+            <h5>Cadastrar nova empresa</h5>
+            <form method="POST" id="formCadastroEmpresa_id">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col s6">
+                        <label>Razão</label>
+                        {{ formCadEmpresa.razao }}
+                    </div>
+                    <div class="col s6">
+                        <label>Fantasia</label>
+                        {{ formCadEmpresa.fantasia }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s6">
+                        <label for="cnpj_id">CNPJ</label>
+                        {{ formCadEmpresa.cnpj }}
+                    </div>
+                    <div class="col s6">
+                        <label for="inscricao_estadual_id">Inscrição Estadual</label>
+                        {{ formCadEmpresa.inscricao_estadual }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s6">
+                        <label for="codigo_empresa_id">Codigo empresa</label>
+                        {{ formCadEmpresa.codigo_empresa }}
+                    </div>
+                    <div class="col s6">
+                        <label>
+                            {{ formCadEmpresa.juridica }}
+                            <span class="checkbox-grid">Jurídica</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <label for="observacao_id">Observações</label>
+                        {{ formCadEmpresa.observacao }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <label for="id_regiao">Regiao</label>
+                        {{ formCadEmpresa.regiao }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <label for="id_estado">Estado</label>
+                        {{ formCadEmpresa.estado }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <label for="id_cidade">Cidade</label>
+                        {{ formCadEmpresa.cidade }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s6">
+                        <label for="id_bairro">Bairro</label>
+                        {{ formCadEmpresa.bairro }}
+                    </div>
+                    <div class="col s6">
+                        <label for="id_novo_bairro">Novo Bairro</label>
+                        {{ formCadEmpresa.novo_bairro }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s6">
+                        <label for="id_logradouro">Logradouro</label>
+                        {{ formCadEmpresa.logradouro }}
+                    </div>
+                    <div class="col s6">
+                        <label for="id_novo_logradouro">Novo Logradouro</label>
+                        {{ formCadEmpresa.novo_logradouro }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <label for="id_complemento">Complemento</label>
+                        {{ formCadEmpresa.complemento }}
+                    </div>
+                </div>
+                <button class="ok-modal" type="submit" name="btnAddEnderecoEmpresa">Ok</button>
+            </form>
+        </div>
+    </div>
 </div>
+<script>
+    const showModal = () => document.getElementById("modalNovoEndereco").classList.toggle("modal-show")
+
+    function carregarDados(element) {
+        var xhttp = new XMLHttpRequest();
+        if (element.id === "id_regiao") {
+            if (element.value !== 0 && element.value !== "") {
+                xhttp.onreadystatechange = function (data) {
+                    if (this.readyState === 4 && this.status === 200) {
+                        document.getElementById("id_estado").innerHTML = this.response
+                    }
+                }
+                xhttp.open("GET", `../../ajax/carregar-estados/${element.value}`, true)
+                xhttp.send()
+            } else {
+                document.getElementById("id_estado").innerHTML = ""
+            }
+        } else if (element.id === "id_estado") {
+            if (element.value !== 0 && element.value !== "") {
+                xhttp.onreadystatechange = function (data) {
+                    if (this.readyState === 4 && this.status === 200) {
+                        document.getElementById("id_cidade").innerHTML = this.response
+                    }
+                }
+                xhttp.open("GET", `../../ajax/carregar-cidades/${element.value}`, true)
+                xhttp.send()
+            } else {
+                document.getElementById("id_cidade").innerHTML = ""
+            }
+        } else if (element.id === "id_cidade") {
+            if (element.value !== 0 && element.value !== "") {
+                xhttp.onreadystatechange = function (data) {
+                    if (this.readyState === 4 && this.status === 200) {
+                        document.getElementById("id_bairro").innerHTML = this.response
+                    }
+                }
+                xhttp.open("GET", `../../ajax/carregar-bairros/${element.value}`, true)
+                xhttp.send()
+            } else {
+                document.getElementById("id_bairro").innerHTML = ""
+            }
+        } else if (element.id === "id_bairro") {
+            if (element.value !== 0 && element.value !== "") {
+                xhttp.onreadystatechange = function (data) {
+                    if (this.readyState === 4 && this.status === 200) {
+                        document.getElementById("id_logradouro").innerHTML = this.response
+                    }
+                }
+                xhttp.open("GET", `../../ajax/carregar-logradouros/${element.value}`, true)
+                xhttp.send()
+            } else {
+                document.getElementById("id_logradouro").innerHTML = ""
+            }
+        }
+    }
+
+</script>
 {% endblock content %}
 {% block footer %}
 <footer>
     <ul style="list-style-type:none;">
-        <li><a href="/sgqcmm/procs/comercial/">Exibir todos os procedimentos do departamento comercial</a></li>
+        <li><a href="../../procs/comercial/">Exibir todos os procedimentos do departamento comercial</a></li>
     </ul>
 </footer>
 {% endblock footer %}

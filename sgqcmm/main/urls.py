@@ -20,4 +20,12 @@ urlpatterns = [
     path('listas-ativs/', views.listas_ativs, name='listas_ativs'),
     path('listas-patrs/', views.listas_patrs, name='listas_patrs'),
     path('listas-colabs/', views.listas_colabs, name='listas_colabs'),
+    path('ajax/carregar-estados/<regiao>', views.carregar_estados,
+         name='ajax_carregar_estados'),
+    path('ajax/carregar-cidades/<estado>', views.carregar_cidades,
+         name='ajax_carregar_cidades'),
+    path('ajax/carregar-bairros/<cidade>', views.carregar_bairros,
+         name='ajax_carregar_bairros'),
+    path('ajax/carregar-logradouros/<bairro>', views.carregar_logradouros,
+         name='ajax_carregar_logradouros'),
 ]

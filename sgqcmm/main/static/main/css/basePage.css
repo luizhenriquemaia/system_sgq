@@ -224,6 +224,8 @@ button{
 table{
   width: 90%;
   margin: auto;
+  padding-bottom: 1em;
+  margin-top: 1em;
 }
 
 table td, table th{
@@ -243,6 +245,19 @@ table th{
 .title-page{
   font-family: 'Butler-Regular';
   margin-bottom: 68px;
+}
+
+.title-table {
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 2em;
+}
+
+.title-form-after-table {
+  font-size: 1.3em;
+  text-align: left;
+  margin-top: 6em;
+  margin-bottom: 1.2em;
 }
 
 .endereco-orcamento{
@@ -545,12 +560,15 @@ a.link-button:hover p.add-text {
   opacity: 1;
 }
 
+
+/* modals */
+
 .modal {
   margin-top: 80px;
   z-index: 1;
   top: 0;
   animation-name: animationModalShow;
-  animation-duration: 0.4s
+  animation-duration: 0.5s
 }
 
 .modal-show {
@@ -575,13 +593,20 @@ a.link-button:hover p.add-text {
   margin-top: 1.5em;
 }
 
+.modal-content .form-field {
+  margin: 15px 0px 10px;
+  padding: 0 0.75rem;
+}
+
+.modal-content input[type=text] {
+  width: 99%;
+}
+
 .ok-modal {
   position: absolute;
   font-weight: 600;
-  bottom: 0;
   right: 0;
-  margin-bottom: 20px;
-  margin-right: 20px;
+  margin: 30px 20px 20px 0px;
   height: 60px;
   width: 60px;
   padding: 15px;

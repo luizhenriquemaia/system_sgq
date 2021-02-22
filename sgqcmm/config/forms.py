@@ -1,40 +1,16 @@
 from django import forms
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm, UserCreationForm
 
-from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds
+from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, b01Empresas
 
 
-class formPesqPorCliente(forms.Form):
-    nome_cliente = forms.CharField(max_length=200, required=True)
-
-
-class editProfileForm(UserChangeForm):
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
-
-
-class changePasswordForm(PasswordChangeForm):
-    class Meta:
-        model = User
-
-
-class addUserForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name',
-                  'email', 'password1', 'password2']
-    def save(self, commit=True):
-        user = super(UserCreationForm, self).save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-        return user
-
-
-class formNovoEndereco(forms.Form):
+class formCadastrarEmpresa(forms.Form):
+    juridica = forms.BooleanField(required=False)
+    razao = forms.CharField(max_length=255)
+    fantasia = forms.CharField(max_length=255)
+    codigo_empresa = forms.CharField(max_length=2)
+    cnpj = forms.CharField(max_length=14)
+    inscricao_estadual = forms.CharField(max_length=20)
+    observacao = forms.CharField(max_length=400, required=False)
     regiao_choices = [(0, ''), ('Norte', 'Norte'), ('Nordeste', 'Nordeste'), (
         'Centro Oeste', 'Centro Oeste'), ('Sul', 'Sul'), ('Sudeste', 'Sudeste')]
     regiao = forms.ChoiceField(choices=regiao_choices, 
