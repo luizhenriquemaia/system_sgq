@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render
+from django.db.models import Q
 
 from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, b01Empresas
 from main.forms import formNovoEndereco
@@ -20,6 +21,21 @@ def empresas(request):
         messages.error(request, "Negado, o usuário deve ser administrativo para acessar esta seção")
         return redirect("main:inicio")
     else:
+        empresas_bd = b01Empresas.objetos.all()
+        empresas_cadastradas = []
+        for empresa in empresas_bd:
+            log_empresa = a06Lograds.objetos.get(id=empresa.lograd_id)
+            bairro_empresa = a05Bairros.objetos.get(id=log_empresa.bairro_id)
+            municipio_empresa = a04Municipios.objetos.get(id=bairro_empresa.municipio_id)
+            endereco_empresa = f"{municipio_empresa.municipio}-{municipio_empresa.estado_id}, {bairro_empresa.bairro}, {log_empresa.logradouro}, {empresa.complend}"
+            dic_empresa = {
+                "id": empresa.id,
+                "razao": empresa.razao,
+                "cnpj": empresa.cnpj,
+                "inscest": empresa.inscest,
+                "endereco": endereco_empresa
+            }
+            empresas_cadastradas.append(dic_empresa)
         if request.method == "POST":
             form_cad_empresa = formCadastrarEmpresa(request.POST)
             if form_cad_empresa.is_valid():
@@ -56,6 +72,12 @@ def empresas(request):
                     id_nova_empresa = b01Empresas.objetos.latest('id').id + 1
                 except:
                     id_nova_empresa = 0
+                
+                check_if_exist = b01Empresas.objetos.filter(Q(razao=form_cad_empresa.cleaned_data['razao'])|Q(cnpj=form_cad_empresa.cleaned_data['cnpj'])|Q(codemp=form_cad_empresa.cleaned_data['codigo_empresa'])|Q(inscest=form_cad_empresa.cleaned_data['inscricao_estadual']))
+                if len(check_if_exist) > 0:
+                    messages.info(request, "Empresa com dados semelhantes já cadastrada, verifique os dados")
+                    return render(request, "config/empresas.html", {"empresasCadastradas": empresas_cadastradas, "formCadEmpresa": formCadastrarEmpresa()})
+
                 nova_empresa = b01Empresas(
                     id=id_nova_empresa,
                     juridica=form_cad_empresa.cleaned_data['juridica'],
@@ -71,19 +93,4 @@ def empresas(request):
                 nova_empresa.save()
             else:
                 print(f"\n\n\n{form_cad_empresa.errors.as_data()}\n\n\n")
-        empresas_bd = b01Empresas.objetos.all()
-        empresas_cadastradas = []
-        for empresa in empresas_bd:
-            log_empresa = a06Lograds.objetos.get(id=empresa.lograd_id)
-            bairro_empresa = a05Bairros.objetos.get(id=log_empresa.bairro_id)
-            municipio_empresa = a04Municipios.objetos.get(id=bairro_empresa.municipio_id)
-            endereco_empresa = f"{municipio_empresa.municipio}-{municipio_empresa.estado_id}, {bairro_empresa.bairro}, {log_empresa.logradouro}, {empresa.complend}"
-            dic_empresa = {
-                "id": empresa.id,
-                "razao": empresa.razao,
-                "cnpj": empresa.cnpj,
-                "inscest": empresa.inscest,
-                "endereco": endereco_empresa
-            }
-            empresas_cadastradas.append(dic_empresa)
         return render(request, "config/empresas.html", {"empresasCadastradas": empresas_cadastradas, "formCadEmpresa": formCadastrarEmpresa()})
