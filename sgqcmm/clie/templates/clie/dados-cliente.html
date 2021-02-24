@@ -102,28 +102,43 @@
 			<button class="submit-ok submit-hover" name="proximo" type="submit" value="proximo">
 				<i class="material-icons">navigate_next</i>
 			</button>
-			<div class="modal" id="modalEmpresa">
-				<div class="modal-content">
-					<span class="close-modal" onclick=hiddeModal()>
-						<i class="material-icons small">close</i>
-					</span>
-					<p>Selecione a empresa a qual o orçamento se refere</p>
-					{{ formSelecionarEmpresa.empresa }}
-					<button class="ok-modal" onclick=checkSelectCompany()>Ok</button>
-				</div>
-			</div>
 		</form>
+		<div class="modal" id="modalEmpresa">
+			<div class="modal-content">
+				<span class="close-modal" onclick=hiddeModal()>
+					<i class="material-icons small">close</i>
+				</span>
+				<div class="row">
+					<div class="col s12">
+						<p>Selecione a empresa a qual o orçamento se refere</p>
+						{{ formSelecionarEmpresa.empresa_orcamento }}
+					</div>
+				</div>
+				<button class="ok-modal" onclick=checkSelectCompany()>Ok</button>
+			</div>
+		</div>
 	</div>
 	<script>
 		const showModal = (e) => {
 			e.preventDefault()
-			document.getElementById("modalEmpresa").classList.toggle("modal-show")
+			const opcoesEndereco = document.getElementsByName("endereco")
+			let opcaoEscolhida = -1
+			for (var i=0; i < opcoesEndereco.length; i++) {
+				if (opcoesEndereco[i].checked) opcaoEscolhida = opcoesEndereco[i]
+			}
+			if (opcaoEscolhida.value === "0") {
+				document.getElementById("formClient").submit()
+			} else {
+				if (opcaoEscolhida.value !== -1) {
+					document.getElementById("modalEmpresa").classList.toggle("modal-show")
+				}
+			}
 		}
 
 		const hiddeModal = () => document.getElementById("modalEmpresa").classList.toggle("modal-show")
 
 		const checkSelectCompany = () => {
-			if (document.getElementById("empresa_id") === null) {
+			if (document.getElementById("id_empresa_orcamento").value === "") {
 				alert("selecione uma empresa válida ou peça para o seu supervisor inserir uma nova empresa")
 			} else {
 				document.getElementById("formClient").submit()

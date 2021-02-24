@@ -7,14 +7,14 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
                               redirect, render, reverse)
+from main.forms import formNovoEndereco
 from main.funcoes import format_list_telefone, nomesequencia, numpurotelefone
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          a07TiposEnd, a09TiposFone, e01Cadastros, e02FonesCad,
                          e03WebCad, e04EndCad, e06ContCad)
 
-from clie.forms import (formSelecionarEmpresa, formDadosCliente, formDadosEmpresa, formNovoEndereco,
-                        formEscCliente, formPesqCliente)
-
+from clie.forms import (formDadosCliente, formDadosEmpresa, formEscCliente,
+                        formPesqCliente, formSelecionarEmpresa)
 
 
 # Pesquisa cliente por nome, telefone ou e-mail
@@ -353,7 +353,6 @@ def dados_cliente(request):
                                                             "formSelecionarEmpresa": form_selecionar_empresa})
 
 
-
 def cadastrar_novo_endereco(request):
     codigo_cliente = request.session['codcliente']
     nome_cliente = e01Cadastros.objetos.get(id=codigo_cliente).descrcad
@@ -412,20 +411,3 @@ def cadastrar_novo_endereco(request):
     else:
         form = formNovoEndereco()
         return render(request,"clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente})
-
-
-def carregar_estados(request, regiao):
-    estados = a03Estados.objetos.filter(regiao=regiao).order_by('estado')
-    return render(request, 'clie/carregar-estados.html', {'estados': estados})
-
-def carregar_cidades(request, estado):
-    cidades = a04Municipios.objetos.filter(estado_id=estado).order_by('municipio')
-    return render(request, 'clie/carregar-cidades.html', {'cidades': cidades})
-
-def carregar_bairros(request, cidade):
-    bairros = a05Bairros.objetos.filter(municipio_id=cidade).order_by('bairro')
-    return render(request, 'clie/carregar-bairros.html', {'bairros': bairros})
-
-def carregar_logradouros(request, bairro):
-    logradouros = a06Lograds.objetos.filter(bairro_id=bairro).order_by('logradouro')
-    return render(request, 'clie/carregar-logradouros.html', {'logradouros': logradouros})
