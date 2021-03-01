@@ -356,40 +356,51 @@ def cadastrar_novo_endereco(request):
             regiao = request.POST['regiao']
             estado = request.POST['estado']
             cidade = request.POST['cidade']
+            # check if the address is already added
+
             if form.cleaned_data['novo_bairro']:
-                bairro = a05Bairros(
-                    id=a05Bairros.objetos.latest('id').id + 1,
-                    bairro=form.cleaned_data['novo_bairro'],
-                    cepini=0,
-                    cepfin=0,
-                    distfab=0,
-                    municipio=a04Municipios.objetos.get(id=cidade)
-                )
-                bairro.save()
+                if len(a05Bairros.objetos.filter(bairro=form.cleaned_data['novo_bairro'])) > 0:
+                    bairro = a05Bairros.objetos.filter(bairro=form.cleaned_data['novo_bairro'])[0]
+                else:
+                    bairro = a05Bairros(
+                        id=a05Bairros.objetos.latest('id').id + 1,
+                        bairro=form.cleaned_data['novo_bairro'],
+                        cepini=0,
+                        cepfin=0,
+                        distfab=0,
+                        municipio=a04Municipios.objetos.get(id=cidade)
+                    )
+                    bairro.save()
             else:
                 if request.POST['bairro'] != "":
                     bairro = a05Bairros.objetos.get(id=request.POST['bairro'])
             if form.cleaned_data['novo_logradouro']:
-                logradouro = a06Lograds(
-                    id=a06Lograds.objetos.latest('id').id + 1,
-                    logradouro=form.cleaned_data['novo_logradouro'],
-                    ceplogr="",
-                    distfab=0,
-                    bairro=bairro
-                )
-                logradouro.save()
+                if len(a06Lograds.objetos.filter(logradouro=form.cleaned_data['novo_logradouro'])) > 0:
+                    logradouro = a06Lograds.objetos.filter(logradouro=form.cleaned_data['novo_logradouro'])[0]
+                else:
+                    logradouro = a06Lograds(
+                        id=a06Lograds.objetos.latest('id').id + 1,
+                        logradouro=form.cleaned_data['novo_logradouro'],
+                        ceplogr="",
+                        distfab=0,
+                        bairro=bairro
+                    )
+                    logradouro.save()
             else:
                 if request.POST['logradouro'] != "":
                     logradouro = a06Lograds.objetos.get(id=request.POST['logradouro'])
             complemento = form.cleaned_data['complemento']
-            novo_endereco_cliente = e04EndCad(
-                id=e04EndCad.proxnumcad(e04EndCad),
-                cadastro=e01Cadastros.objetos.get(id=codigo_cliente),
-                tipend=a07TiposEnd.objetos.get(id=1),
-                lograd=logradouro,
-                complend=complemento
-            )
-            novo_endereco_cliente.save()
+            if len(e04EndCad.objetos.filter(complend=form.cleaned_data['complemento'], cadastro=e01Cadastros.objetos.get(id=codigo_cliente), lograd=logradouro)) > 0:
+                novo_endereco_cliente = e04EndCad.objetos.filter(complend=form.cleaned_data['complemento'], cadastro=e01Cadastros.objetos.get(id=codigo_cliente), lograd=logradouro)[0]
+            else:
+                novo_endereco_cliente = e04EndCad(
+                    id=e04EndCad.proxnumcad(e04EndCad),
+                    cadastro=e01Cadastros.objetos.get(id=codigo_cliente),
+                    tipend=a07TiposEnd.objetos.get(id=1),
+                    lograd=logradouro,
+                    complend=complemento
+                )
+                novo_endereco_cliente.save()
             request.session['codendcliente'] = novo_endereco_cliente.id
             messages.info(request, "Endereço cadastrado")
             return HttpResponseRedirect(reverse('orcs:novo_orcamento'))
