@@ -8,7 +8,7 @@
     <h5 class="title-table">Empresas Cadastradas</h5>
     <table>
         <thead>
-            <th>Id</th>
+            <th>ID</th>
             <th>Razão</th>
             <th>CNPJ</th>
             <th>I.E.</th>
@@ -18,7 +18,7 @@
         {% for empresa in empresasCadastradas %}
             <tr>
                 <td data-lable="Numero">
-                    <a href="./{{empresa.id}}">{{empresa.id}}</a>
+                    <a href="./{{empresa.id}}/centro-de-custos/">{{empresa.id}}</a>
                 </td>
                 <td>
                     {{empresa.razao}}

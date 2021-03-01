@@ -2,23 +2,23 @@ from django.contrib import messages
 from django.shortcuts import render
 from django.db.models import Q
 
-from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, b01Empresas
+from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, b01Empresas, b04CCustos
 from main.forms import formNovoEndereco
 
-from config.forms import formCadastrarEmpresa
+from config.forms import formCadastrarEmpresa, formCadastrarCentroDeCusto
 
 
 
 def inicio(request):
     if not request.user.is_staff:
-        messages.error(request, "Não permitido, o usuário deve ser administrativo para acessar esta seção")
+        messages.error(request, "Não permitido, o usuário deve ser administrador para acessar esta seção")
         return redirect("main:inicio")
     else:
         return render(request, "config/inicio.html")
 
 def empresas(request):
     if not request.user.is_staff:
-        messages.error(request, "Negado, o usuário deve ser administrativo para acessar esta seção")
+        messages.error(request, "Negado, o usuário deve ser administrador para acessar esta seção")
         return redirect("main:inicio")
     else:
         empresas_bd = b01Empresas.objetos.all()
@@ -94,3 +94,46 @@ def empresas(request):
                 print(f"\n\n\n{form_cad_empresa.errors.as_data()}\n\n\n")
                 messages.error(request, "Erro nos dados do formulário")
         return render(request, "config/empresas.html", {"empresasCadastradas": empresas_cadastradas, "formCadEmpresa": formCadastrarEmpresa()})
+
+
+def centro_de_custos(request, cod_empresa):
+    if not request.user.is_staff:
+        messages.error(request, "Negado, o usuário deve ser administrador para acessar esta seção")
+        return redirect("main:inicio")
+    else:
+        empresa = b01Empresas.objetos.get(id=cod_empresa)
+        if request.method == "POST":
+            form = formCadastrarCentroDeCusto(request.POST)
+            if form.is_valid():
+                descricao = f"{empresa.codemp} {form.cleaned_data['descricao']}"
+                funcionamento = form.cleaned_data['funcionamento']
+                sequencia_holerite = form.cleaned_data['sequencia_holerite']
+                ativo = form.cleaned_data['ativo']
+                if len(b04CCustos.objetos.filter(descricao=descricao, funccc=funcionamento, seqmfhol=sequencia_holerite, empresa=empresa)) > 0:
+                    messages.error(request, "Centro de custo já cadastrado")
+                else:
+                    try:
+                        last_id = b04CCustos.objetos.latest('id').id + 1
+                    except:
+                        last_id = -1
+                    novo_centro_de_custo = b04CCustos(
+                        id=last_id + 1,
+                        funccc=funcionamento,
+                        descricao=descricao,
+                        ativo=ativo,
+                        seqmfhol=sequencia_holerite,
+                        empresa=empresa
+                    )
+                    novo_centro_de_custo.save()                
+                    messages.success(request, "Centro de custo adicionado")
+        centro_de_custos_empresa = b04CCustos.objetos.filter(empresa=empresa)
+        list_centro_de_custos = []
+        for centro in centro_de_custos_empresa:
+            dic_centro = {
+                "id": centro.id,
+                "funccc": centro.funccc,
+                "descricao": centro.descricao,
+                "ativo": centro.ativo
+            }
+            list_centro_de_custos.append(dic_centro)
+    return render(request, "config/centro-de-custos.html", {"centrosDeCusto": list_centro_de_custos, "empresa": empresa, "formCadastrarCentroDeCusto": formCadastrarCentroDeCusto()})

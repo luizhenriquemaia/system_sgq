@@ -1,0 +1,89 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+<div class="content">
+    <div class="title-page">
+        <h4>Configurações Gerais do Sistema</h4>
+    </div>
+    <div class="divider"></div>
+    <h5 class="title-table">Centros de Custo da Empresa {{ empresa }}</h5>
+    <table>
+        <thead>
+            <th>ID</th>
+            <th>Função</th>
+            <th>Descrição</th>
+            <th>Ativo</th>
+        </thead>
+        <tbody>
+            {% for centro in centrosDeCusto %}
+            <tr>
+                <td data-lable="Numero">
+                    <a href="./{{centro.id}}">{{centro.id}}</a>
+                </td>
+                <td>
+                    {{centro.funccc}}
+                </td>
+                <td>
+                    {{centro.descricao}}
+                </td>
+                <td>
+                    {{centro.ativo}}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br><br>
+    <div class="row">
+        <div class="col s1 offset-s12" style="padding:0px;">
+            <button class="submit-hover" name="btnAddEmpresa" style="padding: 15px 20px 15px 20px;" onclick=showModal()>
+                <i class="material-icons">add</i></button>
+        </div>
+    </div>
+    <div class="modal" id="modalNovoEndereco">
+        <div class="modal-content">
+            <span class="close-modal" onclick=showModal()>
+                <i class="material-icons small">close</i>
+            </span>
+            <h5>Cadastrar nova empresa</h5>
+            <form method="POST" id="formCadastrarCentroDeCusto_id">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col s12">
+                        <label for="descricao_id">Descrição</label>
+                        {{ formCadastrarCentroDeCusto.descricao }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s7">
+                        <label for="funccc_id">Funcionamento</label>
+                        {{ formCadastrarCentroDeCusto.funcionamento }}
+                    </div>
+                    <div class="col s3">
+                        <label for="seqmfhol_id">Sequência Holerite</label>
+                        {{ formCadastrarCentroDeCusto.sequencia_holerite }}
+                    </div>
+                    <div class="col s2">
+                        <label>
+                            {{ formCadastrarCentroDeCusto.ativo }}
+                            <span class="checkbox-grid">Ativo</span>
+                        </label>
+                    </div>
+                </div>
+                <button class="ok-modal" type="submit" name="btnAddEnderecoEmpresa">Ok</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function showModal() {
+        document.getElementById("modalNovoEndereco").classList.toggle("modal-show")
+    }
+</script>
+{% endblock content %}
+{% block footer %}
+<footer>
+    <ul style="list-style-type:none;">
+        <li><a href="../../procs/comercial/">Exibir todos os procedimentos do departamento comercial</a></li>
+    </ul>
+</footer>
+{% endblock footer %}

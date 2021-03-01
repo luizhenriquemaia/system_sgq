@@ -48,3 +48,13 @@ class formCadastrarEmpresa(forms.Form):
                     bairro_id=bairro).order_by('logradouro')
         except(ValueError, TypeError):
             pass
+
+
+class formCadastrarCentroDeCusto(forms.Form):
+    descricao = forms.CharField(max_length=255)
+    funcionamento_choices = [(1, 'Desp. Pessoais'), (2, 'Escr. Administrativos'), (3, 'Comércio'), 
+                      (4, 'Indústria'), (5, 'Obra/Projeto'), (6, 'Locação'), (7, 'Investimentos'), 
+                      (8, 'Prest. Serviço')]
+    funcionamento = forms.ChoiceField(choices=funcionamento_choices)
+    sequencia_holerite = forms.IntegerField(max_value=100, min_value=1)
+    ativo = forms.BooleanField(initial=True)
