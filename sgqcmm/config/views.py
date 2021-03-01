@@ -72,25 +72,25 @@ def empresas(request):
                     id_nova_empresa = b01Empresas.objetos.latest('id').id + 1
                 except:
                     id_nova_empresa = 0
-                
-                check_if_exist = b01Empresas.objetos.filter(Q(razao=form_cad_empresa.cleaned_data['razao'])|Q(cnpj=form_cad_empresa.cleaned_data['cnpj'])|Q(codemp=form_cad_empresa.cleaned_data['codigo_empresa'])|Q(inscest=form_cad_empresa.cleaned_data['inscricao_estadual']))
-                if len(check_if_exist) > 0:
-                    messages.info(request, "Empresa com dados semelhantes já cadastrada, verifique os dados")
-                    return render(request, "config/empresas.html", {"empresasCadastradas": empresas_cadastradas, "formCadEmpresa": formCadastrarEmpresa()})
-
-                nova_empresa = b01Empresas(
-                    id=id_nova_empresa,
-                    juridica=form_cad_empresa.cleaned_data['juridica'],
-                    razao=form_cad_empresa.cleaned_data['razao'],
-                    fantasia=form_cad_empresa.cleaned_data['fantasia'],
-                    codemp=form_cad_empresa.cleaned_data['codigo_empresa'],
-                    lograd=logradouro,
-                    complend=form_cad_empresa.cleaned_data['complemento'],
-                    cnpj=form_cad_empresa.cleaned_data['cnpj'],
-                    inscest=form_cad_empresa.cleaned_data['inscricao_estadual'],
-                    observs=form_cad_empresa.cleaned_data['observacao']
-                )
-                nova_empresa.save()
+                if len(b01Empresas.objetos.filter(Q(razao=form_cad_empresa.cleaned_data['razao'])|Q(cnpj=form_cad_empresa.cleaned_data['cnpj'])|Q(codemp=form_cad_empresa.cleaned_data['codigo_empresa'])|Q(inscest=form_cad_empresa.cleaned_data['inscricao_estadual']))) > 0:
+                    messages.error(request, "Empresa com dados semelhantes já cadastrada, verifique os dados")
+                else: 
+                    nova_empresa = b01Empresas(
+                        id=id_nova_empresa,
+                        juridica=form_cad_empresa.cleaned_data['juridica'],
+                        razao=form_cad_empresa.cleaned_data['razao'],
+                        fantasia=form_cad_empresa.cleaned_data['fantasia'],
+                        codemp=form_cad_empresa.cleaned_data['codigo_empresa'],
+                        lograd=logradouro,
+                        complend=form_cad_empresa.cleaned_data['complemento'],
+                        cnpj=form_cad_empresa.cleaned_data['cnpj'],
+                        inscest=form_cad_empresa.cleaned_data['inscricao_estadual'],
+                        observs=form_cad_empresa.cleaned_data['observacao']
+                    )
+                    nova_empresa.save()
+                    messages.success(request, "Empresa Cadastrada")
+                return render(request, "config/empresas.html", {"empresasCadastradas": empresas_cadastradas, "formCadEmpresa": formCadastrarEmpresa()})
             else:
                 print(f"\n\n\n{form_cad_empresa.errors.as_data()}\n\n\n")
+                messages.error(request, "Erro nos dados do formulário")
         return render(request, "config/empresas.html", {"empresasCadastradas": empresas_cadastradas, "formCadEmpresa": formCadastrarEmpresa()})

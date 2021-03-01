@@ -30,7 +30,7 @@ def pesqcliente(request):
                 # Verificar se o numero de telefone fornecido e valido
                 fonepuro = numpurotelefone(fonepesq)
                 if len(fonepuro) < 10:
-                    messages.info(request, 'Numero de telefone inválido.')
+                    messages.error(request, 'Numero de telefone inválido.')
                     form = formPesqCliente(request.POST)
                     return render(request, "clie/formpesqcliente.html", {"form": form})
                 cadfone = int(e02FonesCad.numjacadastrado(e02FonesCad, fonepuro))
@@ -313,7 +313,7 @@ def dados_cliente(request):
                     emails_existentes[0].save()
             # Se for empresa, adicionar contato
             if cliente.juridica == 1:
-                messages.info(request, "Empresa adicionada com sucesso, adicione um contato")
+                messages.success(request, "Empresa adicionada com sucesso, adicione um contato")
                 return HttpResponseRedirect(
                     reverse('clie:pesqcliente', args=(1,)))
             # Se não for empresa, adicionar endereço
@@ -356,8 +356,6 @@ def cadastrar_novo_endereco(request):
             regiao = request.POST['regiao']
             estado = request.POST['estado']
             cidade = request.POST['cidade']
-            # check if the address is already added
-
             if form.cleaned_data['novo_bairro']:
                 if len(a05Bairros.objetos.filter(bairro=form.cleaned_data['novo_bairro'])) > 0:
                     bairro = a05Bairros.objetos.filter(bairro=form.cleaned_data['novo_bairro'])[0]
@@ -402,11 +400,11 @@ def cadastrar_novo_endereco(request):
                 )
                 novo_endereco_cliente.save()
             request.session['codendcliente'] = novo_endereco_cliente.id
-            messages.info(request, "Endereço cadastrado")
+            messages.success(request, "Endereço cadastrado")
             return HttpResponseRedirect(reverse('orcs:novo_orcamento'))
         else:
             print(form.errors.as_data())
-            messages.info(request, "Erro ao validar os dados do formulário")
+            messages.error(request, "Erro ao validar os dados do formulário")
             return render(request, "clie/cadastrar-novo-endereco.html", 
                 {"form": form, "cliente": nome_cliente, "formSelecionarEmpresa": form_selecionar_empresa})
     else:
