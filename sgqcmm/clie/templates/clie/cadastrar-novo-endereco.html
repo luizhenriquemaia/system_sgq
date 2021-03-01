@@ -4,7 +4,7 @@
     <div class="title-page">
         <h4>Inserir Novo Endereço Para {{ cliente }}</h4>
     </div>
-    <form method="POST" id="novo-endereco-form">
+    <form method="POST" id="formNovoEndereco" onsubmit=showModal(event)>
         {% csrf_token %}
         <div class="row form-field">
             <div class="col s12">
@@ -52,13 +52,27 @@
         </div>
         <br>
         <br>
-        <button class="submit-ok submit-hover" name="proximo" type="submit" value="proximo">
+        <button class="submit-ok submit-hover" name="proximo" value="proximo" type="submit" >
             <i class="material-icons">navigate_next</i>
         </button>
     </form>
+    <div class="modal" id="modalEmpresa">
+        <div class="modal-content">
+            <span class="close-modal" onclick=showModal(event)>
+                <i class="material-icons small">close</i>
+            </span>
+            <div class="row">
+                <div class="col s12">
+                    <p>Selecione a empresa a qual o orçamento se refere</p>
+                    {{ formSelecionarEmpresa.empresa_orcamento }}
+                </div>
+            </div>
+            <button class="ok-modal" onclick=checkSelectCompany()>Ok</button>
+        </div>
+    </div>
 </div>
-<script>
 
+<script>
     function carregarDados(element) {
         var xhttp = new XMLHttpRequest();
         if (element.id === "id_regiao") {
@@ -68,7 +82,7 @@
                         document.getElementById("id_estado").innerHTML = this.response
                     }
                 }
-                xhttp.open("GET", `../ajax/carregar-estados/${element.value}`, true)
+                xhttp.open("GET", `../../ajax/carregar-estados/${element.value}`, true)
                 xhttp.send()
             } else {
                 document.getElementById("id_estado").innerHTML = ""
@@ -80,7 +94,7 @@
                         document.getElementById("id_cidade").innerHTML = this.response
                     }
                 }
-                xhttp.open("GET", `../ajax/carregar-cidades/${element.value}`, true)
+                xhttp.open("GET", `../../ajax/carregar-cidades/${element.value}`, true)
                 xhttp.send()
             } else {
                 document.getElementById("id_cidade").innerHTML = ""
@@ -92,7 +106,7 @@
                         document.getElementById("id_bairro").innerHTML = this.response
                     }
                 }
-                xhttp.open("GET", `../ajax/carregar-bairros/${element.value}`, true)
+                xhttp.open("GET", `../../ajax/carregar-bairros/${element.value}`, true)
                 xhttp.send()
             } else {
                 document.getElementById("id_bairro").innerHTML = ""
@@ -104,7 +118,7 @@
                         document.getElementById("id_logradouro").innerHTML = this.response
                     }
                 }
-                xhttp.open("GET", `../ajax/carregar-logradouros/${element.value}`, true)
+                xhttp.open("GET", `../../ajax/carregar-logradouros/${element.value}`, true)
                 xhttp.send()
             } else {
                 document.getElementById("id_logradouro").innerHTML = ""
@@ -112,5 +126,35 @@
         }
     }
     
+    function showModal(e) {
+        e.preventDefault()
+        document.getElementById("modalEmpresa").classList.toggle("modal-show")
+    }
+    
+    function checkSelectCompany() {
+        if (document.getElementById("id_empresa_orcamento").value === "") {
+            alert("selecione uma empresa válida ou peça para o seu supervisor inserir uma nova empresa")
+        } else {
+            const codigoEmpresa = document.getElementById("id_empresa_orcamento").value
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const request = new Request(
+                `../../ajax/verificar-empresa/${codigoEmpresa}`,
+                {headers: {'X-CSRFToken': csrftoken}}
+            )
+            fetch(request, {
+                method: 'POST',
+                mode: 'same-origin'
+            }).then(
+                function(response) {
+                    if (response.status === 200) {
+                        document.getElementById("formNovoEndereco").submit()
+                    } else if (response.status === 400) {
+                        alert("Erro ao escolher a empresa")
+                    }
+                }
+            )
+        }
+    }
+
 </script>
 {% endblock content %}

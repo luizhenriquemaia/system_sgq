@@ -1,5 +1,7 @@
+from django.http import HttpResponse
 from django.contrib import messages
 from django.db.models import Q
+
 from django.contrib.auth import (authenticate, login, logout,
                                  update_session_auth_hash)
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
@@ -377,3 +379,14 @@ def carregar_bairros(request, cidade):
 def carregar_logradouros(request, bairro):
     logradouros = a06Lograds.objetos.filter(bairro_id=bairro).order_by('logradouro')
     return render(request, 'clie/carregar-logradouros.html', {'logradouros': logradouros})
+
+def verificar_empresa(request, codigo):
+    if request.method == "POST":
+        try:
+            empresa = b01Empresas.objetos.get(id=codigo)
+        except:
+            return HttpResponse(content="Empresa não válida", status=400)
+        request.session['empresa_orcamento'] = codigo
+        return HttpResponse(content="Empresa válida", status=200)
+    else:
+        return HttpResponse(content="", status=403)
