@@ -1,9 +1,21 @@
 from django import forms
-from main.models import e01Cadastros, b01Empresas, a03Estados, a04Municipios, a05Bairros, a06Lograds
+from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
+                         b01Empresas, b04CCustos, e01Cadastros)
 
 
 class formSelecionarEmpresa(forms.Form):
-    empresa_orcamento = forms.ModelChoiceField(queryset=b01Empresas.objetos.filter(juridica=True), required=False)
+    empresa_orcamento = forms.ModelChoiceField(queryset=b01Empresas.objetos.filter(juridica=True), required=False,
+                                               widget=forms.Select(attrs={'onchange': 'carregarCentrosDeCusto(this.value)'}))
+    centros_de_custo = forms.ModelChoiceField(queryset=b04CCustos.objetos.none())
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        try:
+            if 'cod_empresa' in self.data:
+                empresa = self.data.get('cod_empresa')
+                self.fields['centros_de_custo'].queryset = b04CCustos.objetos.filter(empresa=empresa, ativo=True).order_by('descricao')
+        except(ValueError, TypeError):
+            pass
 
 
 class formDadosCliente(forms.Form):

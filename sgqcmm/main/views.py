@@ -380,13 +380,25 @@ def carregar_logradouros(request, bairro):
     logradouros = a06Lograds.objetos.filter(bairro_id=bairro).order_by('logradouro')
     return render(request, 'clie/carregar-logradouros.html', {'logradouros': logradouros})
 
-def verificar_empresa(request, codigo):
+def verificar_empresa_e_cc(request, cod_empresa, cod_cc):
     if request.method == "POST":
         try:
-            empresa = b01Empresas.objetos.get(id=codigo)
+            empresa = b01Empresas.objetos.get(id=cod_empresa)
+            centro_de_custo = b04CCustos.objetos.filter(id=cod_cc, empresa=empresa)
+            if len(centro_de_custo) == 0:
+                return HttpResponse(content="", status=400)
         except:
-            return HttpResponse(content="Empresa não válida", status=400)
-        request.session['empresa_orcamento'] = codigo
-        return HttpResponse(content="Empresa válida", status=200)
+            return HttpResponse(content="", status=400)
+        request.session['empresa_orcamento'] = cod_empresa
+        request.session['cc_orcamento'] = cod_cc
+        return HttpResponse(content="", status=200)
     else:
-        return HttpResponse(content="", status=403)
+        return HttpResponse(content="", status=405)
+
+def carregar_centros_de_custo(request, cod_empresa):
+    try:
+        empresa = b01Empresas.objetos.get(id=cod_empresa)
+    except:
+        return HttpResponse(content="Empresa não válida", status=400)
+    centros_de_custo = b04CCustos.objetos.filter(empresa=empresa, ativo=True).order_by('descricao')
+    return render(request, 'clie/carregar-centro-de-custo.html', {'centrosDeCusto': centros_de_custo})

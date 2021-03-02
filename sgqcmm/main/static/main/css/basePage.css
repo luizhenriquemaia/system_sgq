@@ -589,7 +589,7 @@ a.link-button:hover p.add-text {
   margin-bottom: 90px;
 }
 
-.modal-content p {
+.modal-content .first-row, .modal-content p {
   margin-top: 1.5em;
 }
 

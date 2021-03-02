@@ -322,7 +322,6 @@ def dados_cliente(request):
             if cod_endereco == 0:
                 return HttpResponseRedirect(reverse('clie:cadastrar_novo_endereco'))
             else:
-                empresa_orcamento = request.session['empresa_orcamento']
                 # Continua usando o endereco selecionado
                 logrCli = e04EndCad.objetos.get(id=int(cod_endereco))
                 codlogrclie = logrCli.lograd_id

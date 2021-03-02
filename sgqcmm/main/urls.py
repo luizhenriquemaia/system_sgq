@@ -28,6 +28,8 @@ urlpatterns = [
           name='ajax_carregar_bairros'),
      path('ajax/carregar-logradouros/<bairro>', views.carregar_logradouros,
           name='ajax_carregar_logradouros'),
-     path('ajax/verificar-empresa/<codigo>', views.verificar_empresa,
-         name='ajax_verificar_empresa'),
+     path('ajax/verificar-empresa-e-cc/<cod_empresa>/<cod_cc>', views.verificar_empresa_e_cc,
+         name='ajax_verificar_empresa_e_cc'),
+     path('ajax/carregar-centros-de-custo/<cod_empresa>', views.carregar_centros_de_custo,
+         name='ajax_carregar_centros_de_custo'),
 ]

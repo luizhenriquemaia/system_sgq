@@ -108,10 +108,16 @@
 				<span class="close-modal" onclick=hiddeModal()>
 					<i class="material-icons small">close</i>
 				</span>
+				<div class="row first-row">
+					<div class="col s12">
+						<label>Empresa</label>
+						{{ formSelecionarEmpresa.empresa_orcamento }}
+					</div>
+				</div>
 				<div class="row">
 					<div class="col s12">
-						<p>Selecione a empresa a qual o orçamento se refere</p>
-						{{ formSelecionarEmpresa.empresa_orcamento }}
+						<label>Centro de Custo</label>
+						{{ formSelecionarEmpresa.centros_de_custo }}
 					</div>
 				</div>
 				<button class="ok-modal" onclick=checkSelectCompany()>Ok</button>
@@ -137,15 +143,30 @@
 
 		const hiddeModal = () => document.getElementById("modalEmpresa").classList.toggle("modal-show")
 
+		function carregarCentrosDeCusto(codEmpresa) {
+			if (codEmpresa === "") {
+				alert("selecione uma empresa válida ou peça para o seu supervisor inserir uma nova empresa")
+			} else {
+				let xhttp = new XMLHttpRequest()
+				xhttp.onreadystatechange = function(data) {
+					if (this.readyState === 4 && this.status === 200) {
+						document.getElementById("id_centros_de_custo").innerHTML = this.response
+					}
+				}
+				xhttp.open("GET", `../../ajax/carregar-centros-de-custo/${codEmpresa}`, true)
+				xhttp.send()
+			}
+		}
 		
 		function checkSelectCompany() {
 			if (document.getElementById("id_empresa_orcamento").value === "") {
 				alert("selecione uma empresa válida ou peça para o seu supervisor inserir uma nova empresa")
 			} else {
 				const codigoEmpresa = document.getElementById("id_empresa_orcamento").value
+				const codigoCC = document.getElementById("id_centros_de_custo").value
 				const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 				const request = new Request(
-					`../../ajax/verificar-empresa/${codigoEmpresa}`,
+					`../../ajax/verificar-empresa-e-cc/${codigoEmpresa}/${codigoCC}`,
 					{ headers: { 'X-CSRFToken': csrftoken } }
 				)
 				fetch(request, {
