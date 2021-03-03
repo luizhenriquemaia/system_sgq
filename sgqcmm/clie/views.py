@@ -325,7 +325,7 @@ def dados_cliente(request):
                 # Continua usando o endereco selecionado
                 logrCli = e04EndCad.objetos.get(id=int(cod_endereco))
                 codlogrclie = logrCli.lograd_id
-                request.session['codendcliente'] = cod_endereco
+                request.session['cod_endereço_cliente'] = cod_endereco
                 request.session['codlogr'] = codlogrclie
                 codbairro = a06Lograds.objetos.get(pk=codlogrclie).bairro_id
                 request.session['codbair'] = codbairro
@@ -351,7 +351,6 @@ def cadastrar_novo_endereco(request):
     if request.POST:
         form = formNovoEndereco(request.POST)
         if form.is_valid():
-            empresa_orcamento = request.session['empresa_orcamento']
             regiao = request.POST['regiao']
             estado = request.POST['estado']
             cidade = request.POST['cidade']
@@ -398,7 +397,7 @@ def cadastrar_novo_endereco(request):
                     complend=complemento
                 )
                 novo_endereco_cliente.save()
-            request.session['codendcliente'] = novo_endereco_cliente.id
+            request.session['cod_endereço_cliente'] = novo_endereco_cliente.id
             messages.success(request, "Endereço cadastrado")
             return HttpResponseRedirect(reverse('orcs:novo_orcamento'))
         else:

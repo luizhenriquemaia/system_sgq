@@ -12,6 +12,7 @@ from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          e06ContCad, g01Orcamento, g02ItOrc, g03EapOrc,
                          g04AtvEap, g05InsEAP, g09VisitasOrc)
 
+from main.add_from_seeds import (add_tipos_de_frete, add_planos_de_pagamento, add_status_do_orcamento, add_fases_orcamento)
 from .calc.calculos_chapa_alveolar_e_compacto import (orc_poli_curvo,
                                                       orc_poli_plano)
 from .calc.calculos_multi_click import orc_multi_click_plano
@@ -321,63 +322,50 @@ def alterar_insumo_atividade(request, codorcam, idEap, idInsumo):
 
 
 def novo_orcamento(request):
-    # Gravar marcador
-    request.session['marcador'] = 'orcs:preorcamento/'
-    # Obter endereco do cliente
-    codendsel = int(request.session['codendcliente'])
-    # Criar novo orcamento
-    # try:
-    #     # se o centro de custo não existir
-    #     centro_de_custo_orcamento = b04CCustos.objetos.get(id=199)
-    # except ObjectDoesNotExist:
-    #     try:
-    #         # se não existir empresa
-    #         empresa_orcamento = b01Empresas.objetos.get(razao="CMM Comércio e Serviços EIRELI")
-    #     except:
-    #         try:
-    #             logradouro_empresa = a06Lograds.objetos.filter(logradouro="Avenida C-104", ceplogr=74250030, bairro=)
-    #         empresa_orcamento = b01Empresas(
-    #             id=b01Empresas.objetos.latest(id) + 1,
-    #             juridica=1,
-    #             razao="CMM Comércio e Serviços EIRELI",
-    #             fantasia="CAMAMAR",
-    #             codemp="CM",
-    #             complend="complemento - alterar posteriormente",
-    #             cnpj="36186950000108",
-    #             inscest="",
-    #             lograd=
-    #         )
-    #     centro_de_custo_orcamento = b04CCustos(
-    #         id=199,
-    #         funccc=8,
-    #         descricao="Orçamentos",
-    #         ativo=1,
-    #         seqmfhol=1,
-    #         empresa=
-    #     )
-    nvcodorc = g01Orcamento.proxnumorc(g01Orcamento)
+    try:
+        a08TiposFrete.objetos.get(id=1)
+    except ObjectDoesNotExist:
+        add_tipos_de_frete()
+    try:
+        a19PlsPgtos.objetos.get(id=1)
+    except ObjectDoesNotExist:
+        add_planos_de_pagamento()
+    try:
+        a20StsOrcs.objetos.get(id=1)
+    except ObjectDoesNotExist:
+        add_status_do_orcamento()
+    try:
+        a31FaseOrc.objetos.get(id=1)
+    except ObjectDoesNotExist:
+        add_fases_orcamento()
+    # usuários adicionados pelo cmd porém não adicionados na tabela c01
+    try:
+        c01Usuarios.objetos.get(nomeusr=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, "O cadastro do seu usuário está incompleto")
+        return HttpResponseRedirect(reverse('main:inicio'))
+    cod_centro_de_custo = request.session['cc_orcamento']
+    cod_endereço_cliente = request.session['cod_endereço_cliente']
+    novo_cod_orcamento = g01Orcamento.proxnumorc(g01Orcamento)
     novo_orcamento = g01Orcamento(
-        id=nvcodorc,
-        ccusto=centro_de_custo_orcamento,
+        id=novo_cod_orcamento,
+        ccusto=b04CCustos.objetos.get(id=cod_centro_de_custo),
         vended=c01Usuarios.objetos.get(nomeusr=request.user),
         fase=a31FaseOrc.objetos.get(id=1),
         plpgto=a19PlsPgtos.objetos.get(id=1),
-        ender=e04EndCad.objetos.get(id=codendsel),
+        ender=e04EndCad.objetos.get(id=cod_endereço_cliente),
         prazo=15,
         tipofrete=a08TiposFrete.objetos.get(id=5),
         distfrete=10,
         status=a20StsOrcs.objetos.get(id=1)
     )
     novo_orcamento.save()
-    request.session['codorcamento'] = nvcodorc
-    # Editar orcamento criado
-    strcodorc = int(nvcodorc)
+    request.session['cod_orcamento'] = novo_cod_orcamento
     return HttpResponseRedirect(
-        reverse('orcs:editar_orcamento', args=(strcodorc,)))
+        reverse('orcs:editar_orcamento', args=(novo_cod_orcamento,)))
 
 
-def editar_orcamento(request, codorcam):	
-    request.session['marcador'] = 'orcs:preorcamento/'
+def editar_orcamento(request, codorcam):
     # Obter dados gerais do orcamento
     orcamento = obter_dados_gerais_orc(codorcam)
     orcEscolhido = g01Orcamento.objetos.get(pk=int(codorcam))
@@ -524,167 +512,6 @@ def excluir_orcamento(request, codorcam):
     else:
         pass
     return HttpResponseRedirect(reverse('main:inicio'))
-
-
-# 07-01-2020 -> Se não precisar dessa view até 3 meses apagar
-# também apagar o template e a url 
-# def inserir_insumo(request, codorcam):
-#     # Obter dados gerais do orcamento
-#     orcamento = obter_dados_gerais_orc(codorcam)
-#     codOrcAtual = request.session['codorcamento']
-#     if request.method == "POST":
-#         form = formInserirInsumo(request.POST)
-#         if 'btnInserir' in request.POST:
-#             if form.is_valid():
-#                 quantInsumo = float(form.cleaned_data['quantInsumo'])
-#                 bdInsumo = a11Insumos.objetos.get(codigo=int(request.POST['combInsumo']))
-#                 cod_atividade_padrao = int(request.POST['combAtvPad'])
-#                 eaps_do_orcamento = g03EapOrc.objetos.filter(orcamento_id=codOrcAtual).order_by('id')
-#                 # Se não tiver eap no orçamento
-#                 # A descrição é genérica pois não se sabe o que está sendo orçado
-#                 if not eaps_do_orcamento:
-#                     primeira_eap = g03EapOrc(
-#                                         id = g03EapOrc.proxnumeap(g03EapOrc),
-#                                         orcamento = g01Orcamento.objetos.get(pk=codOrcAtual),
-#                                         codeap = '1.',
-#                                         coditem = '1.',
-#                                         descitem = "Cobertura de policarbonato",
-#                                         tipo = 5,
-#                                         qtdorc = 1,
-#                                         unidade = 'un',
-#                                         vlrunit = 0
-#                                         )
-#                     primeira_eap.save()
-#                     segunda_eap = g03EapOrc(
-#                                        id = g03EapOrc.proxnumeap(g03EapOrc),
-#                                        orcamento = g01Orcamento.objetos.get(pk=codOrcAtual),
-#                                        codeap = '1.01.',
-#                                        coditem = '1.01.',
-#                                        descitem = "Cobertura de policarbonato",
-#                                        tipo = 3,
-#                                        qtdorc = 1,
-#                                        unidade = 'un',
-#                                        vlrunit = 0
-#                                        )
-#                     segunda_eap.save()
-#                 eaps_do_orcamento = g03EapOrc.objetos.filter(orcamento_id=codOrcAtual).order_by('id')
-#                 ultItemEap = eaps_do_orcamento[0].codeap
-#                 listaEaps11 = []
-#                 for eapOrc in eaps_do_orcamento:
-#                     if cod_atividade_padrao == 35 or cod_atividade_padrao == 36 or cod_atividade_padrao == 55:
-#                         if (len(eapOrc.codeap) >= 11) and (eapOrc.codeap[6] == '1') and (eapOrc.codeap[0] == ultItemEap[0]):
-#                             listaEaps11.append(eapOrc.codeap)
-#                         elif len(eapOrc.codeap) == 8 and (eapOrc.codeap[-2:] == '1.'):
-#                             atividadeEap = g04AtvEap.objetos.get(eap_id=eapOrc.id)
-#                         else:
-#                             pass
-#                         prefUltimaEap = eapOrc.codeap
-#                     elif cod_atividade_padrao == 21 or cod_atividade_padrao == 56:
-#                         if (len(eapOrc.codeap) >= 11) and (eapOrc.codeap[6] == '2') and (eapOrc.codeap[0] == ultItemEap[0]):
-#                             listaEaps11.append(eapOrc.codeap)
-#                         elif len(eapOrc.codeap) == 8 and (eapOrc.codeap[-2:] == '2.'):
-#                             atividadeEap = g04AtvEap.objetos.get(eap_id=eapOrc.id)
-#                         else:
-#                             pass
-#                         prefUltimaEap = eapOrc.codeap
-#                 try:
-#                     ultimaEap = listaEaps11[-1]
-#                 except:
-#                     if cod_atividade_padrao == 35 or cod_atividade_padrao == 36 or cod_atividade_padrao == 55:
-#                         ultimaEap = f'{prefUltimaEap[:2]}01.01.00.'
-#                         novaEAP = g03EapOrc(
-#                                             id = g03EapOrc.proxnumeap(g03EapOrc),
-#                                             orcamento = g01Orcamento.objetos.get(pk=codOrcAtual),
-#                                             codeap = f'{prefUltimaEap[:2]}01.01.',
-#                                             coditem = f'{prefUltimaEap[:2]}01.01.',
-#                                             descitem = f"Policarbonato e acessórios",
-#                                             tipo = 2,
-#                                             qtdorc = 1,
-#                                             unidade = 'un',
-#                                             vlrunit = 0
-#                                             )
-#                         novaEAP.save()
-#                     elif cod_atividade_padrao == 21 or cod_atividade_padrao == 56:
-#                         ultimaEap = f'{prefUltimaEap[:2]}01.02.00.'
-#                         novaEAP = g03EapOrc(
-#                                             id = g03EapOrc.proxnumeap(g03EapOrc),
-#                                             orcamento = g01Orcamento.objetos.get(pk=codOrcAtual),
-#                                             codeap = f'{prefUltimaEap[:2]}01.02.',
-#                                             coditem = f'{prefUltimaEap[:2]}01.02.',
-#                                             descitem = f"Estrutura",
-#                                             tipo = 2,
-#                                             qtdorc = 1,
-#                                             unidade = 'un',
-#                                             vlrunit = 0
-#                                             )
-#                         novaEAP.save()
-#                     eaps_do_orcamento = g03EapOrc.objetos.filter(orcamento_id=codOrcAtual).order_by('id')
-#                 # Selecionar eaps do tipo 2
-#                 eapAtv = []
-#                 for eap in eaps_do_orcamento:
-#                     if cod_atividade_padrao == 35 or cod_atividade_padrao == 36 or cod_atividade_padrao == 55:
-#                         if eap.descitem == 'Policarbonato e acessórios': 
-#                             if eap.tipo == 2: 
-#                                 eapAtv.append(eap)
-#                     else:
-#                         if eap.descitem == 'Estrutura': 
-#                             if eap.tipo == 2: 
-#                                 eapAtv.append(eap)
-#                 # Checkar se existe uma atividade já criada
-#                 try:
-#                     atvEAP = g04AtvEap.objetos.filter(eap_id=eapAtv[-1]).reverse()[0]
-#                 except:
-#                     if eapAtv == []: 
-#                         pass
-#                     else:
-#                         # Criar atividade padrao para item da EAP
-#                         atvEAP = g04AtvEap(
-#                             id = g04AtvEap.proxnumatveap(g04AtvEap),
-#                             eap = eapAtv[-1],
-#                             atvpadr = a15AtvsPad.objetos.get(pk=cod_atividade_padrao)
-#                         )
-#                         atvEAP.save()
-#                 # Criar EAP do tipo 1 para o insumo
-#                 ordenador = f'{ultimaEap[:9]}{int(ultimaEap[9])+1}.'
-#                 novaEAP = g03EapOrc(
-#                                     id = g03EapOrc.proxnumeap(g03EapOrc),
-#                                     orcamento = g01Orcamento.objetos.get(pk=codOrcAtual),
-#                                     codeap = ordenador,
-#                                     coditem = ordenador,
-#                                     descitem = f"{quantInsumo} {bdInsumo.undcompr} de {bdInsumo.descricao}",
-#                                     tipo = 1,
-#                                     qtdorc = quantInsumo,
-#                                     unidade = bdInsumo.undcompr,
-#                                     vlrunit = bdInsumo.custo01
-#                                     )
-#                 novaEAP.save()
-#                 try:
-#                     # Se tiver a atividade já criada
-#                     novoInsEap = g05InsEAP(atividade = atividadeEap,
-#                                            insumo = a11Insumos.objetos.get(codigo=bdInsumo.codigo),
-#                                            qtdprod = quantInsumo,
-#                                            qtdimpr = 0,
-#                                            cstunpr = a11Insumos.objetos.get(codigo=bdInsumo.codigo).custo01,
-#                                            cstunim = 0)
-#                 except:
-#                     # Se não, pegar a atividade nova
-#                     novoInsEap = g05InsEAP(atividade = atvEAP,
-#                                            insumo = a11Insumos.objetos.get(codigo=bdInsumo.codigo),
-#                                            qtdprod = quantInsumo,
-#                                            qtdimpr = 0,
-#                                            cstunpr = a11Insumos.objetos.get(codigo=bdInsumo.codigo).custo01,
-#                                            cstunim = 0)
-#                 novoInsEap.save()
-#                 # A FUNÇÃO ESTÁ GERANDO O ERRO 504
-#                 #atualizar_custos_orc(codOrcAtual)
-#                 atualizar_lista_insumos(codOrcAtual)
-#                 strCodOrc = int(codOrcAtual)
-#                 return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
-#     else:
-#         form = formInserirInsumo()
-#     return render(request, "orcs/inserir-insumo.html", {
-#         "form":form, "orcamento":orcamento,
-#     })
 
 
 def inserir_deslocamento(request, codorcam):
