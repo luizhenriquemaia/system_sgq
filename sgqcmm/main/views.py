@@ -1,10 +1,13 @@
+from django.http import HttpResponse
 from django.contrib import messages
 from django.db.models import Q
+
 from django.contrib.auth import (authenticate, login, logout,
                                  update_session_auth_hash)
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.shortcuts import redirect, render
-from main.models import (a10CatsInsumos, a11Insumos, a19PlsPgtos, a20StsOrcs,
+from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
+                         a10CatsInsumos, a11Insumos, a19PlsPgtos, a20StsOrcs,
                          b01Empresas, b03CtasCaixa, b04CCustos, d01Patrim,
                          e01Cadastros, e04EndCad, g01Orcamento, h01ContrPServ,
                          h03EapContr)
@@ -120,8 +123,8 @@ def inicio(request):
                                                 "form": formPesqPorCliente})
 
 
-def appsdisp(request):
-    return render(request, "main/appsdisp.html")
+def apps_disponiveis(request):
+    return render(request, "main/apps-disponiveis.html")
 
 
 def logout_request(request):
@@ -359,3 +362,43 @@ def listas_colabs(request):
         lstColabs[nocols - 1] = {"texto": txtins, "continua": ""}
     return render(request, "main/listas.html", {'tipolista': "de Colaboradores", 'nomearq': "arqcolabs",
                                                 'itenslista': lstColabs})
+
+
+def carregar_estados(request, regiao):
+    estados = a03Estados.objetos.filter(regiao=regiao).order_by('estado')
+    return render(request, 'clie/carregar-estados.html', {'estados': estados})
+
+def carregar_cidades(request, estado):
+    cidades = a04Municipios.objetos.filter(estado_id=estado).order_by('municipio')
+    return render(request, 'clie/carregar-cidades.html', {'cidades': cidades})
+
+def carregar_bairros(request, cidade):
+    bairros = a05Bairros.objetos.filter(municipio_id=cidade).order_by('bairro')
+    return render(request, 'clie/carregar-bairros.html', {'bairros': bairros})
+
+def carregar_logradouros(request, bairro):
+    logradouros = a06Lograds.objetos.filter(bairro_id=bairro).order_by('logradouro')
+    return render(request, 'clie/carregar-logradouros.html', {'logradouros': logradouros})
+
+def verificar_empresa_e_cc(request, cod_empresa, cod_cc):
+    if request.method == "POST":
+        try:
+            empresa = b01Empresas.objetos.get(id=cod_empresa)
+            centro_de_custo = b04CCustos.objetos.filter(id=cod_cc, empresa=empresa)
+            if len(centro_de_custo) == 0:
+                return HttpResponse(content="", status=400)
+        except:
+            return HttpResponse(content="", status=400)
+        request.session['empresa_orcamento'] = cod_empresa
+        request.session['cc_orcamento'] = cod_cc
+        return HttpResponse(content="", status=200)
+    else:
+        return HttpResponse(content="", status=405)
+
+def carregar_centros_de_custo(request, cod_empresa):
+    try:
+        empresa = b01Empresas.objetos.get(id=cod_empresa)
+    except:
+        return HttpResponse(content="Empresa não válida", status=400)
+    centros_de_custo = b04CCustos.objetos.filter(empresa=empresa, ativo=True).order_by('descricao')
+    return render(request, 'clie/carregar-centro-de-custo.html', {'centrosDeCusto': centros_de_custo})

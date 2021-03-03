@@ -4,7 +4,7 @@
 		<div class="title-page">
 			<h4>Solicitante</h4>
 		</div>
-		<form method="POST">
+		<form method="POST" onsubmit=showModal(event) id="formClient">
 			{% csrf_token %}
 			<div class="row">
 				<div class="col s2 input-field">
@@ -103,7 +103,88 @@
 				<i class="material-icons">navigate_next</i>
 			</button>
 		</form>
+		<div class="modal" id="modalEmpresa">
+			<div class="modal-content">
+				<span class="close-modal" onclick=hiddeModal()>
+					<i class="material-icons small">close</i>
+				</span>
+				<div class="row first-row">
+					<div class="col s12">
+						<label>Empresa</label>
+						{{ formSelecionarEmpresa.empresa_orcamento }}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s12">
+						<label>Centro de Custo</label>
+						{{ formSelecionarEmpresa.centros_de_custo }}
+					</div>
+				</div>
+				<button class="ok-modal" onclick=checkSelectCompany()>Ok</button>
+			</div>
+		</div>
 	</div>
+	<script>
+		function showModal(e) {
+			e.preventDefault()
+			const opcoesEndereco = document.getElementsByName("endereco")
+			let opcaoEscolhida = -1
+			for (var i=0; i < opcoesEndereco.length; i++) {
+				if (opcoesEndereco[i].checked) opcaoEscolhida = opcoesEndereco[i]
+			}
+			if (opcaoEscolhida.value === "0") {
+				document.getElementById("formClient").submit()
+			} else {
+				if (opcaoEscolhida.value !== -1) {
+					document.getElementById("modalEmpresa").classList.toggle("modal-show")
+				}
+			}
+		}
+
+		const hiddeModal = () => document.getElementById("modalEmpresa").classList.toggle("modal-show")
+
+		function carregarCentrosDeCusto(codEmpresa) {
+			if (codEmpresa === "") {
+				alert("selecione uma empresa válida ou peça para o seu supervisor inserir uma nova empresa")
+			} else {
+				let xhttp = new XMLHttpRequest()
+				xhttp.onreadystatechange = function(data) {
+					if (this.readyState === 4 && this.status === 200) {
+						document.getElementById("id_centros_de_custo").innerHTML = this.response
+					}
+				}
+				xhttp.open("GET", `../../ajax/carregar-centros-de-custo/${codEmpresa}`, true)
+				xhttp.send()
+			}
+		}
+		
+		function checkSelectCompany() {
+			if (document.getElementById("id_empresa_orcamento").value === "") {
+				alert("selecione uma empresa válida ou peça para o seu supervisor inserir uma nova empresa")
+			} else {
+				const codigoEmpresa = document.getElementById("id_empresa_orcamento").value
+				const codigoCC = document.getElementById("id_centros_de_custo").value
+				const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+				const request = new Request(
+					`../../ajax/verificar-empresa-e-cc/${codigoEmpresa}/${codigoCC}`,
+					{ headers: { 'X-CSRFToken': csrftoken } }
+				)
+				fetch(request, {
+					method: 'POST',
+					mode: 'same-origin'
+				}).then(
+					function (response) {
+						if (response.status === 200) {
+							document.getElementById("formClient").submit()
+						} else if (response.status === 400) {
+							alert("Erro ao escolher a empresa")
+						}
+					}
+				)
+			}
+		}
+
+	</script>
 {% endblock content %}
 {% block footer %}
 <footer>

@@ -7,13 +7,14 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
                               redirect, render, reverse)
+from main.forms import formNovoEndereco
 from main.funcoes import format_list_telefone, nomesequencia, numpurotelefone
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
-                         a07TiposEnd, a09TiposFone, e01Cadastros, e02FonesCad,
+                         a07TiposEnd, a09TiposFone, b01Empresas, e01Cadastros, e02FonesCad,
                          e03WebCad, e04EndCad, e06ContCad)
 
-from clie.forms import (formDadosCliente, formDadosEmpresa, formNovoEndereco,
-                        formEscCliente, formPesqCliente)
+from clie.forms import (formDadosCliente, formDadosEmpresa, formEscCliente,
+                        formPesqCliente, formSelecionarEmpresa)
 
 
 # Pesquisa cliente por nome, telefone ou e-mail
@@ -29,7 +30,7 @@ def pesqcliente(request):
                 # Verificar se o numero de telefone fornecido e valido
                 fonepuro = numpurotelefone(fonepesq)
                 if len(fonepuro) < 10:
-                    messages.info(request, 'Numero de telefone inválido.')
+                    messages.error(request, 'Numero de telefone inválido.')
                     form = formPesqCliente(request.POST)
                     return render(request, "clie/formpesqcliente.html", {"form": form})
                 cadfone = int(e02FonesCad.numjacadastrado(e02FonesCad, fonepuro))
@@ -133,7 +134,6 @@ def criar_novo_cliente(request, nome, telefone, email):
                 estado_id=column[5].strip(' "')
             )
             city.save()
-    
     try:
         #teste para ver se existem tipos de telefones cadastrados
         a09TiposFone.objetos.get(id=1)
@@ -208,13 +208,6 @@ def dados_empresa(request, codempresa):
             empresa.genero = request.POST['genero']
             cod_endereco = int(form.cleaned_data['endereco'])
             if cod_endereco == 0:
-                # Seguir para inclusao do endereco
-                #request.session['regiao'] = 'Centro Oeste'
-                #request.session['siglauf'] = 'GO'
-                #request.session['codmuni'] = 94
-                #request.session['codbair'] = 100
-                #request.session['codlogr'] = 3
-                #return HttpResponseRedirect(reverse('clie:deflocal'))
                 return HttpResponseRedirect(reverse('clie:cadastrar_novo_endereco'))
             else:
                 # Continua usando o endereco selecionado
@@ -320,26 +313,19 @@ def dados_cliente(request):
                     emails_existentes[0].save()
             # Se for empresa, adicionar contato
             if cliente.juridica == 1:
-                messages.info(request, "Empresa adicionada com sucesso, adicione um contato")
+                messages.success(request, "Empresa adicionada com sucesso, adicione um contato")
                 return HttpResponseRedirect(
                     reverse('clie:pesqcliente', args=(1,)))
             # Se não for empresa, adicionar endereço
             # Verificar se deve cadastrar novo endereco
             cod_endereco = int(form.cleaned_data['endereco'])
             if cod_endereco == 0:
-                # Seguir para inclusao do endereco
-                #request.session['regiao'] = 'Centro Oeste'
-                #request.session['siglauf'] = 'GO'
-                #request.session['codmuni'] = 94
-                #request.session['codbair'] = 100
-                #request.session['codlogr'] = 3
                 return HttpResponseRedirect(reverse('clie:cadastrar_novo_endereco'))
-                #return HttpResponseRedirect(reverse('clie:deflocal'))
             else:
                 # Continua usando o endereco selecionado
                 logrCli = e04EndCad.objetos.get(id=int(cod_endereco))
                 codlogrclie = logrCli.lograd_id
-                request.session['codendcliente'] = cod_endereco
+                request.session['cod_endereço_cliente'] = cod_endereco
                 request.session['codlogr'] = codlogrclie
                 codbairro = a06Lograds.objetos.get(pk=codlogrclie).bairro_id
                 request.session['codbair'] = codbairro
@@ -354,8 +340,9 @@ def dados_cliente(request):
                 return HttpResponseRedirect(reverse('orcs:novo_orcamento'))
     else:
         form = formDadosCliente()
-        return render(request, "clie/dados-cliente.html", {"form": form, "dadosCliente": dados_cliente})
-
+        form_selecionar_empresa = formSelecionarEmpresa()
+        return render(request, "clie/dados-cliente.html", {"form": form, "dadosCliente": dados_cliente,
+                                                            "formSelecionarEmpresa": form_selecionar_empresa})
 
 
 def cadastrar_novo_endereco(request):
@@ -368,64 +355,58 @@ def cadastrar_novo_endereco(request):
             estado = request.POST['estado']
             cidade = request.POST['cidade']
             if form.cleaned_data['novo_bairro']:
-                bairro = a05Bairros(
-                    id=a05Bairros.objetos.latest('id').id + 1,
-                    bairro=form.cleaned_data['novo_bairro'],
-                    cepini=0,
-                    cepfin=0,
-                    distfab=0,
-                    municipio=a04Municipios.objetos.get(id=cidade)
-                )
-                bairro.save()
+                if len(a05Bairros.objetos.filter(bairro=form.cleaned_data['novo_bairro'])) > 0:
+                    bairro = a05Bairros.objetos.filter(bairro=form.cleaned_data['novo_bairro'])[0]
+                else:
+                    bairro = a05Bairros(
+                        id=a05Bairros.objetos.latest('id').id + 1,
+                        bairro=form.cleaned_data['novo_bairro'],
+                        cepini=0,
+                        cepfin=0,
+                        distfab=0,
+                        municipio=a04Municipios.objetos.get(id=cidade)
+                    )
+                    bairro.save()
             else:
                 if request.POST['bairro'] != "":
                     bairro = a05Bairros.objetos.get(id=request.POST['bairro'])
             if form.cleaned_data['novo_logradouro']:
-                logradouro = a06Lograds(
-                    id=a06Lograds.objetos.latest('id').id + 1,
-                    logradouro=form.cleaned_data['novo_logradouro'],
-                    ceplogr="",
-                    distfab=0,
-                    bairro=bairro
-                )
-                logradouro.save()
+                if len(a06Lograds.objetos.filter(logradouro=form.cleaned_data['novo_logradouro'])) > 0:
+                    logradouro = a06Lograds.objetos.filter(logradouro=form.cleaned_data['novo_logradouro'])[0]
+                else:
+                    logradouro = a06Lograds(
+                        id=a06Lograds.objetos.latest('id').id + 1,
+                        logradouro=form.cleaned_data['novo_logradouro'],
+                        ceplogr="",
+                        distfab=0,
+                        bairro=bairro
+                    )
+                    logradouro.save()
             else:
                 if request.POST['logradouro'] != "":
                     logradouro = a06Lograds.objetos.get(id=request.POST['logradouro'])
             complemento = form.cleaned_data['complemento']
-            novo_endereco_cliente = e04EndCad(
-                id=e04EndCad.proxnumcad(e04EndCad),
-                cadastro=e01Cadastros.objetos.get(id=codigo_cliente),
-                tipend=a07TiposEnd.objetos.get(id=1),
-                lograd=logradouro,
-                complend=complemento
-            )
-            novo_endereco_cliente.save()
-            request.session['codendcliente'] = novo_endereco_cliente.id
-            messages.info(request, "Endereço cadastrado")
+            if len(e04EndCad.objetos.filter(complend=form.cleaned_data['complemento'], cadastro=e01Cadastros.objetos.get(id=codigo_cliente), lograd=logradouro)) > 0:
+                novo_endereco_cliente = e04EndCad.objetos.filter(complend=form.cleaned_data['complemento'], cadastro=e01Cadastros.objetos.get(id=codigo_cliente), lograd=logradouro)[0]
+            else:
+                novo_endereco_cliente = e04EndCad(
+                    id=e04EndCad.proxnumcad(e04EndCad),
+                    cadastro=e01Cadastros.objetos.get(id=codigo_cliente),
+                    tipend=a07TiposEnd.objetos.get(id=1),
+                    lograd=logradouro,
+                    complend=complemento
+                )
+                novo_endereco_cliente.save()
+            request.session['cod_endereço_cliente'] = novo_endereco_cliente.id
+            messages.success(request, "Endereço cadastrado")
             return HttpResponseRedirect(reverse('orcs:novo_orcamento'))
         else:
-            #print(form.errors) #Print errors if there is one
-            messages.info(request, "Erro ao validar os dados do formulário")
-            return render(request, "clie/cadastrar-novo-endereco.html", {"form": form})
+            print(form.errors.as_data())
+            messages.error(request, "Erro ao validar os dados do formulário")
+            return render(request, "clie/cadastrar-novo-endereco.html", 
+                {"form": form, "cliente": nome_cliente, "formSelecionarEmpresa": form_selecionar_empresa})
     else:
         form = formNovoEndereco()
-        return render(request,"clie/cadastrar-novo-endereco.html", {"form": form, "cliente": nome_cliente})
-
-
-def carregar_estados(request, regiao):
-    estados = a03Estados.objetos.filter(regiao=regiao).order_by('estado')
-    return render(request, 'clie/carregar-estados.html', {'estados': estados})
-
-def carregar_cidades(request, estado):
-    cidades = a04Municipios.objetos.filter(estado_id=estado).order_by('municipio')
-    return render(request, 'clie/carregar-cidades.html', {'cidades': cidades})
-
-def carregar_bairros(request, cidade):
-    bairros = a05Bairros.objetos.filter(municipio_id=cidade).order_by('bairro')
-    return render(request, 'clie/carregar-bairros.html', {'bairros': bairros})
-
-def carregar_logradouros(request, bairro):
-    logradouros = a06Lograds.objetos.filter(bairro_id=bairro).order_by('logradouro')
-    print(a06Lograds.objetos.all())
-    return render(request, 'clie/carregar-logradouros.html', {'logradouros': logradouros})
+        form_selecionar_empresa = formSelecionarEmpresa()
+        return render(request,"clie/cadastrar-novo-endereco.html", 
+            {"form": form, "cliente": nome_cliente, "formSelecionarEmpresa": form_selecionar_empresa})

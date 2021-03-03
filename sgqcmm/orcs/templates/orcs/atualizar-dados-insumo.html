@@ -1,0 +1,95 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+  {% if user.is_authenticated %}
+  <div class="content">
+    <div class="title-page">
+      <h4>Atualizar Dados do Insumo Cód.: {{ insumo.codigo }}</h4>
+    </div>
+    <div class="endereco-orcamento">
+      <div class="divider"></div>
+    </div>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-field">
+        <div class="row">
+          <div class="col s6">
+            <label>Antiga Descrição</label>
+            <p>{{ insumo.antigaDescricao }}</p>
+          </div>
+          <div class="col s5">
+            <label>Nova Descrição</label>
+            {{ form.nova_descricao }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Antiga Unidade</label>
+            <p>{{ insumo.antigaUnidade }}</p>
+          </div>
+          <div class="col s5">
+            <label>Nova Unidade</label>
+            {{ form.nova_unidade }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Antigo Preço</label>
+            <p>{{ insumo.antigoPreco }}</p>
+          </div>
+          <div class="col s5">
+            <label>Novo Preço</label>
+            {{ form.novo_preco }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Antiga Espessura (mm)</label>
+            <p>{{ insumo.antigaEspessura }}</p>
+          </div>
+          <div class="col s5">
+            <label>Nova Espessura (mm)</label>
+            {{ form.nova_espessura }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Antigo Comprimento (mm)</label>
+            <p>{{ insumo.antigoComprimento }}</p>
+          </div>
+          <div class="col s5">
+            <label>Novo Comprimento (mm)</label>
+            {{ form.novo_comprimento }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Antiga Largura (mm)</label>
+            <p>{{ insumo.antigaLargura }}</p>
+          </div>
+          <div class="col s5">
+            <label>Nova Largura (mm)</label>
+            {{ form.nova_largura }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <label>Antiga Categoria</label>
+            <p>{{ insumo.antigaCategoria }}</p>
+          </div>
+          <div class="col s5">
+            <label>Nova Categoria</label>
+            {{ form.nova_cat_insumo }}
+          </div>
+        </div>
+      </div>
+      <br>
+			<br>
+      <div class="row">
+				<div class="col s1 offset-s12" style="padding:0px;">
+					<button class="submit-hover" name="btnProximo" type="submit" style="padding: 15px 20px 15px 20px;"><i class="material-icons">navigate_next</i></button>
+				</div>
+			</div>
+    </form>
+  </div>
+{% endif %}
+{% endblock content %}

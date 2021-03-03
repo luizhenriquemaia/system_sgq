@@ -1,0 +1,198 @@
+<html lang="pt-br">
+<!DOCTYPE html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Visita Técnica CAMAMAR</title>
+		{% load static %}
+		<link rel="stylesheet" type="text/css" href="{% static 'orcs/css/impressaoVisita.css' %}"/>
+	</head>
+	<body>
+		<div id="interface">
+			<header id="cabecalho">
+				<table class="tabcab">
+					<tr class="lincab">
+						{% load static %}
+						<td class="collogo" rowspan="2"><img src="{% static 'orcs/media/logo_gc.png' %}"  width=200 ></td>
+						<td class="coltitform"><h2 class="tittab">Sistema de Gestão da Qualidade</h2></td>
+						<td class="cabtab">RQ.INST.01</td>
+					</tr>
+					<tr class="lincab">
+						<td class="coltitform"><h2 class="tittab">Visita Técnica Inicial</h2></td>
+						<td class="cabtab">Versão 05</td>
+					</tr>
+				</table>
+			</header>
+			<ol type="1">
+				<li>Identificação do Orçamento</a></li>
+				<table class="tabcorpo">
+					<tr class="linpad">
+						<td class="lblittbesq">Solicitante:</td>
+						<td class="ittb3cols">{{ vendedor }}</td>
+						<td class="lblittbdir">Nº Orçamento:</td>
+						<td class="ittb3cols">{{orcamento.codorcamento}}</td>
+						<td class="lblittbdir">Data:</td>
+						<td class="ittb3cols">01/01/2019</td>
+					</tr>
+				</table>
+				<li>Identificação do Proprietário</a></li>
+				<table class="tabcorpo">
+					<tr class="linpad">
+						<td class="lblittbesq">Nome:</td>
+						<td class="ittbcolunic">{{ orcamento.nomecliente }}</td>
+					</tr>
+					<tr class="linpad">
+						<td class="lblittbesq">Telefones:</td>
+						<td class="ittbcolunic">{% for telefone in telefones %}
+													{{ telefone }}&nbsp
+												{% endfor %}
+						</td>
+					</tr>
+					<tr class="linpad">
+						<td class="lblittbesq">Endereço:</td>
+						<td class="ittbcolunic">{{ orcamento.endereco }}</td>
+					</tr>
+				</table>
+				<li>Informações Gerais Coletadas</a></li>
+				<table class="tabcorpo">
+					<tr class="linpad">
+						<td class="lblittbesq">Tipo de Serviço:</td>
+						<td class="ittbcolpad" colspan="5"></td>
+					</tr><tr class="linpad">
+						<td class="lblittbesq">Fase da Obra:</td>
+						<td class="multiesc3op">(___) Projeto</td>
+						<td class="multiesc3op" colspan="2">(___) Obra em Andamento</td>
+						<td class="multiesc3op" colspan="2">(___) Em Uso</td>
+					</tr><tr class="linpad">
+						<td class="lblittbesq">Acessibilidade:</td>
+						<td class="multiesc4op">(___) Curso Integração</td>
+						<td class="multiesc4op">(___) Autorização Acesso</td>
+						<td class="multiesc4op">(___) Escadas</td>
+						<td class="multiesc4op">(___) Andaimes</td>
+						<td class="multiesc4op">(___) Fazer a Estrutura no Local da Obra</td>
+					</tr><tr class="linpad">
+						<td class="lblittbesq">Hor. Trabalho:</td>
+						<td class="multiesc4op">(___) Livre</td>
+						<td class="multiesc4op">(___) Comercial</td>
+						<td class="multiesc4op" colspan="3">(___) Restrito:</td>
+					</tr><tr class="linpad">
+						<td class="lblittbesq">Alimentação:</td>
+						<td class="multiesc4op">(___) Fornecida</td>
+						<td class="multiesc4op">(___) Rest. Próximo</td>
+						<td class="multiesc4op" colspan="3">(___) Restrição:</td>
+					</tr><tr class="linpad">
+						<td class="lblittbesq">Hospedagem:</td>
+						<td class="multiesc4op">(___) Não Necessária</td>
+						<td class="multiesc4op">(___) Fornecida</td>
+						<td class="multiesc4op">(___) Hotel Próximo</td>
+						<td class="multiesc4op" colspan="2">(___) Restrição</td>
+					</tr><tr class="linpad">
+						<td class="lblittbesq">Dur. Estimada:</td>
+						<td class="multiesc4op" colspan="2"></td>
+						<td class="lblittbesq">Qtd. Funcionários:</td>
+						<td class="multiesc4op" colspan="2"></td>
+					</tr>
+				</table>
+				<li>Informações Específicas para Coberturas</a></li>
+				<table class="tabcorpo">
+					<tr class="linpad">
+						<td class="lblittbesq">Sist. Montagem:</td>
+						<td class="multiesc4op">(___) Policarbonato Alveolar</td>
+						<td class="multiesc4op">(___) Policarbonato Compacto</td>
+						<td class="multiesc4op" colspan="2">(___) Multitelhas</td>
+					</tr>
+					<tr class="linpad">
+						<td class="lblittbesq">Sist. Fixação:</td>
+						<td class="ittbcolpad" colspan="4"></td>
+					</tr>
+					<tr class="linpad">
+						<td class="lblittbesq">Sist. Drenagem:</td>
+						<td class="multiesc4op">(___) Rufos</td>
+						<td class="multiesc4op">(___) Calhas</td>
+						<td class="multiesc4op">(___) Correntes de Aço</td>
+						<td class="multiesc4op">(___) Correntes de PVC</td>
+					</tr>
+					<tr class="linpad">
+						<td class="lblittbesq">Tipo Estrutura:</td>
+						<td class="multiesc4op">(___) Plana</td>
+						<td class="multiesc4op">(___) Em Arco (Calandrada)</td>
+						<td class="multiesc4op">(___) Retrátil</td>
+						<td class="multiesc4op"></td>
+					</tr>
+					<tr class="linpad">
+						<td class="lblittbesq">Estr. Existente:</td>
+						<td class="multiesc4op">(___) Sem Estrutura</td>
+						<td class="multiesc4op">(___) Estrutura Adequada</td>
+						<td class="multiesc4op">(___) Estr. Inadequada</td>
+						<td class="multiesc4op">Distância Entre Apoios: </td>
+					</tr>
+					<tr class="linpad">
+						<td class="lblittbesq">Inadequação:</td>
+						<td class="ittbcolpad" colspan="4"></td>
+					</tr>
+				</table>
+				<li>Outras Informações</a></li>
+				<table class="tabcorpo">
+					<tr class="linpad">
+						<td class="lblittbesq">Outras Inf.:</td>
+						<td class="multiesc3op">(___) Há Energia</td>
+						<td class="multiesc3op">(___) Especificar Cor da Estrutura de Apoio</td>
+						<td class="multiesc3op">(___) Tem Autorização do Condomínio</td>
+					</tr>
+					<tr class="linpad">
+						<td class="lblittbesq">Grau de Dificuldade:</td>
+						<td class="multiesc3op">(___) Facil</td>
+						<td class="multiesc3op">(___) Médio</td>
+						<td class="multiesc3op">(___) Difícil</td>
+					</tr>
+					<tr class="linpad">
+						<td class="lblittbesq">Observações:</td>
+						<td class="ittbcolpad" colspan="3"></td>
+					</tr>
+				</table>
+				<li>Encaminhamento</a></li>
+				<table class="tabcorpo">
+					<tr class="linpad">
+						<td class="lblittbesq"></td>
+						<td class="cabtab">INSTALADOR</td>
+						<td class="cabtab">PROJETISTA</td>
+					</tr><tr class="linpad">
+						<td class="lblittbesq">Nome:</td>
+						<td class="ittb2cols"></td>
+						<td class="ittb2cols"></td>
+					</tr><tr class="linpad">
+						<td class="lblittbesq">Assinatura:</td>
+						<td class="ittb2cols"></td>
+						<td class="ittb2cols"></td>
+					</tr><tr class="linpad">
+						<td class="lblittbesq">Data / Hora:</td>
+						<td class="ittb2cols"></td>
+						<td class="ittb2cols"></td>
+					</tr>
+				</table>
+			</ol>
+			<table class="tabespac">
+				<p style="text-align:center;">DESENHAR SENTIDO DE QUEDA, CALHAS E RUFOS ATRÁS DA FOLHA</p>
+			</table>
+			<footer>
+				<table class="tabrodape">
+					<tr class="linpad">
+						<td class="cabtab">IDENTIFICAÇÃO</td>
+						<td class="cabtab">ARMAZENAMENTO</td>
+						<td class="cabtab">PROTEÇÃO</td>
+						<td class="cabtab">RECUPERAÇÃO</td>
+						<td class="cabtab">TEMPO DE RETENÇÃO</td>
+						<td class="cabtab">DESCARTE</td>
+						<td class="cabtab" rowspan="2">p. 1/1</td>
+					</tr><tr class="linpad">
+						<td class="itrodape">RQ.INST.01</td>
+						<td class="itrodape">PASTA ORÇAMENTOS INSTALAÇÕES</td>
+						<td class="itrodape">ARQ. ESCR.</td>
+						<td class="itrodape">POR NÚMERO</td>
+						<td class="itrodape">TÉRMINO DA GARANTIA</td>
+						<td class="itrodape">RECICLAGEM</td>
+					</tr>
+				</table>
+			</footer>
+		</div>
+	</body>
+</html>

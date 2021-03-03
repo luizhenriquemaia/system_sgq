@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    {% load static %}
+    <link href="{% static 'orcs/css/impressaoProposta.css' %}" rel="stylesheet"/>
+    <title>SGQ CAMAMAR</title>
+  </head>
+  <body class="contrato">
+    <div class="page_timbrado">
+      <div class="area_escrita">
+        <div class="margem_pagina">
+          <div class="titulo">
+            <h1>Contrato de Compra e Venda de Serviço e Materiais</h1>
+          </div>
+          <p class="subtitulo">Das partes:</p>
+          <div class="area_partes">
+            {% if dadosProposta.empresa %}
+              <p>Contratante: {{ dadosProposta.empresa }}</p>
+              <p>CNPJ: {{ dadosProposta.cnpj }}</p>
+            {% else %}
+              <p>Contratante: {{ dadosProposta.cliente }}</p>
+              <p>CPF: {{ dadosProposta.cpf }}</p>
+            {% endif %}
+            <p>Telefone: {{ dadosProposta.telefone }}</p>
+            {% if dadosProposta.empresa %}
+              <p>Endereço: {{ dadosProposta.enderecoEmpresa }}</p>
+            {% endif %}
+            <p>Endereço da Obra: {{ dadosProposta.enderecoObra }}</p>
+          </div>
+          <div class="area_partes">
+            <p>Contratada: CAMAMAR COMÉRCIO LTDA.</p>
+            <p>CNPJ: 03.623.169/0001-96</p>
+            <p>Telefone: (62) 3275-1030</p>
+            <p>Endereço: Av. C-104, Nº 531, Qd. 259, Lt. 04 - Jardim América - Goiânia - GO</p>
+            <p>CEP: 74.250-030</p>
+          </div>
+          <p class="texto_comum">
+            As partes acima nomeadas e qualificadas, representadas neste ato por seus representantes legais infra-assinados,
+            firmam o presente instrumento de conformidade com as cláusulase condições a seguir, as quais se obrigam a
+            cumpri-lo, por si e por seus sucessores a qualquer título.
+          </p>
+          <p class="titulo_clausula">Cláusula primeira - do objeto</p>
+          <p class="texto_comum">
+            O presente contrato tem por objeto o fornecimento de material, conforme quadro explicativo abaixo,
+            celebrado pela CONTRATANTE e CONTRATADA.
+          </p>
+          {% if pularPaginaObj == 'nao' %}
+            <table class="objetos_contrato">
+              <tr>
+                <th>Cod.</th>
+                <th>Descrição dos objetos e/ou serviços</th>
+              </tr>
+              {% for descricao in listDescricoesOrc %}
+              <tr>
+                <td>{{ descricao.codEap }}</td>
+                <td>{{ descricao.descricao }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="page_timbrado">
+      <div class="area_escrita">
+        <div class="margem_pagina">
+          {% if pularPaginaObj == 'sim' %}
+            <table class="objetos_contrato">
+              <tr>
+                <th>Cod.</th>
+                <th>Descrição dos objetos e/ou serviços</th>
+              </tr>
+              {% for descricao in listDescricoesOrc %}
+              <tr>
+                <td>{{ descricao.codEap }}</td>
+                <td>{{ descricao.descricao }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          {% endif %}
+          <p class="texto_comum">
+            INSERIR DADOS
+            O material para estrutura de apoio será fabricado em metalon 50x30mm #18, pintado com esmalte sintético na cor branco
+            neve fosco, estrutura será plana e fixa, com inclinação de 20%.
+          </p>
+          <p class="titulo_clausula">Cláusula segunda - do preço e condições de pagamento</p>
+          <p class="texto_comum">
+            INSERIR DADOS
+            Pelo fornecimento do produto acima identificado as partes pactuam o valor de R$ 9.000,00 (nove mil reais) a ser pago
+            pela CONTRATANTE à CONTRATADA.
+          </p>
+          <p class="texto_comum">
+            INSERIR DADOS
+            O pagamento deste montante se iniciou com uma entrada de um cheque no valor de R$3.000,00 (Três mil reais), e o restante
+            em seis parcelas abaixo explicitadas, cujos respectivos cheques serão recebidos no ato da assinatura deste contrato:
+          </p>
+          {% if pularPaginaParc != 'sim3' %}
+            <table class="pagamento">
+              <tr>
+                <th>Número Parcela</th>
+                <th>Cheque Número</th>
+                <th>Prazo Pagamento</th>
+                <th>Valor Parcela</th>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+            </table>
+          {% endif %}
+          {% if pularPaginaObj == 'nao' and pularPaginaParc == 'nao' or pularPaginaParc == 'sim1' %}
+            <p class="texto_comum">
+              INSERIR DADOS
+              Os pagamentos dos produtos e serviços serão feitos em cheques em conta corrente emitidos pela CONTRATADA, de acordo com
+              os valores apurados acima relacionados, com a concordância de ambas as partes.
+            </p>
+          {% endif %}
+          {% if pularPaginaObj == 'nao' and pularPaginaParc == 'nao' or pularPaginaParc == 'sim1' %}
+            <p class="texto_comum">
+              INSERIR DADOS
+              O CONTRATANTE receberá uma nota de venda do material Policarbonato e Acessórios, conforme descrição dos itens constantes
+              no pedido 43.478 e outra nota de serviço, com a seguinte descrição: Fabricação e Instalação de Cobertura em
+              Policarbonato, ambas emitidas pela CONTRATADA.
+            </p>
+          {% endif %}
+          {% if pularPaginaObj == 'nao' and pularPaginaParc == 'nao' or pularPaginaParc == 'sim1' %}
+            <p class="titulo_clausula">Cláusula terceira - do prazo de entrega</p>
+            <p class="texto_comum">
+              INSERIR DADOS
+              A entrega do material será feita no endereço da CONTRATADA em até 15 (quinze dias) úteis, da data de assinatura deste
+              contrato, podendo ocorrer, até mesmo, antes dessa data.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="page_timbrado">
+      <div class="area_escrita">
+        <div class="margem_pagina">
+          {% if pularPaginaParc == 'sim3' %}
+            <table class="pagamento">
+              <tr>
+                <th>Número Parcela</th>
+                <th>Cheque Número</th>
+                <th>Prazo Pagamento</th>
+                <th>Valor Parcela</th>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+              <tr>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+                <td>teste</td>
+              </tr>
+            </table>
+          {% endif %}
+          {% if pularPaginaObj == 'sim' and pularPaginaParc == 'sim1' or pularPaginaParc == 'sim2' or pularPaginaParc == 'sim3' %}
+            <p class="texto_comum">
+              INSERIR DADOS
+              O CONTRATANTE receberá uma nota de venda do material Policarbonato e Acessórios, conforme descrição dos itens
+              constantes
+              no pedido 43.478 e outra nota de serviço, com a seguinte descrição: Fabricação e Instalação de Cobertura em
+              Policarbonato, ambas emitidas pela CONTRATADA.
+            </p>
+          {% endif %}
+          {% if pularPaginaObj == 'sim' and pularPaginaParc == 'sim1' %}
+            <p class="titulo_clausula">Cláusula terceira - do prazo de entrega</p>
+            <p class="texto_comum">
+              INSERIR DADOS
+              A entrega do material será feita no endereço da CONTRATADA em até 15 (quinze dias) úteis, da data de assinatura deste
+              contrato, podendo ocorrer, até mesmo, antes dessa data.
+            </p>
+          {% endif %}
+          <p class="titulo_clausula">Cláusula quarta - obrigações da contratada</p>
+          <p class="texto_comum">
+            Entrega do produto nas especificações e dimensões descritas na CLÁUSULA PRIMEIRA, de acordo com o prazo de entrega
+            constante na CLÁUSULA TERCEIRA.
+          </p>
+          <br>
+          <p class="paragrafo_clausula">
+            <span>Parágrafo primeiro:</span> A contratada não se responsabiliza por eventuais danos causados por terceiros ao material armazenado
+            no endereço da CONTRATANTE durante o período de instalação.
+          </p>
+          <p class="paragrafo_clausula">
+            <span>Parágrafo segundo:</span> A contratada não aceitará devoluções do material, uma vez que o mesmo foi feito de forma
+            personalizada para a CONTRATANTE. Caso tenha que ser feito substituições do material e acréscimo do serviço, os ônus
+            serão por conta da CONTRATANTE.
+          </p>
+          <p class="titulo_clausula">Cláusula quinta - obrigações da contratante</p>
+          <p>
+            A CONTRATANTE se obriga a realizar os pagamentos de acordo com os prazos estabelecidos na CLÁUSULA SEGUNDA.
+          </p>
+          <p class="paragrafo_clausula">
+            <span>Parágrafo único:</span> Também é obrigação da CONTRATANTE a correta armazenagem dos produtos entregues, até a sua instalação.
+          </p>
+          {% if pularPaginaObj != 'sim' and pularPaginaParc != 'sim3' %}
+            <p class="titulo_clausula">Cláusula sexta - condições gerais</p>
+            <p class="paragrafo_clausula">
+              <span>Parágrafo Primeiro:</span> Havendo remanescente de valores a serem quitados parceladamente, a CONTRATANTE, assina TERMO DE
+              ACORDO E CONFISSÃO DE DÍVIDA, que integra a este contrato como aval das responsabilidades neste contrato assumidas.
+            </p>
+            <p class="paragrafo_clausula">
+              <span>Parágrafo Segundo:</span> A CONTRATANTE, declara que está ciente que o inadimplemento de uma ou mais parcelas aqui pactuada(s),
+              ficará (ão) sujeita(s) a atualização monetária a base de 1% (um por cento) ao mês, a título de mora e juros de acordo
+              com o IGPM da FGV ou outro índice que o substitua, bem como multa no percentual de 2%, caso, o inadimplemento for
+              superior a 30 (trinta) dias, o débito será enviado ao Setor Jurídico para as providências cabíveis nas instâncias
+              judiciais, neste caso, ficará a CONTRATANTE responsável pelas despesas de execução judicial, honorários advocatícios, despesas de comunicações via correios e demais despesas oriundas
+              da busca da satisfação do crédito da CONTRATADA.
+            </p>
+          {% endif %}
+          {% if pularPaginaObj != 'sim' and pularPaginaParc == 'sim1' %}
+            <p class="paragrafo_clausula">
+              <span>Parágrafo Terceiro:</span> A CONTRATANTE declara que está ciente que o inadimplemento de suas obrigações
+              contraídas através do
+              presente contrato, ensejará a inscrição de seu nome nos órgãos de defesa do consumidor, tais como, SERASA, SPC e
+              Cartórios de Protestos, além do que prevê o Parágrafo Terceiro e servirá de título executivo extra judicial nos termos
+              do artigo 585, II do Código de Processo Civil.
+            </p>
+          {% endif %}
+          {% if pularPaginaObj != 'sim' and pularPaginaParc == 'sim1' %}
+            <p class="paragrafo_clausula">
+              <span>Parágrafo Quarto:</span> A CONTRATANTE declara ainda que está de acordo com todas as cláusulas e parágrafos
+              previstos neste
+              contrato, e haver lido detidamente todos os seus termos, assumindo inteiramente todas as responsabilidades dele
+              advindas
+              e se comprometendo a cumpri-las da forma como pactuadas.
+            </p>
+          {% endif %}
+          {% if pularPaginaObj == 'nao' %}
+            <p class="paragrafo_clausula">
+              <span>Parágrafo Quinto:</span> Haverá a suspensão da entrega de produtos, caso venha haver inadimplemento por parte do
+              CONTRATANTE
+              nos termos do artigo 476 do CC – excepitio non adimpleti – nenhum dos contratantes, antes de cumprida sua obrigação,
+              pode exigir o implemento da do outro.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="page_timbrado">
+      <div class="area_escrita">
+        <div class="margem_pagina">
+          {% if pularPaginaObj == 'sim' and pularPaginaParc == 'sim3' %}
+            <p class="titulo_clausula">Cláusula sexta - condições gerais</p>
+            <p class="paragrafo_clausula">
+              <span>Parágrafo Primeiro:</span> Havendo remanescente de valores a serem quitados parceladamente, a CONTRATANTE,
+              assina TERMO DE
+              ACORDO E CONFISSÃO DE DÍVIDA, que integra a este contrato como aval das responsabilidades neste contrato assumidas.
+            </p>
+            <p class="paragrafo_clausula">
+              <span>Parágrafo Segundo:</span> A CONTRATANTE, declara que está ciente que o inadimplemento de uma ou mais parcelas
+              aqui pactuada(s),
+              ficará (ão) sujeita(s) a atualização monetária a base de 1% (um por cento) ao mês, a título de mora e juros de acordo
+              com o IGPM da FGV ou outro índice que o substitua, bem como multa no percentual de 2%, caso, o inadimplemento for
+              superior a 30 (trinta) dias, o débito será enviado ao Setor Jurídico para as providências cabíveis nas instâncias
+              judiciais, neste caso, ficará a CONTRATANTE responsável pelas despesas de execução judicial, honorários advocatícios,
+              despesas de comunicações via correios e demais despesas oriundas
+              da busca da satisfação do crédito da CONTRATADA.
+            </p>
+          {% endif %}
+          {% if pularPaginaObj == 'sim' and pularPaginaParc == 'sim1' or pularPaginaParc == 'sim2' or pularPaginaParc == 'sim3' %}
+            <p class="paragrafo_clausula">
+              <span>Parágrafo Terceiro:</span> A CONTRATANTE declara que está ciente que o inadimplemento de suas obrigações
+              contraídas através do
+              presente contrato, ensejará a inscrição de seu nome nos órgãos de defesa do consumidor, tais como, SERASA, SPC e
+              Cartórios de Protestos, além do que prevê o Parágrafo Terceiro e servirá de título executivo extra judicial nos termos
+              do artigo 585, II do Código de Processo Civil.
+            </p>
+          {% endif %}
+          {% if pularPaginaObj == 'sim' and pularPaginaParc == 'sim1' or pularPaginaParc == 'sim2' or pularPaginaParc == 'sim3' %}
+            <p class="paragrafo_clausula">
+              <span>Parágrafo Quarto:</span> A CONTRATANTE declara ainda que está de acordo com todas as cláusulas e parágrafos
+              previstos neste
+              contrato, e haver lido detidamente todos os seus termos, assumindo inteiramente todas as responsabilidades dele
+              advindas
+              e se comprometendo a cumpri-las da forma como pactuadas.
+            </p>
+          {% endif %}
+          {% if pularPaginaObj == 'sim' %}
+            <p class="paragrafo_clausula">
+              <span>Parágrafo Quinto:</span> Haverá a suspensão da entrega de produtos, caso venha haver inadimplemento por parte do
+              CONTRATANTE
+              nos termos do artigo 476 do CC – excepitio non adimpleti – nenhum dos contratantes, antes de cumprida sua obrigação,
+              pode exigir o implemento da do outro.
+            </p>
+          {% endif %}
+          <p class="paragrafo_clausula">
+            <span>Parágrafo Sexto:</span> O prazo previsto na cláusula terceira poderá sofrer alterações, caso haja intercorrência de situação
+            alheia à vontade da CONTRATADA, como chuvas, falha no fornecimento da energia elétrica, alteração por parte da
+            CONTRATANTE, falta de material especializado no mercado.
+          </p>
+          <p class="paragrafo_clausula">
+            <span>Parágrafo Sétimo:</span> Fica expressamente vedado à CONTRATANTE, qualquer acordo verbal com membros da equipe da CONTRATADA,
+            incluindo ou retirando qualquer aspecto do que se encontra previsto neste contrato, caso, venha a ocorrer, a CONTRATADA
+            não responderá pelos acréscimos ou supressão de detalhes constantes das cláusulas neste contrato previstas.
+          </p>
+          <p class="paragrafo_clausula">
+            <span>Parágrafo Oitavo:</span> Havendo culpa da CONTRATADA em não cumprir o prazo para entrega da obra, esgotadas as possibilidades
+            de suspensão e/ou adiamentos, a CONTRATADA, pagará à CONTRATANTE, multa de 1% (um por cento) incidente sobre o valor do
+            contrato, a título de multa por dia de atraso, limitado nos termos da lei, ao saldo do contrato (parcelas não quitadas).
+            de multa por dia de atraso, limitado nos termos da lei, ao saldo do contrato (parcelas não quitadas).
+          </p>
+          <p class="paragrafo_clausula">
+            <span>Parágrafo Nono:</span> Na mesma pena incorre a CONTRATANTE, caso crie empecilho ou dificuldades que impeça a
+            CONTRATADA de
+            entregar os produtos no prazo previsto neste contrato.
+          </p>
+          <p class="paragrafo_clausula">
+            <span>Parágrafo Décimo:</span> Em caso de mora do CONTRATANTE, fica aqui instituída a reserva de domínio prevista no
+            artigo 522 e
+            seguintes do Código Civil, e aceito pelas partes, reservando-se à CONTRATADA a propriedade do(s) produto(s)
+            fornecidos,
+            conforme discriminados na CLÁUSULA PRIMEIRA.
+          </p>
+          <p class="paragrafo_clausula">
+            <span>Parágrafo Décimo Primeiro:</span> Declara a CONTRATANTE que está ciente que a garantia dos produtos é a
+            fornecida pelo
+            fabricante.
+          </p>
+          {% if pularPaginaObj == 'sim' and pularPaginaParc != 'sim3' %}
+            <p class="titulo_clausula">Cláusula penal - artigo 408 à 416 do CC:</p>
+            <p>
+              No caso de inadimplemento (resolução) do presente contrato de qualquer das obrigações previstas, por culpa da
+              CONTRATANTE, este incorrerá em multa de 20% (vinte por cento) incidente sobre o valor do contrato.
+            </p>
+            <p class="paragrafo_clausula">
+              Parágrafo Único: O estipulado acima não excluiu o direito de receber as perdas e danos pela resolução ou inadimplência
+              contratual (art. 402 do CC/02).
+            </p>
+          {% endif %}
+          {% if pularPaginaObj != 'sim' and pularPaginaParc == 'sim1' %}
+            <p class="titulo_clausula">
+              CLÁUSULA COMPROMISSÓRIA GERAL:
+            </p>
+            <p class="texto_comum">
+              As partes elegem como foro para processamento e resolução de qualquer questão decorrente da interpretação, da execução
+              ou da inexecução das obrigações estabelecidas no presente contrato, a instituição arbitral denominada Oitava Corte de
+              Conciliação e Arbitragem de Goiânia – 8ª CCA DE GOIÂNIA, a quem competirá decidir a questão instituindo a arbitragem
+              conforme os procedimentos previstos em suas próprias regras, as quais as partes declaram conhecer a Lei 9.307/96 e a
+              legislação brasileira pertinente. Como forma de concordância expressa, nos termos do § 2º do art. 4º da Lei nº
+              9.307/96,
+              as partes assinam a presente cláusula compromissória cheia.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="page_timbrado">
+      <div class="area_escrita">
+        <div class="margem_pagina">
+          {% if pularPaginaObj == 'sim' and pularPaginaParc == 'sim3' %}
+            <p class="titulo_clausula">Cláusula penal - artigo 408 à 416 do CC:</p>
+            <p>
+              No caso de inadimplemento (resolução) do presente contrato de qualquer das obrigações previstas, por culpa da
+              CONTRATANTE, este incorrerá em multa de 20% (vinte por cento) incidente sobre o valor do contrato.
+            </p>
+            <p class="paragrafo_clausula">
+              Parágrafo Único: O estipulado acima não excluiu o direito de receber as perdas e danos pela resolução ou inadimplência
+              contratual (art. 402 do CC/02).
+            </p>
+          {% endif %}
+          {% if pularPaginaObj == 'sim' and pularPaginaParc == 'sim1' or pularPaginaParc == 'sim2' or pularPaginaParc == 'sim3' %}
+            <p class="titulo_clausula">
+              CLÁUSULA COMPROMISSÓRIA GERAL:
+            </p>
+            <p class="texto_comum">
+              As partes elegem como foro para processamento e resolução de qualquer questão decorrente da interpretação, da execução
+              ou da inexecução das obrigações estabelecidas no presente contrato, a instituição arbitral denominada Oitava Corte de
+              Conciliação e Arbitragem de Goiânia – 8ª CCA DE GOIÂNIA, a quem competirá decidir a questão instituindo a arbitragem
+              conforme os procedimentos previstos em suas próprias regras, as quais as partes declaram conhecer a Lei 9.307/96 e a
+              legislação brasileira pertinente. Como forma de concordância expressa, nos termos do § 2º do art. 4º da Lei nº
+              9.307/96,
+              as partes assinam a presente cláusula compromissória cheia.
+            </p>
+          {% endif %}
+          <p>
+            Estando assim, justos e contratados, assinam o presente contrato em duas vias de igual teor, para que surta seus efeitos
+            legais.
+          </p>
+          <p class="data-a-esquerda">Goiânia - GO, {{ today }}.</p>
+          <div class="area_assinatura">
+            <div class="contratada">
+              <p>CONTRATADA</p>
+              <P>CAMAMAR COMÉRCIO LTDA.</P>
+              <P>Cleide Bisinoto Higino de Cuba</P>
+              <p>Representante Legal</p>
+            </div>
+            <div class="contratante">
+              <p>CONTRATANTE</p>
+              <p>{{ dadosProposta.empresa }}</p>
+              <p>{{ dadosProposta.cliente }}</p>
+            </div>
+          </div>
+          <p class="subtitulo">Testemunhas:</p>
+          <div class="area_assinatura">
+            <div class="testemunha1">
+              <p>Nome: Alexandre Rodrigues do Carmo</p>
+              <p>RG: 312.6636 SSP-GO</p>
+              <p>CPF: 578.119.971-34</p>
+            </div>
+            <div class="testemunha2">
+              <p>Nome: </p>
+              <p>RG: </p>
+              <p>CPF: </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

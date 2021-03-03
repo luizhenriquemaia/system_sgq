@@ -1,0 +1,32 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+	{% if user.is_authenticated %}
+		<div class="container">
+			<h4 style="text-align:center;"> Pré-Orçamento para {{orcamento.nomecliente}} </h4>
+			<br>
+			<p>{{orcamento.endereco}}</p>
+			<div class="divider"></div>
+			<br>
+			<br>
+			<br>
+			<form method="POST">
+				{% csrf_token %}
+				<table border="1">
+					<tr>
+						<th style="text-align: center">Base</th>
+						<th style="text-align: center">Altura</th>
+						<th style="text-align: center">Repetições</th>
+					</tr>
+					<tr>
+						<td style="text-align: center">{{ form.asd}}</td>
+						<td style="text-align: center">{{ form.teste }}</td>
+						<td style="text-align: center">123123</td>
+					</tr>
+				</table>
+				<br>
+				<button class="btn red darken-4" name="proximo" type="submit" style="float: right">Próximo</button>
+			</form>
+	</div>
+	{% endif %}
+	{% endblock content %}
+</html>
