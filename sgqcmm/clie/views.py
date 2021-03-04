@@ -9,6 +9,7 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
                               redirect, render, reverse)
 from main.forms import formNovoEndereco
 from main.funcoes import format_list_telefone, nomesequencia, numpurotelefone
+from main.add_from_seeds import add_estados, add_municipios, add_tipos_de_telefone
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          a07TiposEnd, a09TiposFone, b01Empresas, e01Cadastros, e02FonesCad,
                          e03WebCad, e04EndCad, e06ContCad)
@@ -100,53 +101,17 @@ def criar_novo_cliente(request, nome, telefone, email):
         cod_cliente = 1
     # Caso seja o primeiro cadastro de cliente
     try:
-        # teste para ver se existem estados cadastrados
         a03Estados.objetos.get(id=1)
     except:
-        # cadastrar estados do seeds_db
-        csv_file = Path.cwd().joinpath("seeds_db", 'main_a03estados.csv')
-        data_set = csv_file.read_text(encoding='UTF-8')
-        io_string = StringIO(data_set)
-        for column in reader(io_string, delimiter=',', quotechar="|"):
-            country = a03Estados(
-                uf=column[0].strip(' "'),
-                estado=column[1].strip(' "'),
-                regiao=column[2].strip(' "'),
-                distfab=Decimal(column[3].strip(' "')),
-                cepfin=column[4].strip(' "'),
-                cepini=column[5].strip(' "'),
-            )
-            country.save()
+        add_estados()
     try:
-        #teste para ver se existem cidades cadastradas
         a04Municipios.objetos.get(id=1)
     except:
-        csv_file = Path.cwd().joinpath("seeds_db", 'main_a04municipios.csv')
-        data_set = csv_file.read_text(encoding='UTF-8')
-        io_string = StringIO(data_set)
-        for count, column in enumerate(reader(io_string, delimiter=',', quotechar="|")):
-            city = a04Municipios(
-                id=count,
-                municipio=column[1].strip(' "'),
-                cepini=column[2].strip(' "'),
-                cepfin=column[3].strip(' "'),
-                distfab=Decimal(column[4].strip(' "')),
-                estado_id=column[5].strip(' "')
-            )
-            city.save()
+        add_municipios()
     try:
-        #teste para ver se existem tipos de telefones cadastrados
         a09TiposFone.objetos.get(id=1)
     except:
-        csv_file = Path.cwd().joinpath("seeds_db", 'main_a09tiposfone.csv')
-        data_set = csv_file.read_text(encoding='UTF-8')
-        io_string = StringIO(data_set)
-        for count, column in enumerate(reader(io_string, delimiter=',', quotechar="|")):
-            phone = a09TiposFone(
-                id=count + 1,
-                tfone=column[1].strip(' "'),
-            )
-            phone.save()
+        add_tipos_de_telefone()
     cliente = e01Cadastros(
         id=cod_cliente,
         usrcad=request.user,
