@@ -1,0 +1,78 @@
+{% extends "config/base-page-config.html" %}
+{% block content_config %}
+<h5 class="title-table">Categorias de Insumo Cadastradas</h5>
+<table>
+    <thead>
+        <th>ID</th>
+        <th>Hierarquia</th>
+        <th>Ordenador</th>
+        <th>Descrição</th>
+        <th>Tipo</th>
+    </thead>
+    <tbody>
+        {% for categoria in categoriasCadastradas %}
+        <tr>
+            <td data-lable="Numero">
+                <a href="./{{categoria.id}}/">{{categoria.id}}</a>
+            </td>
+            <td>
+                {{categoria.hierarquia}}
+            </td>
+            <td>
+                {{categoria.ordenador}}
+            </td>
+            <td>
+                {{categoria.descricao}}
+            </td>
+            <td>
+                {{categoria.tipo}}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br><br>
+<div class="row">
+    <div class="col s1 offset-s12" style="padding:0px;">
+        <button class="submit-hover" name="btnAddEmpresa" style="padding: 15px 20px 15px 20px;" onclick=showModal()>
+            <i class="material-icons">add</i></button>
+    </div>
+</div>
+<div class="modal" id="modalNovoEndereco">
+    <div class="modal-content">
+        <span class="close-modal" onclick=showModal()>
+            <i class="material-icons small">close</i>
+        </span>
+        <h5>Cadastrar nova categoria</h5>
+        <form method="POST" id="formCadastroCategoria_id">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col s6">
+                    <label>Hierarquia</label>
+                    {{ formCadCategoria.hierarquia }}
+                </div>
+                <div class="col s6">
+                    <label>Ordenador</label>
+                    {{ formCadCategoria.ordenador }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s6">
+                    <label for="descricao_id">Descrição</label>
+                    {{ formCadCategoria.descricao }}
+                </div>
+                <div class="col s6">
+                    <label for="tipo_id">Tipo</label>
+                    {{ formCadCategoria.tipo }}
+                </div>
+            </div>
+            <button class="ok-modal" type="submit" name="btnAddCategoria">Ok</button>
+        </form>
+    </div>
+</div>
+<script>
+    function showModal() {
+        document.getElementById("modalNovoEndereco").classList.toggle("modal-show")
+    }
+</script>
+{% endblock content_config %}
