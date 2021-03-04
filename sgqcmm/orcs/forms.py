@@ -26,8 +26,8 @@ class formInserirInsumoNaAtividade(forms.Form):
     valor_insumo = forms.CharField(max_length=10, required=False)
 
 class formInserirServico(forms.Form):
-    descricao = forms.CharField(max_length=400, required=False)
-    codigo_eap = forms.CharField(max_length=10, required=False)
+    descricao = forms.CharField(max_length=255)
+    codigo_eap = forms.CharField(max_length=30)
     tipo = forms.ChoiceField(choices=[
         ('1', 'Atividade'), ('2', 'Entrega Interna'), ('3', 'Entrega Externa')])
     

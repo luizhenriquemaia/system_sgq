@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import HttpResponseRedirect, redirect, render, reverse
+from django.http import HttpResponse
+
 from main.funcoes import format_list_telefone, listacodigossup
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          a08TiposFrete, a10CatsInsumos, a11Insumos, a15AtvsPad,
@@ -224,11 +226,6 @@ def atualizar_dados_insumo(request, codInsumo):
         if form.is_valid():
             insumo_bd = a11Insumos.objetos.filter(codigo=codInsumo)
             novo_preco = formatar_custos_para_bd(form.cleaned_data['novo_preco']) if form.cleaned_data['novo_preco'] else insumo_bd[0].custo01
-            # if form.cleaned_data['novo_preco']:
-            #     novo_preco = formatar_custos_para_bd(
-            #         form.cleaned_data['novo_preco'])
-            # else:
-            #     novo_preco = insumo_bd[0].custo01
             nova_descricao = form.cleaned_data['nova_descricao'] if form.cleaned_data['nova_descricao'] else insumo_bd[0].descricao
             nova_unidade = form.cleaned_data['nova_unidade'] if form.cleaned_data['nova_unidade'] else insumo_bd[0].undbas
             nova_espessura = formatar_custos_para_bd(form.cleaned_data['nova_espessura']) if form.cleaned_data['nova_espessura'] else insumo_bd[0].espessura
@@ -376,8 +373,12 @@ def editar_orcamento(request, codorcam):
             descricao_servico = form.cleaned_data['descricao']
             tipo_servico = int(request.POST['tipo'])
             codigo_eap_servico = form.cleaned_data['codigo_eap']
+            try:
+                codigo_nova_eap = g03EapOrc.objetos.latest('id').id + 1
+            except ObjectDoesNotExist:
+                codigo_nova_eap = 0
             novo_servico = g03EapOrc(
-                id=g03EapOrc.objetos.order_by('id').last().id + 1,
+                id=codigo_nova_eap,
                 codeap=codigo_eap_servico,
                 coditem=codigo_eap_servico,
                 descitem=descricao_servico,
@@ -388,6 +389,8 @@ def editar_orcamento(request, codorcam):
                 orcamento_id=orcEscolhido.id
             )
             novo_servico.save()
+        else:
+            messages.error(request, "Erro ao adicionar serviço")
     # CORRIGIR ERRO DE TIPO DE EAP PARA VENEZIANAS
     #try:
         # Obter eap do orçamento divididas por tipo
@@ -510,7 +513,7 @@ def excluir_orcamento(request, codorcam):
     if request.user.is_staff:
         g01Orcamento.objetos.get(id=int(codorcam)).delete()
     else:
-        pass
+        return HttpResponse(status=403)
     return HttpResponseRedirect(reverse('main:inicio'))
 
 
