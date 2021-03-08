@@ -58,3 +58,15 @@ class formCadastrarCentroDeCusto(forms.Form):
     funcionamento = forms.ChoiceField(choices=funcionamento_choices)
     sequencia_holerite = forms.IntegerField(max_value=100, min_value=1)
     ativo = forms.BooleanField(initial=True)
+
+
+class formCadastrarCategoriaInsumo(forms.Form):
+    choices_tipo = [(0, 'Agrupador'), (1, 'Equipamentos'), (2, 'Mão de Obra'), 
+                      (3, 'Insumos'), (4, 'Serviços Executados'), (5, 'Transporte'), 
+                      (6, 'Abast./Manut. de Máq. e Veículos'), (7, 'Seguradoras'),
+                      (8, 'Financeiros'), (9, 'Imóveis'), (10, 'Produtos para Venda'),
+                      (11, 'Desp. com Mão de Obra')]
+    tipo = forms.ChoiceField(choices=choices_tipo)
+    hierarquia = forms.IntegerField(max_value=100, min_value=1)
+    ordenador = forms.IntegerField(min_value=1)
+    descricao = forms.CharField(max_length=50)

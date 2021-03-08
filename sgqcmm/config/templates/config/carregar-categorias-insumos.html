@@ -1,0 +1,19 @@
+{% for categoria in categoriasCadastradas %}
+<tr>
+    <td data-lable="Numero">
+        <a href="./{{categoria.id}}/">{{categoria.id}}</a>
+    </td>
+    <td>
+        {{categoria.hierarquia}}
+    </td>
+    <td>
+        {{categoria.ordenador}}
+    </td>
+    <td>
+        {{categoria.descricao}}
+    </td>
+    <td>
+        {{categoria.tipo}}
+    </td>
+</tr>
+{% endfor %}

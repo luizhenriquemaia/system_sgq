@@ -9,7 +9,7 @@
         <th>Descrição</th>
         <th>Tipo</th>
     </thead>
-    <tbody>
+    <tbody id="tbodyCategorias_id">
         {% for categoria in categoriasCadastradas %}
         <tr>
             <td data-lable="Numero">
@@ -44,9 +44,8 @@
             <i class="material-icons small">close</i>
         </span>
         <h5>Cadastrar nova categoria</h5>
-        <form method="POST" id="formCadastroCategoria_id">
+        <form method="POST" id="formCadastroCategoria_id" onsubmit=submitFormCadastro(event)>
             {% csrf_token %}
-            <div class="row">
                 <div class="col s6">
                     <label>Hierarquia</label>
                     {{ formCadCategoria.hierarquia }}
@@ -66,7 +65,7 @@
                     {{ formCadCategoria.tipo }}
                 </div>
             </div>
-            <button class="ok-modal" type="submit" name="btnAddCategoria">Ok</button>
+            <button class="ok-modal" type="submit" name="btnAddCategoria" onclick=showModal()>Ok</button>
         </form>
     </div>
 </div>
@@ -74,5 +73,44 @@
     function showModal() {
         document.getElementById("modalNovoEndereco").classList.toggle("modal-show")
     }
+
+    function submitFormCadastro(e) {
+        e.preventDefault()
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+        const data_to_backend = new FormData()
+        data_to_backend.append("tipo", document.getElementById("id_tipo").value)
+        data_to_backend.append("hierarquia", document.getElementById("id_hierarquia").value)
+        data_to_backend.append("ordenador", document.getElementById("id_ordenador").value)
+        data_to_backend.append("descricao", document.getElementById("id_descricao").value)
+        const request = new Request(`./`,
+            {
+                method: 'POST', 
+                headers: {'X-CSRFToken': csrftoken},
+                body: data_to_backend
+            },
+        )
+        fetch(request, {
+            method: 'POST',
+            mode: 'same-origin'
+        }).then(
+            function (response) {
+                if (response.status === 200) {
+                    let xhttp = new XMLHttpRequest()
+                    xhttp.onreadystatechange = function (data) {
+                        if (this.readyState === 4 && this.status === 200) {
+                            document.getElementById("tbodyCategorias_id").innerHTML = this.response
+                        } else if (this.readyState === 4 && this.status === 403) {
+                            alert("Not Allowed")
+                        }
+                    }
+                    xhttp.open("GET", "./ajax/carregar-categorias-insumos/", true)
+                    xhttp.send()
+                } else {
+                    console.log("ERROR")
+                }
+            }
+        )
+    }
+
 </script>
 {% endblock content_config %}

@@ -391,9 +391,7 @@ def editar_orcamento(request, codorcam):
             novo_servico.save()
         else:
             messages.error(request, "Erro ao adicionar serviço")
-    # CORRIGIR ERRO DE TIPO DE EAP PARA VENEZIANAS
-    #try:
-        # Obter eap do orçamento divididas por tipo
+    # Obter eap do orçamento divididas por tipo
     eap_orc_5 = g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=5).order_by('codeap')
     eap_orc_3 = g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=3).order_by('codeap')
     eap_orc_1 = g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=1).order_by('codeap')
@@ -492,16 +490,21 @@ def editar_orcamento(request, codorcam):
     for eap in g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=1):
         for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
             insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
-            dados_insumo =  {
-                'id': insumo_objeto_a11.id,
-                'codigo':insumo_objeto_a11.codigo,
-                'descricao':insumo_objeto_a11.descricao,
-                'undBas':insumo_objeto_a11.undbas,
-                'qtdProd': round(insumo.qtdprod, 2),
-                'cstUnPr': round(insumo.cstunpr, 2),
-                'vlrTotal': '{:,}'.format(round(insumo.qtdprod * insumo.cstunpr, 2)).replace('.', 'x').replace(',', '.').replace('x', ',')
-            }
-            lista_insumos.append(dados_insumo)
+            index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo['descricao']), None)
+            if index_existent_insumo != None:
+                lista_insumos[index_existent_insumo]['quantidade'] += insumo['quantidade']
+            else:
+                dados_insumo =  {
+                    'id': insumo_objeto_a11.id,
+                    'codigo':insumo_objeto_a11.codigo,
+                    'descricao':insumo_objeto_a11.descricao,
+                    'undBas':insumo_objeto_a11.undbas,
+                    'qtdProd': round(insumo.qtdprod, 2),
+                    'cstUnPr': round(insumo.cstunpr, 2),
+                    'vlrTotal': '{:,}'.format(round(insumo.qtdprod * insumo.cstunpr, 2)).replace('.', 'x').replace(',', '.').replace('x', ',')
+                }
+                lista_insumos.append(dados_insumo)
+
     return render(request, "orcs/editar-orcamento.html", {
         "orcamento": orcamento, "eaporcam": list_eaps,
         "insumos": lista_insumos, "form": formInserirServico
