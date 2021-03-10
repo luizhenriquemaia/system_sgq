@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import HttpResponseRedirect, redirect, render, reverse
+from django.http import HttpResponse
+
 from main.funcoes import format_list_telefone, listacodigossup
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          a08TiposFrete, a10CatsInsumos, a11Insumos, a15AtvsPad,
@@ -224,11 +226,6 @@ def atualizar_dados_insumo(request, codInsumo):
         if form.is_valid():
             insumo_bd = a11Insumos.objetos.filter(codigo=codInsumo)
             novo_preco = formatar_custos_para_bd(form.cleaned_data['novo_preco']) if form.cleaned_data['novo_preco'] else insumo_bd[0].custo01
-            # if form.cleaned_data['novo_preco']:
-            #     novo_preco = formatar_custos_para_bd(
-            #         form.cleaned_data['novo_preco'])
-            # else:
-            #     novo_preco = insumo_bd[0].custo01
             nova_descricao = form.cleaned_data['nova_descricao'] if form.cleaned_data['nova_descricao'] else insumo_bd[0].descricao
             nova_unidade = form.cleaned_data['nova_unidade'] if form.cleaned_data['nova_unidade'] else insumo_bd[0].undbas
             nova_espessura = formatar_custos_para_bd(form.cleaned_data['nova_espessura']) if form.cleaned_data['nova_espessura'] else insumo_bd[0].espessura
@@ -376,8 +373,12 @@ def editar_orcamento(request, codorcam):
             descricao_servico = form.cleaned_data['descricao']
             tipo_servico = int(request.POST['tipo'])
             codigo_eap_servico = form.cleaned_data['codigo_eap']
+            try:
+                codigo_nova_eap = g03EapOrc.objetos.latest('id').id + 1
+            except ObjectDoesNotExist:
+                codigo_nova_eap = 0
             novo_servico = g03EapOrc(
-                id=g03EapOrc.objetos.order_by('id').last().id + 1,
+                id=codigo_nova_eap,
                 codeap=codigo_eap_servico,
                 coditem=codigo_eap_servico,
                 descitem=descricao_servico,
@@ -388,9 +389,9 @@ def editar_orcamento(request, codorcam):
                 orcamento_id=orcEscolhido.id
             )
             novo_servico.save()
-    # CORRIGIR ERRO DE TIPO DE EAP PARA VENEZIANAS
-    #try:
-        # Obter eap do orçamento divididas por tipo
+        else:
+            messages.error(request, "Erro ao adicionar serviço")
+    # Obter eap do orçamento divididas por tipo
     eap_orc_5 = g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=5).order_by('codeap')
     eap_orc_3 = g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=3).order_by('codeap')
     eap_orc_1 = g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=1).order_by('codeap')
@@ -489,16 +490,21 @@ def editar_orcamento(request, codorcam):
     for eap in g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=1):
         for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
             insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
-            dados_insumo =  {
-                'id': insumo_objeto_a11.id,
-                'codigo':insumo_objeto_a11.codigo,
-                'descricao':insumo_objeto_a11.descricao,
-                'undBas':insumo_objeto_a11.undbas,
-                'qtdProd': round(insumo.qtdprod, 2),
-                'cstUnPr': round(insumo.cstunpr, 2),
-                'vlrTotal': '{:,}'.format(round(insumo.qtdprod * insumo.cstunpr, 2)).replace('.', 'x').replace(',', '.').replace('x', ',')
-            }
-            lista_insumos.append(dados_insumo)
+            index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo['descricao']), None)
+            if index_existent_insumo != None:
+                lista_insumos[index_existent_insumo]['quantidade'] += insumo['quantidade']
+            else:
+                dados_insumo =  {
+                    'id': insumo_objeto_a11.id,
+                    'codigo':insumo_objeto_a11.codigo,
+                    'descricao':insumo_objeto_a11.descricao,
+                    'undBas':insumo_objeto_a11.undbas,
+                    'qtdProd': round(insumo.qtdprod, 2),
+                    'cstUnPr': round(insumo.cstunpr, 2),
+                    'vlrTotal': '{:,}'.format(round(insumo.qtdprod * insumo.cstunpr, 2)).replace('.', 'x').replace(',', '.').replace('x', ',')
+                }
+                lista_insumos.append(dados_insumo)
+
     return render(request, "orcs/editar-orcamento.html", {
         "orcamento": orcamento, "eaporcam": list_eaps,
         "insumos": lista_insumos, "form": formInserirServico
@@ -510,7 +516,7 @@ def excluir_orcamento(request, codorcam):
     if request.user.is_staff:
         g01Orcamento.objetos.get(id=int(codorcam)).delete()
     else:
-        pass
+        return HttpResponse(status=403)
     return HttpResponseRedirect(reverse('main:inicio'))
 
 

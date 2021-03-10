@@ -1,11 +1,13 @@
+from django.http import HttpResponse
 from django.contrib import messages
 from django.shortcuts import render
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 
-from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, b01Empresas, b04CCustos
+from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, a10CatsInsumos, b01Empresas, b04CCustos
 from main.forms import formNovoEndereco
 
-from config.forms import formCadastrarEmpresa, formCadastrarCentroDeCusto
+from config.forms import formCadastrarEmpresa, formCadastrarCentroDeCusto, formCadastrarCategoriaInsumo
 
 
 
@@ -137,3 +139,54 @@ def centro_de_custos(request, cod_empresa):
             }
             list_centro_de_custos.append(dic_centro)
     return render(request, "config/centro-de-custos.html", {"centrosDeCusto": list_centro_de_custos, "empresa": empresa, "formCadastrarCentroDeCusto": formCadastrarCentroDeCusto()})
+
+def orcamento(request):
+    if not request.user.is_staff:
+        messages.error(request, "Negado, o usuário deve ser administrador para acessar esta seção")
+        return redirect("main:inicio")
+    else:        
+        return render(request, "config/orcamento.html")
+
+def categoria_insumo(request):
+    if not request.user.is_staff:
+        messages.error(request, "Negado, o usuário deve ser administrador para acessar esta seção")
+        return redirect("main:inicio")
+    else:
+        if request.method == "POST":
+            form = formCadastrarCategoriaInsumo(request.POST)
+            if form.is_valid():
+                tipo = request.POST['tipo']
+                hierarquia = form.cleaned_data['hierarquia']
+                ordenador = form.cleaned_data['ordenador']
+                descricao = form.cleaned_data['descricao']
+                check_if_exists = a10CatsInsumos.objetos.filter(Q(ordenador=ordenador)|Q(descricao=descricao))
+                if len(check_if_exists) != 0:
+                    messages.error(request, "Descrição e/ou ordenador já cadastrados")
+                else:
+                    try:
+                        ultimo_id_categoria = a10CatsInsumos.objetos.latest('id').id
+                    except:
+                        ultimo_id_categoria = -1
+                    nova_categoria_insumo = a10CatsInsumos(
+                        id=ultimo_id_categoria + 1,
+                        hierarquia=hierarquia,
+                        ordenador=ordenador,
+                        tipo=tipo,
+                        descricao=descricao
+                    )
+                    nova_categoria_insumo.save()
+            else:
+                print("\nERROR FORM\n")
+                print(form.errors.as_data())
+        categorias_insumo_cadastradas = a10CatsInsumos.get_all_categories(a10CatsInsumos)
+        form = formCadastrarCategoriaInsumo()
+        return render(request, "config/categoria-insumo.html", 
+            {'formCadCategoria': form, 'categoriasCadastradas': categorias_insumo_cadastradas})
+
+def carregar_categorias_insumo(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        categorias_insumo = a10CatsInsumos.get_all_categories(a10CatsInsumos)
+        return render(request, 'config/carregar-categorias-insumos.html',
+            {"categoriasCadastradas": categorias_insumo})
