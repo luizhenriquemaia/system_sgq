@@ -94,16 +94,19 @@
         }).then(
             function (response) {
                 if (response.status === 200) {
+                    M.toast({ html: "Categoria cadastrada", classes: 'green rounded', displayLength: 2000})
                     let xhttp = new XMLHttpRequest()
                     xhttp.onreadystatechange = function (data) {
                         if (this.readyState === 4 && this.status === 200) {
                             document.getElementById("tbodyCategorias_id").innerHTML = this.response
                         } else if (this.readyState === 4 && this.status === 403) {
-                            alert("Not Allowed")
+                            M.toast({ html: "Ação não permitida", classes: 'red rounded', displayLength: 3000})
                         }
                     }
                     xhttp.open("GET", "./ajax/carregar-categorias-insumos/", true)
                     xhttp.send()
+                } else if (response.status === 400) {
+                    M.toast({html: "Descrição e/ou ordenador já cadastradados", classes: 'red rounded', displayLength: 3000})
                 } else {
                     console.log("ERROR")
                 }
