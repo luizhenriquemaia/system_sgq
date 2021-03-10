@@ -178,8 +178,7 @@ def categoria_insumo(request):
             else:
                 print("\nERROR FORM\n")
                 print(form.errors.as_data())
-        categorias_insumo_cadastradas = a10CatsInsumos.objetos.all()
-        print(f"\n\n\n{categorias_insumo_cadastradas}\n\n\n")
+        categorias_insumo_cadastradas = a10CatsInsumos.get_all_categories(a10CatsInsumos)
         form = formCadastrarCategoriaInsumo()
         return render(request, "config/categoria-insumo.html", 
             {'formCadCategoria': form, 'categoriasCadastradas': categorias_insumo_cadastradas})
@@ -188,6 +187,6 @@ def carregar_categorias_insumo(request):
     if not request.user.is_staff:
         return HttpResponse(status=403)
     else:
-        categorias_insumo = a10CatsInsumos.objetos.all().order_by('ordenador')
+        categorias_insumo = a10CatsInsumos.get_all_categories(a10CatsInsumos)
         return render(request, 'config/carregar-categorias-insumos.html',
             {"categoriasCadastradas": categorias_insumo})

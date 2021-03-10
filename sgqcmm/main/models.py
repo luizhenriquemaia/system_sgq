@@ -242,6 +242,21 @@ class a10CatsInsumos(models.Model):
         except self.DoesNotExist:
             return None
 
+    def get_all_categories(self):
+        categories = self.objetos.raw(
+            '''
+                SELECT id, hierarquia, ordenador, descricao,
+                REPLACE(REPLACE(REPLACE(REPLACE(
+                    REPLACE(REPLACE(REPLACE(REPLACE(
+                        REPLACE(REPLACE(REPLACE(REPLACE(tipo, 0, 'Agrupador'), 1, 'Equipamentos'), 2, 'Mão de Obra'), 3, 'Insumos'),
+                        4, 'Serviços Executados'), 5, 'Transporte'), 6, 'Abst./Manut. de Máq. e Veículos'), 7, 'Seguradoras'),
+                        8, 'Financeiros'), 9, 'Imóveis'), 10, 'Produtos para Venda'), 11, 'Desp. com Mão de Obra') tipo
+                FROM main_a10catsinsumos  
+                ORDER BY hierarquia
+            '''
+        )
+        return categories
+
 
 class a11Insumos(models.Model):
     id = models.IntegerField(primary_key=True)
