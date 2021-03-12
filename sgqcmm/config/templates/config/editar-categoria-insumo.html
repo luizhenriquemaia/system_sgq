@@ -1,0 +1,55 @@
+{% extends "config/base-page-config.html" %}
+{% block content_config %}
+<h5 class="title-table">Editar Categoria {{categoria.descricao}}</h5>
+<div class="divider"></div>
+<form method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col s6">
+            <label>Antiga Hierarquia</label>
+            <p>{{categoria.hierarquia}}</p>
+        </div>
+        <div class="col s6">
+            <label>Nova Hierarquia</label>
+            {{form.hierarquia}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s6">
+            <label>Antigo Ordenador</label>
+            <p>{{categoria.ordenador}}</p>
+        </div>
+        <div class="col s6">
+            <label>Novo Ordenador</label>
+            {{form.ordenador}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s6">
+            <label>Antiga Descrição</label>
+            <p>{{categoria.descricao}}</p>
+        </div>
+        <div class="col s6">
+            <label>Nova Descrição</label>
+            {{form.descricao}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s6">
+            <label>Antigo Tipo</label>
+            <p>{{categoria.tipo}}</p>
+        </div>
+        <div class="col s6">
+            <label>Novo Tipo</label>
+            {{form.tipo}}
+        </div>
+    </div>
+    <br><br>
+    <div class="row">
+        <div class="col s1 offset-s12" style="padding:0px;">
+            <button class="submit-hover" name="btnAddEmpresa" style="padding: 15px 20px 15px 20px;" onclick=showModal()>
+                <i class="material-icons">add</i></button>
+        </div>
+    </div>
+</form>
+{% endblock content_config %}

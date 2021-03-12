@@ -1,13 +1,13 @@
 from django.http import HttpResponse
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 
 from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, a10CatsInsumos, b01Empresas, b04CCustos
 from main.forms import formNovoEndereco
 
-from config.forms import formCadastrarEmpresa, formCadastrarCentroDeCusto, formCadastrarCategoriaInsumo
+from config.forms import formCadastrarEmpresa, formCadastrarCentroDeCusto, formCategoriaInsumo, formEditarCategoriaInsumo
 
 
 
@@ -153,15 +153,14 @@ def categoria_insumo(request):
         return redirect("main:inicio")
     else:
         if request.method == "POST":
-            form = formCadastrarCategoriaInsumo(request.POST)
+            form = formCategoriaInsumo(request.POST)
             if form.is_valid():
                 tipo = request.POST['tipo']
                 hierarquia = form.cleaned_data['hierarquia']
                 ordenador = form.cleaned_data['ordenador']
                 descricao = form.cleaned_data['descricao']
-                check_if_exists = a10CatsInsumos.objetos.filter(Q(ordenador=ordenador)|Q(descricao=descricao))
-                if len(check_if_exists) != 0:
-                    messages.error(request, "Descrição e/ou ordenador já cadastrados")
+                if a10CatsInsumos.objetos.filter(Q(ordenador=ordenador)|Q(descricao=descricao)).exists():
+                    return HttpResponse(status=400)
                 else:
                     try:
                         ultimo_id_categoria = a10CatsInsumos.objetos.latest('id').id
@@ -175,11 +174,12 @@ def categoria_insumo(request):
                         descricao=descricao
                     )
                     nova_categoria_insumo.save()
+                    messages.success(request, "Categoria de insumo cadastrada")
             else:
                 print("\nERROR FORM\n")
                 print(form.errors.as_data())
         categorias_insumo_cadastradas = a10CatsInsumos.get_all_categories(a10CatsInsumos)
-        form = formCadastrarCategoriaInsumo()
+        form = formCategoriaInsumo()
         return render(request, "config/categoria-insumo.html", 
             {'formCadCategoria': form, 'categoriasCadastradas': categorias_insumo_cadastradas})
 
@@ -190,3 +190,26 @@ def carregar_categorias_insumo(request):
         categorias_insumo = a10CatsInsumos.get_all_categories(a10CatsInsumos)
         return render(request, 'config/carregar-categorias-insumos.html',
             {"categoriasCadastradas": categorias_insumo})
+
+def editar_categoria_insumo(request, cod_categoria):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        categoria_insumo = a10CatsInsumos.objetos.get(id=cod_categoria)
+        if request.method == "POST":
+            form = formEditarCategoriaInsumo(request.POST)
+            if form.is_valid():
+                categoria_insumo.tipo = request.POST['tipo'] if request.POST['tipo'] != '' else  categoria_insumo.tipo
+                categoria_insumo.hierarquia = form.cleaned_data['hierarquia'] if form.cleaned_data['hierarquia'] else categoria_insumo.hierarquia
+                categoria_insumo.ordenador = form.cleaned_data['ordenador'] if form.cleaned_data['ordenador'] else categoria_insumo.ordenador
+                categoria_insumo.descricao = form.cleaned_data['descricao'] if form.cleaned_data['descricao'] else categoria_insumo.descricao
+                categoria_insumo.save()
+                messages.success(request, "Categoria alterada com sucesso")
+                return redirect("config:categoria_insumo")
+            else:
+                messages.error(request, "Dados inválidos")
+                return render(request, 'config/editar-categoria-insumo.html',
+                    {'form': form, "categoria": categoria_insumo})        
+        form = formEditarCategoriaInsumo()
+        return render(request, 'config/editar-categoria-insumo.html',
+            {'form': form, "categoria": categoria_insumo})
