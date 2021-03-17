@@ -14,7 +14,6 @@ from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          e06ContCad, g01Orcamento, g02ItOrc, g03EapOrc,
                          g04AtvEap, g05InsEAP, g09VisitasOrc)
 
-from main.add_from_seeds import (add_tipos_de_frete, add_planos_de_pagamento, add_status_do_orcamento, add_fases_orcamento)
 from .calc.calculos_chapa_alveolar_e_compacto import (orc_poli_curvo,
                                                       orc_poli_plano)
 from .calc.calculos_multi_click import orc_multi_click_plano
@@ -319,26 +318,20 @@ def alterar_insumo_atividade(request, codorcam, idEap, idInsumo):
 
 
 def novo_orcamento(request):
-    try:
-        a08TiposFrete.objetos.get(id=1)
-    except ObjectDoesNotExist:
-        add_tipos_de_frete()
-    try:
-        a19PlsPgtos.objetos.get(id=1)
-    except ObjectDoesNotExist:
-        add_planos_de_pagamento()
-    try:
-        a20StsOrcs.objetos.get(id=1)
-    except ObjectDoesNotExist:
-        add_status_do_orcamento()
-    try:
-        a31FaseOrc.objetos.get(id=1)
-    except ObjectDoesNotExist:
-        add_fases_orcamento()
+    if not a08TiposFrete.objetos.filter(id=5).exists():
+        messages.error(request, "Sem tipos de fretes cadastrados, vá para config/add-seeds")
+        return HttpResponseRedirect(reverse('main:inicio'))
+    if not a19PlsPgtos.objetos.filter(id=1).exists():
+        messages.error(request, "Sem planos de pagamentos cadastrados, vá para config/add-seeds")
+        return HttpResponseRedirect(reverse('main:inicio'))
+    if not a20StsOrcs.objetos.filter(id=1).exists():
+        messages.error(request, "Sem planos de pagamentos cadastrados, vá para config/add-seeds")
+        return HttpResponseRedirect(reverse('main:inicio'))
+    if not a31FaseOrc.objetos.filter(id=1).exists():
+        messages.error(request, "Sem fases de orçamentos cadastradas, vá para config/add-seeds")
+        return HttpResponseRedirect(reverse('main:inicio'))
     # usuários adicionados pelo cmd porém não adicionados na tabela c01
-    try:
-        c01Usuarios.objetos.get(nomeusr=request.user)
-    except ObjectDoesNotExist:
+    if not c01Usuarios.objetos.filter(nomeusr=request.user).exists():
         messages.error(request, "O cadastro do seu usuário está incompleto")
         return HttpResponseRedirect(reverse('main:inicio'))
     cod_centro_de_custo = request.session['cc_orcamento']

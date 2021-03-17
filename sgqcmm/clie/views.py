@@ -9,7 +9,6 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
                               redirect, render, reverse)
 from main.forms import formNovoEndereco
 from main.funcoes import format_list_telefone, nomesequencia, numpurotelefone
-from main.add_from_seeds import add_estados, add_municipios, add_tipos_de_telefone
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          a07TiposEnd, a09TiposFone, b01Empresas, e01Cadastros, e02FonesCad,
                          e03WebCad, e04EndCad, e06ContCad)
@@ -100,18 +99,6 @@ def criar_novo_cliente(request, nome, telefone, email):
     except ObjectDoesNotExist:
         cod_cliente = 1
     # Caso seja o primeiro cadastro de cliente
-    try:
-        a03Estados.objetos.get(id=1)
-    except:
-        add_estados()
-    try:
-        a04Municipios.objetos.get(id=1)
-    except:
-        add_municipios()
-    try:
-        a09TiposFone.objetos.get(id=1)
-    except:
-        add_tipos_de_telefone()
     cliente = e01Cadastros(
         id=cod_cliente,
         usrcad=request.user,
