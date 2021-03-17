@@ -252,7 +252,7 @@ class a10CatsInsumos(models.Model):
                         4, 'Serviços Executados'), 5, 'Transporte'), 6, 'Abst./Manut. de Máq. e Veículos'), 7, 'Seguradoras'),
                         8, 'Financeiros'), 9, 'Imóveis'), 10, 'Produtos para Venda'), 11, 'Desp. com Mão de Obra') tipo
                 FROM main_a10catsinsumos  
-                ORDER BY hierarquia
+                ORDER BY CONCAT ('A' + ordenador)
             '''
         )
         return categories

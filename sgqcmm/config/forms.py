@@ -60,7 +60,7 @@ class formCadastrarCentroDeCusto(forms.Form):
     ativo = forms.BooleanField(initial=True)
 
 
-class formCadastrarCategoriaInsumo(forms.Form):
+class formCategoriaInsumo(forms.Form):
     choices_tipo = [(0, 'Agrupador'), (1, 'Equipamentos'), (2, 'Mão de Obra'), 
                       (3, 'Insumos'), (4, 'Serviços Executados'), (5, 'Transporte'), 
                       (6, 'Abast./Manut. de Máq. e Veículos'), (7, 'Seguradoras'),
@@ -70,3 +70,14 @@ class formCadastrarCategoriaInsumo(forms.Form):
     hierarquia = forms.IntegerField(max_value=100, min_value=1)
     ordenador = forms.IntegerField(min_value=1)
     descricao = forms.CharField(max_length=50)
+
+class formEditarCategoriaInsumo(forms.Form):
+    choices_tipo = [('', '-------'), (0, 'Agrupador'), (1, 'Equipamentos'), (2, 'Mão de Obra'), 
+                      (3, 'Insumos'), (4, 'Serviços Executados'), (5, 'Transporte'), 
+                      (6, 'Abast./Manut. de Máq. e Veículos'), (7, 'Seguradoras'),
+                      (8, 'Financeiros'), (9, 'Imóveis'), (10, 'Produtos para Venda'),
+                      (11, 'Desp. com Mão de Obra')]
+    tipo = forms.ChoiceField(choices=choices_tipo, required=False)
+    hierarquia = forms.IntegerField(max_value=100, min_value=1, required=False)
+    ordenador = forms.IntegerField(min_value=1, required=False)
+    descricao = forms.CharField(max_length=50, required=False)
