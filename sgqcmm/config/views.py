@@ -1,14 +1,19 @@
-from django.http import HttpResponse
+from io import StringIO
+from pathlib import Path
+
 from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
-
-from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, a10CatsInsumos, b01Empresas, b04CCustos
+from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
 from main.forms import formNovoEndereco
+from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
+                         a07TiposEnd, a08TiposFrete, a09TiposFone,
+                         a10CatsInsumos, a19PlsPgtos, a20StsOrcs, a31FaseOrc,
+                         b01Empresas, b04CCustos)
 
-from config.forms import formCadastrarEmpresa, formCadastrarCentroDeCusto, formCategoriaInsumo, formEditarCategoriaInsumo
-
+from config.forms import (formCadastrarCentroDeCusto, formCadastrarEmpresa,
+                          formCategoriaInsumo, formEditarCategoriaInsumo)
 
 
 def inicio(request):
@@ -213,3 +218,202 @@ def editar_categoria_insumo(request, cod_categoria):
         form = formEditarCategoriaInsumo()
         return render(request, 'config/editar-categoria-insumo.html',
             {'form': form, "categoria": categoria_insumo})
+
+
+def adicionar_seeds(request):
+    return render(request, 'config/adicionar-seeds.html')
+
+
+def adicionar_seeds_estados(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        if a03Estados.objetos.filter(uf="GO").exists():
+            return HttpResponse(content="Dados já adicionados", status=400)
+        else:
+            try:
+                csv_file = Path.cwd().joinpath("seeds_db", 'main_a03estados.csv')
+                data_set = csv_file.read_text(encoding='UTF-8')
+                io_string = StringIO(data_set)
+                for column in reader(io_string, delimiter=',', quotechar="|"):
+                    country = a03Estados(
+                        uf=column[0].strip(' "'),
+                        estado=column[1].strip(' "'),
+                        regiao=column[2].strip(' "'),
+                        distfab=Decimal(column[3].strip(' "')),
+                        cepfin=column[4].strip(' "'),
+                        cepini=column[5].strip(' "'),
+                    )
+                    country.save()
+                return HttpResponse(content="Dados adicionados", status=201)
+            except:
+                return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
+
+
+def adicionar_seeds_municipios(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        if a04Municipios.objetos.filter(id=1).exists():
+            return HttpResponse(content="Dados já adicionados", status=400)
+        else:
+            try:
+                csv_file = Path.cwd().joinpath("seeds_db", 'main_a04municipios.csv')
+                data_set = csv_file.read_text(encoding='UTF-8')
+                io_string = StringIO(data_set)
+                for count, column in enumerate(reader(io_string, delimiter=',', quotechar="|")):
+                    city = a04Municipios(
+                        id=count,
+                        municipio=column[1].strip(' "'),
+                        cepini=column[2].strip(' "'),
+                        cepfin=column[3].strip(' "'),
+                        distfab=Decimal(column[4].strip(' "')),
+                        estado_id=column[5].strip(' "')
+                    )
+                    city.save()
+                return HttpResponse(content="Dados adicionados", status=201)
+            except:
+                return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
+
+
+def adicionar_seeds_tipos_endereco(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        if a07TiposEnd.objetos.filter(id=1).exists():
+            return HttpResponse(content="Dados já adicionados", status=400)
+        else:
+            try:
+                csv_file = Path.cwd().joinpath("seeds_db", 'main_a07tiposend.csv')
+                data_set = csv_file.read_text(encoding='UTF-8')
+                io_string = StringIO(data_set)
+                for count, column in enumerate(reader(io_string, delimiter=',', quotechar="|")):
+                    tipo_endereco = a07TiposEnd(
+                        id=column[0].strip(' "'),
+                        tend=column[1].strip(' "'),
+                    )
+                    tipo_endereco.save()
+                return HttpResponse(content="Dados adicionados", status=201)
+            except:
+                return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
+
+
+def adicionar_seeds_tipos_frete(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        if a08TiposFrete.objetos.filter(id=1).exists():
+            return HttpResponse(content="Dados já adicionados", status=400)
+        else:
+            try:
+                csv_file = Path.cwd().joinpath("seeds_db", 'main_a08tiposfrete.csv')
+                data_set = csv_file.read_text(encoding='UTF-8')
+                io_string = StringIO(data_set)
+                for column in reader(io_string, delimiter=';', quotechar='|'):
+                    novo_tipo_frete = a08TiposFrete(
+                        id=column[0].strip(' "'),
+                        descsing=column[1].strip(' "'),
+                        descplur=column[2].strip(' "'),
+                        desccomp=column[3].strip(' "'),
+                        pesomax=column[4].strip(' "'),
+                        volmax=column[5].strip(' "'),
+                        vlrkm=column[6].strip(' "'),
+                    )
+                    novo_tipo_frete.save()
+                return HttpResponse(content="Dados adicionados", status=201)
+            except:
+                return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
+
+
+def adicionar_seeds_tipos_telefones(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        if a09TiposFone.objetos.filter(id=1).exists():
+            return HttpResponse(content="Dados já adicionados", status=400)
+        else:
+            try:
+                csv_file = Path.cwd().joinpath("seeds_db", 'main_a09tiposfone.csv')
+                data_set = csv_file.read_text(encoding='UTF-8')
+                io_string = StringIO(data_set)
+                for count, column in enumerate(reader(io_string, delimiter=',', quotechar="|")):
+                    phone = a09TiposFone(
+                        id=count + 1,
+                        tfone=column[1].strip(' "'),
+                    )
+                    phone.save()
+                return HttpResponse(content="Dados adicionados", status=201)
+            except:
+                return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
+
+
+def adicionar_seeds_planos_pagamento(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        if a19PlsPgtos.objetos.filter(id=1).exists():
+            return HttpResponse(content="Dados já adicionados", status=400)
+        else:
+            try:
+                csv_file = Path.cwd().joinpath("seeds_db", 'main_a19plspgtos.csv')
+                data_set = csv_file.read_text(encoding='UTF-8')
+                io_string = StringIO(data_set)
+                for column in reader(io_string, delimiter=';', quotechar='|'):
+                    novo_plano = a19PlsPgtos(
+                        id=column[0].strip(' "'),
+                        tipo=column[1].strip(' "'),
+                        formapgto=column[2].strip(' "'),
+                        descricao=column[3].strip(' "'),
+                        
+                    )
+                    novo_plano.save()
+                return HttpResponse(content="Dados adicionados", status=201)
+            except:
+                return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
+
+
+def adicionar_seeds_status_orcamento(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        if a20StsOrcs.objetos.filter(id=1).exists():
+            return HttpResponse(content="Dados já adicionados", status=400)
+        else:
+            try:
+                csv_file = Path.cwd().joinpath("seeds_db", 'main_a20stsorcs.csv')
+                data_set = csv_file.read_text(encoding='UTF-8')
+                io_string = StringIO(data_set)
+                for column in reader(io_string, delimiter=',', quotechar='|'):
+                    novo_status = a20StsOrcs(
+                        id=column[0].strip(' "'),
+                        descricao=column[1].strip(' "'),
+                        alerta=column[2].strip(' "'), 
+                        ativo=column[3].strip(' "'),
+                        transfoe=column[4].strip(' "'),
+                    )
+                    novo_status.save()
+                return HttpResponse(content="Dados adicionados", status=201)
+            except:
+                return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
+
+
+def adicionar_seeds_fases_orcamento(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        if a31FaseOrc.objetos.filter(id=1).exists():
+            return HttpResponse(content="Dados já adicionados", status=400)
+        else:
+            try:
+                csv_file = Path.cwd().joinpath("seeds_db", 'main_a31faseorc.csv')
+                data_set = csv_file.read_text(encoding='UTF-8')
+                io_string = StringIO(data_set)
+                for column in reader(io_string, delimiter=',', quotechar='|'):
+                    new_fase = a31FaseOrc(
+                        id=column[0].strip(' "'),
+                        descricao=column[1].strip(' "')
+                    )
+                    new_fase.save()
+                return HttpResponse(content="Dados adicionados", status=201)
+            except:
+                return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)

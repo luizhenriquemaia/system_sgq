@@ -1,0 +1,77 @@
+{% extends "config/base-page-config.html" %}
+{% block content_config %}
+<h5 class="title-table">Adicionar dados essenciais no banco de dados</h5>
+<br>
+<div class="collection">
+    <a href="#" id="estados_id" onclick=add_data(this.id) class="collection-item black-text">
+        Estados
+    </a>
+    <a href="#" id="municipios_id" onclick=add_data(this.id) class="collection-item black-text">
+        Municípios
+    </a>
+    <a href="#" id="tipoEndereco_id" onclick=add_data(this.id) class="collection-item black-text">
+        Tipos de endereço
+    </a>
+    <a href="#" id="tipoFrete_id" onclick=add_data(this.id) class="collection-item black-text">
+        Tipos de frete
+    </a>
+    <a href="#" id="tipoTelefone_id" onclick=add_data(this.id) class="collection-item black-text">
+        Tipos de telefone
+    </a>
+    <a href="#" id="planosPagamento_id" onclick=add_data(this.id) class="collection-item black-text">
+        Planos de pagamentos
+    </a>
+    <a href="#" id="statusOrcamento_id" onclick=add_data(this.id) class="collection-item black-text">
+        Status do orçamento
+    </a>
+    <a href="#" id="fasesOrcamento_id" onclick=add_data(this.id) class="collection-item black-text">
+        Fases do orçamento
+    </a>
+</div>
+<script>
+    function add_data(idField) {
+        let request = ""
+        switch (idField) {
+            case "estados_id":
+                request = new Request(`./ajax/estados/`)
+                break
+            case "municipios_id":
+                request = new Request(`./ajax/municipios/`)
+                break
+            case "tipoEndereco_id":
+                request = new Request(`./ajax/tipos-endereco/`)
+                break
+            case "tipoFrete_id":
+                request = new Request(`./ajax/tipos-frete/`)
+                break
+            case "tipoTelefone_id":
+                request = new Request(`./ajax/tipos-telefone/`)
+                break
+            case "planosPagamento_id":
+                request = new Request(`./ajax/planos-de-pagamentos/`)
+                break
+            case "statusOrcamento_id":
+                request = new Request(`./ajax/status-do-orcamento/`)
+                break
+            case "fasesOrcamento_id":
+                request = new Request(`./ajax/fases-do-orcamento/`)
+                break
+            }
+        fetch(request, {
+            method: 'GET'
+        }).then(
+            function (response) {
+                if (response.status === 201) {
+                    M.toast({ html: "Dados adicionados", classes: 'green rounded', displayLength: 2000 })
+                } else if (response.status === 403) {
+                    M.toast({ html: "Você não tem permissão para realizar esta ação", classes: 'red rounded', displayLength: 3000 })
+                } else if (response.status === 400) {
+                    M.toast({ html: "Dados já adicionados", classes: 'red rounded', displayLength: 3000 })
+                } else if (response.status === 500) {
+                    M.toast({ html: "Erro interno do servidor", classes: 'red rounded', displayLength: 3000 })
+                }
+            }
+        )
+    }
+</script>
+{% endblock content_config %}
