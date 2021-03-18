@@ -610,24 +610,22 @@ def cadastrar_insumo(request):
             espessura = formatar_custos_para_bd(form.cleaned_data['espessura']) if form.cleaned_data['espessura'] else 0
             comprimento = formatar_custos_para_bd(form.cleaned_data['comprimento']) if form.cleaned_data['comprimento'] else 0
             largura = formatar_custos_para_bd(form.cleaned_data['largura']) if form.cleaned_data['largura'] else 0
-            ultimoCodigo = a11Insumos.objetos.all().values_list('codigo', flat=True)
-            maiorCodigo = max(ultimoCodigo) if bool(ultimoCodigo) else maiorCodigo
-            ultimoIdInsumo = int(a11Insumos.objetos.all().order_by('-id')[0].id)
-            novoInsumo = a11Insumos(id=ultimoIdInsumo+1,
-                                    codigo=maiorCodigo+1,
-                                    descricao=descInsumo,
-                                    undbas=unidInsumo,
-                                    undcompr=unidInsumo,
-                                    fatundcomp=1,
-                                    custo01=custoInsumo,
-                                    custo02=custoInsumo,
-                                    prvda=custoInsumo,
-                                    pesunbas=0,
-                                    qtppal=0,
-                                    catins_id=catInsumo,
-                                    espessura=espessura,
-                                    comprimento=comprimento,
-                                    largura=largura)
+            ultimo_insumo_adicionado = a11Insumos.objetos.latest('-id').only('id', 'codigo')
+            novoInsumo = a11Insumos(id = ultimo_insumo_adicionado.id + 1,
+                                    codigo = ultimo_insumo_adicionado.codigo + 1,
+                                    descricao = descInsumo,
+                                    undbas = unidInsumo,
+                                    undcompr = unidInsumo,
+                                    fatundcomp = 1,
+                                    custo01 = custoInsumo,
+                                    custo02 = custoInsumo,
+                                    prvda = custoInsumo,
+                                    pesunbas = 0,
+                                    qtppal = 0,
+                                    catins_id = catInsumo,
+                                    espessura = espessura,
+                                    comprimento = comprimento,
+                                    largura = largura)
             novoInsumo.save()
             return HttpResponseRedirect(reverse('orcs:detalhar_servico', args=(codOrcAtual, codigo_servico_atual,)))
     else:
