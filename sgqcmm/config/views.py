@@ -9,11 +9,28 @@ from django.shortcuts import redirect, render
 from main.forms import formNovoEndereco
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          a07TiposEnd, a08TiposFrete, a09TiposFone,
-                         a10CatsInsumos, a19PlsPgtos, a20StsOrcs, a31FaseOrc,
-                         b01Empresas, b04CCustos)
+                         a10CatsInsumos, a11Insumos, a19PlsPgtos, a20StsOrcs,
+                         a31FaseOrc, b01Empresas, b04CCustos)
 
 from config.forms import (formCadastrarCentroDeCusto, formCadastrarEmpresa,
-                          formCategoriaInsumo, formEditarCategoriaInsumo)
+                          formCategoriaInsumo, formEditarCategoriaInsumo, formCadastroInsumo)
+
+
+# funções genéricas views
+def formatar_custos_para_template(custo):
+    return '{:,}'.format(round(custo, 2)).replace(
+        '.', 'x').replace(',', '.').replace('x', ',')
+
+def formatar_custos_para_bd(custo):
+    return custo.replace(',', 'x').replace('.', '').replace('x', '.')
+
+def formatar_com_duas_casas_string(string_valor):
+    valor_separado = string_valor.split(",")
+    if len(valor_separado[1]) < 2:
+        return f"{valor_separado[0]},{valor_separado[1]}0"
+    else:
+        return string_valor
+
 
 
 def inicio(request):
@@ -220,6 +237,71 @@ def editar_categoria_insumo(request, cod_categoria):
             {'form': form, "categoria": categoria_insumo})
 
 
+def insumos_orcamento(request):
+    if not request.user.is_staff:
+        messages.error(request, "Negado, o usuário deve ser administrador para acessar esta seção")
+        return redirect("main:inicio")
+    else:
+        if request.method == "POST":
+            form = formCadastroInsumo(request.POST)
+            if form.is_valid():
+                categoria = request.POST['categoria']
+                descricao = form.cleaned_data['descricao']
+                unidade_base = form.cleaned_data['unidade_base']
+                unidade_compra = form.cleaned_data['unidade_compra'] if form.cleaned_data['unidade_compra'] else form.cleaned_data['unidade_base']
+                fator_conversao = form.cleaned_data['fator_conversao'] if form.cleaned_data['fator_conversao'] else 1
+                custo_1 = form.cleaned_data['custo_1']
+                custo_2 = form.cleaned_data['custo_2'] if form.cleaned_data['custo_2'] else form.cleaned_data['custo_1']
+                preco_unitario_venda = form.cleaned_data['preco_unitario_venda'] if form.cleaned_data['preco_unitario_venda'] else form.cleaned_data['custo_1']
+                peso_unidade_basica = form.cleaned_data['peso_unidade_basica'] if form.cleaned_data['peso_unidade_basica'] else 0
+                quantidade_unidade_palete = form.cleaned_data['quantidade_unidade_palete'] if form.cleaned_data['quantidade_unidade_palete'] else 0
+                comprimento = form.cleaned_data['comprimento'] if form.cleaned_data['comprimento'] else 0
+                largura = form.cleaned_data['largura'] if form.cleaned_data['largura'] else 0
+                espessura = form.cleaned_data['espessura'] if form.cleaned_data['espessura'] else 0
+                try:
+                    ultimo_insumo = a11Insumos.objetos.latest('id')
+                    id_novo_insumo = ultimo_insumo.id + 1
+                    codigo_novo_insumo = ultimo_insumo.codigo + 1
+                except ObjectDoesNotExist:
+                    id_novo_insumo = 0
+                    codigo_novo_insumo = 0
+                try:
+                    novo_insumo = a11Insumos(
+                        id = id_novo_insumo,
+                        catins = a10CatsInsumos.objetos.get(id=categoria),
+                        codigo = codigo_novo_insumo,
+                        descricao = descricao,
+                        undbas = unidade_base,
+                        undcompr = unidade_compra,
+                        fatundcomp = fator_conversao,
+                        custo01 = custo_1,
+                        custo02 = custo_2,
+                        prvda = preco_unitario_venda,
+                        pesunbas = peso_unidade_basica,
+                        qtppal = quantidade_unidade_palete,
+                        comprimento = comprimento,
+                        largura = largura,
+                        espessura = espessura
+                    )
+                    novo_insumo.save()
+                    return HttpResponse(status=201)
+                except:
+                    return HttpResponse(status=400)
+        form = formCadastroInsumo()
+        insumos_cadastrados = a11Insumos.objetos.all().only('id', 'codigo', 'descricao', 'catins')
+        return render(request, "config/insumo-orcamento.html", 
+            {'formCadInsumo': form, 'insumosCadastrados': insumos_cadastrados})
+
+
+def carregar_insumos(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        insumos_cadastrados = a11Insumos.objetos.all().only('id', 'codigo', 'descricao', 'catins')
+        return render(request, 'config/carregar-insumos.html',
+            {"insumosCadastrados": insumos_cadastrados})
+
+
 def adicionar_seeds(request):
     return render(request, 'config/adicionar-seeds.html')
 
@@ -417,3 +499,5 @@ def adicionar_seeds_fases_orcamento(request):
                 return HttpResponse(content="Dados adicionados", status=201)
             except:
                 return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
+
+

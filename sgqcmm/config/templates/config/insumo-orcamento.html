@@ -1,0 +1,168 @@
+{% extends "config/base-page-config.html" %}
+{% block content_config %}
+<h5 class="title-table">Insumos Cadastrados</h5>
+<table>
+    <thead>
+        <th>ID</th>
+        <th>Código</th>
+        <th>Descrição</th>
+        <th>Categoria</th>
+    </thead>
+    <tbody id="tbodyInsumos_id">
+        {% for insumo in insumosCadastrados %}
+        <tr>
+            <td data-lable="Numero">
+                <a href="./{{insumo.id}}/">{{insumo.id}}</a>
+            </td>
+            <td>
+                {{insumo.codigo}}
+            </td>
+            <td>
+                {{insumo.descricao}}
+            </td>
+            <td>
+                {{insumo.catins}}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br><br>
+<div class="row">
+    <div class="col s1 offset-s12" style="padding:0px;">
+        <button class="submit-hover" name="btnAddInsumo" style="padding: 15px 20px 15px 20px;" onclick=showModal()>
+            <i class="material-icons">add</i></button>
+    </div>
+</div>
+<div class="modal" id="modalNovoInsumo">
+    <div class="modal-content">
+        <span class="close-modal" onclick=showModal()>
+            <i class="material-icons small">close</i>
+        </span>
+        <h5>Cadastrar novo insumo</h5>
+        <form method="POST" id="formCadastroInsumo_id" onsubmit=submitFormCadastro(event)>
+            {% csrf_token %}
+            <div class="row">
+                <div class="col s12">
+                    <label>Categoria</label>
+                    {{ formCadInsumo.categoria }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    <label>Descrição</label>
+                    {{ formCadInsumo.descricao }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s4">
+                    <label>Unidade Base</label>
+                    {{ formCadInsumo.unidade_base }}
+                </div>
+                <div class="col s4">
+                    <label>Unidade Compra</label>
+                    {{ formCadInsumo.unidade_compra }}
+                </div>
+                <div class="col s4">
+                    <label>Fator de Conversão UnB/UnC</label>
+                    {{ formCadInsumo.fator_conversao }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s4">
+                    <label>Custo 1</label>
+                    {{ formCadInsumo.custo_1 }}
+                </div>
+                <div class="col s4">
+                    <label>Custo 2</label>
+                    {{ formCadInsumo.custo_2 }}
+                </div>
+                <div class="col s4">
+                    <label>Preço de unitário de venda</label>
+                    {{ formCadInsumo.preco_unitario_venda }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s6">
+                    <label>Peso por unidade básica</label>
+                    {{ formCadInsumo.peso_unidade_basica }}
+                </div>
+                <div class="col s6">
+                    <label>Quantidade de unidades básicas em palete</label>
+                    {{ formCadInsumo.quantidade_unidade_palete }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s4">
+                    <label>Comprimento</label>
+                    {{ formCadInsumo.comprimento }}
+                </div>
+                <div class="col s4">
+                    <label>Largura</label>
+                    {{ formCadInsumo.largura }}
+                </div>
+                <div class="col s4">
+                    <label>Espessura</label>
+                    {{ formCadInsumo.espessura }}
+                </div>
+            </div>
+            <button class="ok-modal" type="submit" name="btnAddCategoria" onclick=showModal()>Ok</button>
+        </form>
+    </div>
+</div>
+<script>
+    function showModal() {
+        document.getElementById("modalNovoInsumo").classList.toggle("modal-show")
+    }
+
+    function submitFormCadastro(e) {
+        e.preventDefault()
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+        const data_to_backend = new FormData()
+        data_to_backend.append("categoria", document.getElementById("id_categoria").value)
+        data_to_backend.append("descricao", document.getElementById("id_descricao").value)
+        data_to_backend.append("unidade_base", document.getElementById("id_unidade_base").value)
+        data_to_backend.append("unidade_compra", document.getElementById("id_unidade_compra").value)
+        data_to_backend.append("fator_conversao", document.getElementById("id_fator_conversao").value)
+        data_to_backend.append("custo_1", document.getElementById("id_custo_1").value)
+        data_to_backend.append("custo_2", document.getElementById("id_custo_2").value)
+        data_to_backend.append("preco_unitario_venda", document.getElementById("id_preco_unitario_venda").value)
+        data_to_backend.append("peso_unidade_basica", document.getElementById("id_peso_unidade_basica").value)
+        data_to_backend.append("quantidade_unidade_palete", document.getElementById("id_quantidade_unidade_palete").value)
+        data_to_backend.append("comprimento", document.getElementById("id_comprimento").value)
+        data_to_backend.append("largura", document.getElementById("id_largura").value)
+        data_to_backend.append("espessura", document.getElementById("id_espessura").value)
+        const request = new Request(`./`,
+            {
+                method: 'POST', 
+                headers: {'X-CSRFToken': csrftoken},
+                body: data_to_backend
+            })
+        fetch(request, {
+            method: 'POST',
+            mode: 'same-origin'
+        }).then(
+            function (response) {
+                if (response.status === 201) {
+                    M.toast({ html: "Insumo cadastrado com sucesso", classes: 'green rounded', displayLength: 2000})
+                    let xhttp = new XMLHttpRequest()
+                    xhttp.onreadystatechange = function (data) {
+                        if (this.readyState === 4 && this.status === 200) {
+                            document.getElementById("tbodyInsumos_id").innerHTML = this.response
+                        } else if (this.readyState === 4 && this.status === 403) {
+                            M.toast({ html: "Ação não permitida", classes: 'red rounded', displayLength: 3000})
+                        }
+                    }
+                    xhttp.open("GET", "./ajax/carregar-insumos/", true)
+                    xhttp.send()
+                } else if (response.status === 400) {
+                    M.toast({html: "Dados incorretos", classes: 'red rounded', displayLength: 3000})
+                } else {
+                    M.toast({ html: "Erro interno do servidor", classes: 'red rounded', displayLength: 3000 })
+                }
+            }
+        )
+    }
+
+</script>
+{% endblock content_config %}
