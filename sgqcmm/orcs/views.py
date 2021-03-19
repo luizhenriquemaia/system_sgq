@@ -483,9 +483,9 @@ def editar_orcamento(request, codorcam):
     for eap in g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=1):
         for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
             insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
-            index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo['descricao']), None)
+            index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo_objeto_a11.descricao), None)
             if index_existent_insumo != None:
-                lista_insumos[index_existent_insumo]['quantidade'] += insumo['quantidade']
+                lista_insumos[index_existent_insumo]['qtdProd'] += insumo.qtdprod
             else:
                 dados_insumo =  {
                     'id': insumo_objeto_a11.id,
