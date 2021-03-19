@@ -1,3 +1,4 @@
+from csv import reader
 from io import StringIO
 from pathlib import Path
 
@@ -500,4 +501,64 @@ def adicionar_seeds_fases_orcamento(request):
             except:
                 return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
 
+
+def adicionar_seeds_categorias_insumos(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        if a10CatsInsumos.objetos.filter(id=1).exists():
+            return HttpResponse(content="Dados já adicionados", status=400)
+        else:
+            try:
+                csv_file = Path.cwd().joinpath("seeds_db", 'main_a10catsinsumos.csv')
+                data_set = csv_file.read_text(encoding='UTF-8')
+                io_string = StringIO(data_set)
+                for column in reader(io_string, delimiter=';', quotechar='|'):
+                    nova_categoria = a10CatsInsumos(
+                        id=column[0].strip(' "'),
+                        hierarquia=column[1].strip(' "'),
+                        ordenador=column[2].strip(' "'),
+                        descricao=column[3].strip(' "'),
+                        tipo=column[4].strip(' "')
+                    )
+                    nova_categoria.save()
+                return HttpResponse(content="Dados adicionados", status=201)
+            except:
+                return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
+
+
+def adicionar_seeds_insumos(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        if a11Insumos.objetos.filter(id=1).exists():
+            return HttpResponse(content="Dados já adicionados", status=400)
+        else:
+            try:
+                csv_file = Path.cwd().joinpath("seeds_db", 'main_a11insumos.csv')
+                data_set = csv_file.read_text(encoding='UTF-8')
+                io_string = StringIO(data_set)
+                for column in reader(io_string, delimiter=';', quotechar='|'):
+                    nova_categoria = a11Insumos(
+                        id=column[0].strip(' "'),
+                        codigo=column[1].strip(' "'),
+                        descricao=column[2].strip(' "'),
+                        undbas=column[3].strip(' "'),
+                        undcompr=column[4].strip(' "'),
+                        fatundcomp=column[5].strip(' "'),
+                        custo01=column[6].strip(' "'),
+                        custo02=column[7].strip(' "'),
+                        prvda=column[8].strip(' "'),
+                        pesunbas=column[9].strip(' "'),
+                        qtppal=column[10].strip(' "'),
+                        catins=a10CatsInsumos.objetos.get(id=column[11].strip(' "')),
+                        espessura=column[12].strip(' "'),
+                        dataatualizacao=column[13].strip(' "'),
+                        comprimento=column[14].strip(' "'),
+                        largura=column[15].strip(' "'),
+                    )
+                    nova_categoria.save()
+                return HttpResponse(content="Dados adicionados", status=201)
+            except:
+                return HttpResponse(content="Erro ao interno ao adicionar estados", status=500)
 
