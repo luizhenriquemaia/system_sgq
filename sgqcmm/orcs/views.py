@@ -45,7 +45,6 @@ def formatar_com_duas_casas_string(string_valor):
     else:
         return string_valor
 
-
 def obter_dados_gerais_orc(codorcam):
     orcEscolhido = g01Orcamento.objetos.get(pk=int(codorcam))
     codEndEsc = orcEscolhido.ender_id
@@ -62,7 +61,6 @@ def obter_dados_gerais_orc(codorcam):
         'empresa': cliente.contempresa
     }
     return orcamento
-
 
 def somar_custos_eap_editar_orcamento(eap_atividade, eap_entrega, eap_totalizador):
             # somar os custos das eaps para template de editar orcamento
@@ -106,7 +104,6 @@ def somar_custos_eap_editar_orcamento(eap_atividade, eap_entrega, eap_totalizado
                 lista_eaps += lista_eaps_totalizador
                 lista_eaps_totalizador = []
             return lista_eaps
-
 
 def inserir_dados_eap(request, *eap_resultante):
     codigo_orcamento = request.session['codorcamento']
@@ -185,7 +182,6 @@ def inserir_dados_eap(request, *eap_resultante):
         #             )
         #             novoInsEAP.save()
 
-
 def atualizar_custos_orc(codorcam):
     eapAt = g03EapOrc.objetos.filter(orcamento_id=codorcam)
     eapAt.update(vlrunit=0, cstser=0, cstmat=0)
@@ -243,7 +239,6 @@ def atualizar_custos_orc(codorcam):
                 itemSup.save()
     return eapAt
 
-
 def atualizar_lista_insumos(codOrcam):
     # Limpar lista atual de itens
     orcamento = g01Orcamento.objetos.get(pk=codOrcam)
@@ -266,7 +261,6 @@ def atualizar_lista_insumos(codOrcam):
         # de atributo pois não tem mais atividade
         except AttributeError:
             pass
-
 
 def atualizar_dados_insumo(request, codInsumo):
     codorcam = request.session['codorcamento']
@@ -321,13 +315,13 @@ def atualizar_dados_insumo(request, codInsumo):
             request, "orcs/atualizar-dados-insumo.html", {
                 "form": form, "insumo": dicInsumo})
 
-
 def view_para_atualizar_custos_orc(request, codorcam):
     strcodorc = str(codorcam)
     atualizar_custos_orc(codorcam)
     return HttpResponseRedirect(
             reverse(
                 'orcs:editar_orcamento', args=(strcodorc,)))
+
 
 
 def alterar_insumo_atividade(request, codorcam, idEap, idInsumo):
@@ -408,7 +402,7 @@ def novo_orcamento(request):
 def editar_orcamento(request, codorcam):
     # Obter dados gerais do orcamento
     orcamento = obter_dados_gerais_orc(codorcam)
-    orcEscolhido = g01Orcamento.objetos.get(pk=int(codorcam))
+    orcamento_escolhido = g01Orcamento.objetos.get(pk=int(codorcam))
     request.session['codorcamento'] = codorcam
     if request.method == "POST":
         form = formInserirServico(request.POST)
@@ -429,14 +423,14 @@ def editar_orcamento(request, codorcam):
                 qtdorc=1,
                 unidade='un',
                 vlrunit=0,
-                orcamento_id=orcEscolhido.id
+                orcamento_id=orcamento_escolhido.id
             )
             novo_servico.save()
         else:
             messages.error(request, "Erro ao adicionar serviço")
     # se o orçamento for de antes de 23-03-2021 -> ir para antiga view
     elif request.method == "GET":
-        if orcEscolhido.dtorc <= datetime.date(2021, 3, 16):
+        if orcamento_escolhido.dtorc <= datetime.date(2021, 3, 16):
             return HttpResponseRedirect(reverse('orcs:editar_orcamento_antigo', args=(codorcam,)))
         try:
             raw_query_eaps = """ 
@@ -446,7 +440,7 @@ def editar_orcamento(request, codorcam):
                             WHERE orcamento_id = %s AND (tipo = 1 or tipo = 3 or tipo = 5)
                             ORDER BY codeap
                             """
-            eaps_do_orcamento = g03EapOrc.objetos.raw(raw_query_eaps, [orcEscolhido])
+            eaps_do_orcamento = g03EapOrc.objetos.raw(raw_query_eaps, [orcamento_escolhido])
         except DoesNotExist:
             eaps_do_orcamento = []
         eap_orc_5 = [eap for eap in eaps_do_orcamento if eap.tipo == 5]
@@ -455,7 +449,7 @@ def editar_orcamento(request, codorcam):
         lista_eaps = somar_custos_eap_editar_orcamento(eap_orc_1, eap_orc_3, eap_orc_5)
         # Obter Lista de Insumos do Orcamentos
         lista_insumos = []
-        for eap in g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=1):
+        for eap in g03EapOrc.objetos.filter(orcamento_id=orcamento_escolhido, tipo=1):
             for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
                 insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
                 index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo_objeto_a11.descricao), None)
@@ -760,9 +754,67 @@ def cadastrar_insumo(request):
     return render(request, "orcs/cad-insumo.html", {"form":form,})
 
 
-def detalhar_servico(request, codorcam, id):
-    request.session['eap_atividade'] = id
-    idEap = id
+def detalhar_servico(request, codorcam, id_entrega):
+    request.session['eap_atividade'] = id_entrega
+    orcamento = obter_dados_gerais_orc(codorcam)
+    orcamento_escolhido = g01Orcamento.objetos.get(pk=int(codorcam))
+    form = formInserirInsumoNaAtividade()
+    if request.method == "POST":
+        form = formInserirInsumoNaAtividade(request.POST)
+        if form.is_valid():
+            id_novo_insumo = int(request.POST['insumo'])
+            quantidade_novo_insumo = formatar_custos_para_bd(form.cleaned_data['quant_insumo']) if form.cleaned_data['quant_insumo'] else 0
+            valor_novo_insumo = formatar_custos_para_bd(form.cleaned_data['valor_insumo']) if form.cleaned_data['valor_insumo'] else 0                
+            novo_insumo = g05InsEAP(
+                qtdprod=quantidade_novo_insumo,
+                qtdimpr=0,
+                cstunpr=valor_novo_insumo,
+                cstunim=0,
+                insumo=a11Insumos.objetos.get(id=id_novo_insumo),
+                eap_id=id_entrega
+            )
+            novo_insumo.save()
+    elif request.method == "GET":
+        if orcamento_escolhido.dtorc <= datetime.date(2021, 3, 16):
+            return HttpResponseRedirect(reverse('orcs:detalhar_servico_antigo', args=(codorcam, id_entrega)))
+        atividades_eap = g03EapOrc.objetos.filter(orcamento_id=codorcam, tipo=1).only("id", "codeap")
+        codeap_entrega_eap = g03EapOrc.objetos.get(id=id_entrega).codeap
+        atividades_eap_entrega = [eap for eap in atividades_eap if eap.codeap[:5] == codeap_entrega_eap]
+        insumos_atividade = []
+        raw_query_insumo =  """
+                            SELECT main_g05InsEAP.id, main_g05InsEAP.eap_id, CAST(main_g05InsEAP.qtdprod AS DECIMAL(12,2)) AS qtdprod, CAST(main_g05InsEAP.cstunpr AS DECIMAL(12,2)) AS cstunpr,
+                                   main_g03eaporc.codeap,
+                                   main_a11Insumos.descricao AS descricao, main_a11Insumos.undbas AS undbas
+                            FROM main_g05InsEAP 
+                            INNER JOIN main_a11Insumos ON main_a11Insumos.id = main_g05InsEAP.insumo_id
+                            INNER JOIN main_g03eaporc ON main_g03eaporc.id = main_g05InsEAP.eap_id
+                            WHERE main_g05InsEAP.eap_id = %s
+                            ORDER BY main_g05InsEAP.eap_id
+                            """
+        for item, atividade in enumerate(atividades_eap_entrega):
+            insumo_atividade = g05InsEAP.objetos.raw(raw_query_insumo, [atividade.id])
+            for insumo in insumo_atividade:
+                insumos_atividade.append(
+                    {
+                        "id": insumo.id,
+                        "item": item,
+                        "descricao": insumo.descricao,
+                        "quantidade": formatar_custos_para_template(insumo.qtdprod),
+                        "unidade": insumo.undbas,
+                        "custo": formatar_custos_para_template(insumo.cstunpr),
+                        "valorTotal": formatar_custos_para_template(insumo.qtdprod * insumo.cstunpr)
+                    }
+                )
+        return render(
+            request, "orcs/detalhar-servico.html", 
+            {"orcamento": orcamento, "idEap": id_entrega,
+            "insumos": insumos_atividade, "form": form})
+    else:
+        HttpResponse(status=405)
+
+
+def detalhar_servico_antigo(request, codorcam, id_entrega):
+    request.session['eap_atividade'] = id_entrega
     orcamento = obter_dados_gerais_orc(codorcam)
     form = formInserirInsumoNaAtividade()
     if request.method == "POST":
@@ -777,10 +829,10 @@ def detalhar_servico(request, codorcam, id):
                 cstunpr=valor_novo_insumo,
                 cstunim=0,
                 insumo=a11Insumos.objetos.get(id=id_novo_insumo),
-                eap_id=idEap
+                eap_id=id_entrega
             )
             novo_insumo.save()
-    insumos_eap = g05InsEAP.objetos.filter(eap_id=idEap)
+    insumos_eap = g05InsEAP.objetos.filter(eap_id=id_entrega)
     insumos_para_template = []
     for item, insumo in enumerate(insumos_eap, start=1):
         insumo_db = a11Insumos.objetos.get(id=insumo.insumo_id)
@@ -796,7 +848,7 @@ def detalhar_servico(request, codorcam, id):
         insumos_para_template.append(insumo_objeto)
     return render(
         request, "orcs/detalhar-servico.html", 
-        {"orcamento": orcamento, "idEap": idEap,
+        {"orcamento": orcamento, "idEap": id_entrega,
         "insumos": insumos_para_template, "form": form})
 
 

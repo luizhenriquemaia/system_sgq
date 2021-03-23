@@ -50,9 +50,13 @@ urlpatterns = [
         views.excluir_insumo_atividade, 
         name='excluir_insumo_atividade'),
     path(
-        'preorcamento/<int:codorcam>/detalhar-serv/<int:id>',
+        'preorcamento/<int:codorcam>/detalhar-serv/<int:id_entrega>',
         views.detalhar_servico, 
         name='detalhar_servico'),
+    path(
+        'preorcamento/<int:codorcam>/detalhar-serv-antigo/<int:id_entrega>',
+        views.detalhar_servico_antigo, 
+        name='detalhar_servico_antigo'),
     path(
         'preorcamento/<int:codorcam>/detalhar-serv/<int:idEap>/alterar-insumo-atividade/<int:idInsumo>',
         views.alterar_insumo_atividade, 
