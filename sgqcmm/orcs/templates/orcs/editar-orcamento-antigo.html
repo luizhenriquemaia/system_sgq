@@ -35,7 +35,7 @@
 								{{itemeap.codeap}}
 							</div>
 							<div class="col s1" style="font-weight:bold; text-align: right;">
-								{% if itemeap.tipo == 3 %}
+								{% if itemeap.tipo == 1 %}
 									<a href="./detalhar-serv/{{itemeap.id}}"><i class="material-icons">unfold_more</i></a>
 								{% endif %}
 							</div>
@@ -47,7 +47,7 @@
 							<div class="col s2">{{itemeap.vlrunit_formatado}}</div>
 							<div class="col s2">{{itemeap.vlrtot}}</div>
 							<div class="col s1">
-								{% if itemeap.tipo == 3 %}
+								{% if itemeap.tipo == 1 %}
 									<a href="./adicionar-desconto/{{itemeap.id}}">
 										<i class="material-icons">money_off</i>
 									</a>

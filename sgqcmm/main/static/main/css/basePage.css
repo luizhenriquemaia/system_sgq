@@ -306,8 +306,11 @@ span.checkbox-grid {
 	margin-top: 20px;
 }
 
+.icon-button {
+  padding: 15px 20px;
+}
 
-button.submit-hover{
+.submit-hover{
   background: #8B1014;
   color: #FFFFFF;
 	cursor: pointer;
@@ -316,12 +319,12 @@ button.submit-hover{
 	box-shadow: 0 1.5px 4px rgba(0, 0, 0, .24), 0 1.5px 6px rgba(0, 0, 0, .12);
 }
 
-button.submit-hover:hover{
+.submit-hover:hover{
   background:#FFFFFF;
   color:#8B1014;
 }
 
-button.submit-hover:before, button.submit-hover:after{
+.submit-hover:before, .submit-hover:after{
 	content:'';
   position:absolute;
   top:0;
@@ -332,14 +335,14 @@ button.submit-hover:before, button.submit-hover:after{
   transition:.4s ease all;
 }
 
-button.submit-hover:after{
+.submit-hover:after{
   right:inherit;
   top:inherit;
   left:0;
   bottom:0;
 }
 
-button.submit-hover:hover:before, button.submit-hover:hover:after{
+.submit-hover:hover:before, .submit-hover:hover:after{
   width:100%;
   transition:.8s ease all;
 }

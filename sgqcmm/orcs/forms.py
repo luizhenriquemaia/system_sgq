@@ -133,26 +133,13 @@ class formMarcarVisita(forms.Form):
 
 
 class formMedidasVenezianas(forms.Form):
-    base1 = forms.CharField(label='Base1', max_length=20)
-    altura1 = forms.CharField(label='Altura1', max_length=20)
-    repet1 = forms.CharField(label='Repet1', max_length=20)
-    rebite1 = forms.CharField(label='Rebite1', max_length=20)
-    base2 = forms.CharField(label='Base2', max_length=20, required=False)
-    altura2 = forms.CharField(label='Altura2', max_length=20, required=False)
-    repet2 = forms.CharField(label='Repet2', max_length=20, required=False)
-    rebite2 = forms.CharField(label='Rebite2', max_length=20, required=False)
-    base3 = forms.CharField(label='Base3', max_length=20, required=False)
-    altura3 = forms.CharField(label='Altura3', max_length=20, required=False)
-    repet3 = forms.CharField(label='Repet3', max_length=20, required=False)
-    rebite3 = forms.CharField(label='Rebite3', max_length=20, required=False)
-    base4 = forms.CharField(label='Base4', max_length=20, required=False)
-    altura4 = forms.CharField(label='Altura4', max_length=20, required=False)
-    repet4 = forms.CharField(label='Repet4', max_length=20, required=False)
-    rebite4 = forms.CharField(label='Rebite4', max_length=20, required=False)
-    base5 = forms.CharField(label='Base5', max_length=20, required=False)
-    altura5 = forms.CharField(label='Altura5', max_length=20, required=False)
-    repet5 = forms.CharField(label='Repet5', max_length=20, required=False)
-    rebite5 = forms.CharField(label='Rebite5', max_length=20, required=False)
+    selante = forms.ModelChoiceField(
+        queryset=a11Insumos.objetos.filter(catins_id=38).order_by("descricao"),
+        to_field_name="codigo")
+    base = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    altura = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    repeticoes = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    rebite = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
 
 
 class formOrcamentoMultiClickPlanoFixo(forms.Form):

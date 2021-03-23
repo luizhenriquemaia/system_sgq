@@ -26,6 +26,10 @@ urlpatterns = [
         views.editar_orcamento,
         name='editar_orcamento'),
     path(
+        'preorcamento-antigo/<int:codorcam>/', 
+        views.editar_orcamento_antigo,
+        name='editar_orcamento_antigo'),
+    path(
         'preorcamento/<int:codorcam>/atualizar-custos/',
         views.view_para_atualizar_custos_orc,
         name='atualizar_custos_orc'),
@@ -74,10 +78,6 @@ urlpatterns = [
         views.obra_visitada, 
         name='obra_visitada'),
     path(
-        'imp-proposta/v1/<int:codorcam>/', 
-        views.imp_proposta_antiga,
-        name='imp_proposta_antiga'),
-    path(
         'imp-proposta/<int:codorcam>/',
         views.imp_proposta,
         name='imp_proposta'),
@@ -122,9 +122,13 @@ urlpatterns = [
         views.cronog_visitas, 
         name='cronog_visitas'),
     path(
-        'venezianas/<int:codorcam>/', 
+        'venezianas/<int:codigo_orcamento>/', 
         views.venezianas, 
         name='venezianas'),
+    path(
+        'venezianas/ajax/adicionar-mais-vaos/<int:numberOfRows>/', 
+        views.adicionar_mais_vaos_veneziana, 
+        name='adicionar_mais_vaos_veneziana'),
     path(
         'poli-plano-fix/<int:codorcam>/', 
         views.poli_plano_fix, 
