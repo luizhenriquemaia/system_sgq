@@ -3,6 +3,14 @@ from .utils.materiais_orcamento import VenezianaPolicarbonato, PerfilVenezianaAl
 from .utils.funcoes_calculos import arrend_cima, tot_pecas, escrever_linha_eap
 
 
+# escrever "eap" para os insumos de orçamentos de policarbonato
+def escrever_eap_insumos(self):
+    linha_eap = escrever_linha_eap(
+            '', '', -1, arrend_cima(self.quantidade, 2), '', 0, 0, self.codigo
+        )
+    return linha_eap
+
+
 def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
     for valores_vao in valores:
         repeticoes = float(valores_vao['repeticoes'])
@@ -10,7 +18,6 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
         altura_vao = float(valores_vao['altura'])
         quantidade_rebites_por_aleta = float(valores_vao['rebite'])
         objeto_aleta = a11Insumos.objetos.get(codigo=codigo_aleta)
-        # cálculos iniciais
         area_vao = repeticoes * base_vao * altura_vao
 
         # Totalizador entrega externa
@@ -29,7 +36,7 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
             f'{prefixo_eap}.0{linha_atual_entrega}.', texto_descricao, 3, 1, 'un', 1, 55, 0
         )
         eap_resultante.append(linha_eap)
-        # Atividade entrega externa -> Aleta
+        # Insumo entrega externa -> Aleta
         linha_atual_atividade = 1
         chapa_aleta = VenezianaPolicarbonato(codigo_aleta)
         chapa_aleta.quantificar(
@@ -37,12 +44,10 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
             altura_vao, 
             repeticoes
         )
-        texto_descricao = f"{chapa_aleta.total_chapas_aleta} chapas de {chapa_aleta.descricao}"
-        linha_eap = escrever_linha_eap(
-            f'{prefixo_eap}.0{linha_atual_entrega}.0{linha_atual_atividade}.', texto_descricao, 1, chapa_aleta.total_chapas_aleta, 'ch', 0, 0, chapa_aleta.codigo
+        eap_resultante.append(
+            escrever_eap_insumos(chapa_aleta)
         )
-        eap_resultante.append(linha_eap)
-        # Atividade entrega externa -> Perfis Veneziana
+        # Insumo entrega externa -> Perfis Veneziana
         linha_atual_atividade += 1
         perfil_veneziana = PerfilVenezianaAluminio(14114)
         perfil_veneziana.quantificar(
@@ -50,12 +55,10 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
             altura_vao, 
             repeticoes
         )
-        texto_descricao = f"{perfil_veneziana.total_perfis:.2f} barras de {perfil_veneziana.descricao}"
-        linha_eap = escrever_linha_eap(
-            f'{prefixo_eap}.0{linha_atual_entrega}.0{linha_atual_atividade}.', texto_descricao, 1, perfil_veneziana.total_perfis, 'br', 0, 0, perfil_veneziana.codigo
+        eap_resultante.append(
+            escrever_eap_insumos(perfil_veneziana)
         )
-        eap_resultante.append(linha_eap)
-        # Atividade entrega externa -> Rebites
+        # Insumo entrega externa -> Rebites
         linha_atual_atividade += 1
         rebites = Rebite(12734) if chapa_aleta.espessura == 3 else Rebite(13330)
         rebites.quantificar(
@@ -63,12 +66,10 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
             quantidade_rebites_por_aleta, 
             repeticoes
         )
-        texto_descricao = f"{rebites.total_rebites:.2f} centos de {rebites.descricao}"
-        linha_eap = escrever_linha_eap(
-            f'{prefixo_eap}.0{linha_atual_entrega}.0{linha_atual_atividade}.', texto_descricao, 1, rebites.total_rebites, 'cto', 0, 0, rebites.codigo
+        eap_resultante.append(
+            escrever_eap_insumos(rebites)
         )
-        eap_resultante.append(linha_eap)
-        # Atividade entrega externa -> Selante
+        # Insumo entrega externa -> Selante
         linha_atual_atividade += 1
         selante = Selante(codigo_selante)
         selante.calcular_quantidade(
@@ -77,12 +78,10 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
             repeticoes,
             False
         )
-        texto_descricao = f"{selante.quantidade:.2f} saches de {selante.descricao}"
-        linha_eap = escrever_linha_eap(
-            f'{prefixo_eap}.0{linha_atual_entrega}.0{linha_atual_atividade}.', texto_descricao, 1, selante.quantidade, 'un', 0, 0, selante.codigo
+        eap_resultante.append(
+            escrever_eap_insumos(selante)
         )
-        eap_resultante.append(linha_eap)
-        # Atividade entrega externa -> Fita de alumínio
+        # Insumo entrega externa -> Fita de alumínio
         if chapa_aleta.espessura != 3:
             linha_atual_atividade += 1
             fita_aluminio = FitaAluminio(13770)
@@ -91,11 +90,9 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
                 0.9 * arrend_cima(base_vao, 0) * chapa_aleta.linhas_de_aleta,
                 repeticoes
             )
-            texto_descricao = f"{fita_aluminio.quantidade:.2f} rolos de {fita_aluminio.descricao}"
-            linha_eap = escrever_linha_eap(
-                f'{prefixo_eap}.0{linha_atual_entrega}.0{linha_atual_atividade}.', texto_descricao, 1, fita_aluminio.quantidade, 'rl', 0, 0, fita_aluminio.codigo
+            eap_resultante.append(
+                escrever_eap_insumos(fita_aluminio)
             )
-            eap_resultante.append(linha_eap)
 
         # Entrega externa -> Outros insumos e mão de obra
         texto_descricao = f"Outros insumos e mão de obra"
@@ -108,12 +105,12 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
         # Atividade entrega externa -> Mão de obra
         linha_atual_atividade += 1
         # Estimar mao de obra de fabricacao
-        mao_de_obra = arrend_cima(((chapa_aleta.total_chapas_aleta / 2) + (perfil_veneziana.total_perfis_verticais / 2) + (perfil_veneziana.total_perfis_verticais / 4) + (rebites.total_rebites / 20)) * 1.3, 2)
+        mao_de_obra = arrend_cima(((chapa_aleta.quantidade / 2) + (perfil_veneziana.total_perfis_verticais / 2) + (perfil_veneziana.total_perfis_verticais / 4) + (rebites.quantidade / 20)) * 1.3, 2)
         # Estimar mao de obra de instalacao
         mao_de_obra += arrend_cima(area_vao * 8 / 6, 2)
         texto_descricao = f"Mão de obra para fabricação e instalação"
         linha_eap = escrever_linha_eap(
-            f'{prefixo_eap}.0{linha_atual_entrega}.0{linha_atual_atividade}.', texto_descricao, 1, mao_de_obra, 'h', 0, 0, 1163
+            f'{prefixo_eap}.0{linha_atual_entrega}.0{linha_atual_atividade}.', texto_descricao, -1, mao_de_obra, 'h', 0, 0, 1163
         )
         eap_resultante.append(linha_eap)
 

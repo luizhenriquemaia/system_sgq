@@ -52,7 +52,7 @@ class VenezianaPolicarbonato():
             if altura / (self.linhas_de_aleta - 1) <= 0.336:
                 self.linhas_de_aleta -= 1
         self.quantidade_aletas = repeticoes * arrend_cima(base, 0) * self.linhas_de_aleta
-        self.total_chapas_aleta = tot_pecas(self.quantidade_aletas, self.comprimento_peca, self.comprimento)
+        self.quantidade = tot_pecas(self.quantidade_aletas, self.comprimento_peca, self.comprimento)
 
 
 class ChapaMultiClick():
@@ -154,7 +154,7 @@ class PerfilVenezianaAluminio():
         self.total_perfis_horizontais = arrend_cima(2 * repeticoes * base / self.comprimento, 0)
         quantidade_perfis_verticais = 2 * repeticoes * (arrend_cima(base, 0) + 1)
         self.total_perfis_verticais = arrend_cima(quantidade_perfis_verticais * altura / self.comprimento, 0)
-        self.total_perfis = self.total_perfis_horizontais + self.total_perfis_verticais
+        self.quantidade = self.total_perfis_horizontais + self.total_perfis_verticais
 
 
 class Rebite():
@@ -165,7 +165,7 @@ class Rebite():
     def quantificar(self, quantidade_aletas, quantidade_rebites_por_aleta, repeticoes):
         self.total_fixacao_aletas = arrend_cima(quantidade_aletas * quantidade_rebites_por_aleta / 10, 0) / 10
         self.total_fixacao_modulos = arrend_cima(repeticoes * 8 / 10, 0) / 10
-        self.total_rebites = self.total_fixacao_aletas + self.total_fixacao_modulos
+        self.quantidade = self.total_fixacao_aletas + self.total_fixacao_modulos
 
 
 

@@ -62,6 +62,7 @@ def obter_dados_gerais_orc(codorcam):
     }
     return orcamento
 
+
 def somar_custos_eap_editar_orcamento(eap_atividade, eap_entrega, eap_totalizador):
             # somar os custos das eaps para template de editar orcamento
             lista_eaps, lista_eaps_atividade, lista_eaps_entrega, lista_eaps_totalizador = [], [], [], []
@@ -105,16 +106,15 @@ def somar_custos_eap_editar_orcamento(eap_atividade, eap_entrega, eap_totalizado
                 lista_eaps_totalizador = []
             return lista_eaps
 
+
 def inserir_dados_eap(request, *eap_resultante):
     codigo_orcamento = request.session['codorcamento']
-    #atvEapAtual = 0
     novo_codigo_eap = g03EapOrc.proxnumeap(g03EapOrc)
-    #nvCodAtvEap = g04AtvEap.proxnumatveap(g04AtvEap)
     for linha in eap_resultante:
         if linha['Tipo'] > 0:
             nova_eap = g03EapOrc(
                 id = novo_codigo_eap,
-                orcamento = g01Orcamento.objetos.get(pk=codigo_orcamento),
+                orcamento_id = codigo_orcamento,
                 codeap = linha['Ordenador'],
                 coditem = linha['Ordenador'],
                 descitem = linha['Descricao'],
@@ -124,63 +124,18 @@ def inserir_dados_eap(request, *eap_resultante):
                 vlrunit = 0
             )
             nova_eap.save()
-            if linha['Tipo'] == 1:
-                atividade_atual = novo_codigo_eap
-                novo_insumo = g05InsEAP(
-                    eap = g03EapOrc.objetos.get(id=atividade_atual),
-                    insumo = a11Insumos.objetos.get(codigo=linha['CodInsumo']),
-                    qtdprod = linha['Quant'],
-                    qtdimpr = 0
-                )
-                novo_insumo.save()
             novo_codigo_eap += 1
-        # colocar insumo como tipo -1 no calculos.py
-        elif linha['Tipo'] == -1:
+            # atualmente só utilizamos os códigos 5 e 3
+            # sem cadastrar atividades como insumos (estes possuem o tipo -1)
+        elif linha['Tipo'] == -1:            
             novo_insumo = g05InsEAP(
-                eap=g03EapOrc.objetos.get(id=atividade_atual),
+                eap = nova_eap,
                 insumo = a11Insumos.objetos.get(codigo=linha['CodInsumo']),
                 qtdprod = linha['Quant'],
                 qtdimpr = 0
             )
             novo_insumo.save()
-        # Quando for necessário, criar a parte de atividade para a eap
-        # # Corrigir o erro na hora de adicionar um novo vão de veneziana
-        # if linha['CodAtvEAP'] == 5:
-        #     atvEapAtual = 0
-        # else:
-        #     novaEAP = g03EapOrc(
-        #                         id = novo_codigo_eap,
-        #                         orcamento = g01Orcamento.objetos.get(pk=codOrcAtual),
-        #                         codeap = linha['Ordenador'],
-        #                         coditem = linha['Ordenador'],
-        #                         descitem = linha['Descricao'],
-        #                         tipo = linha['Tipo'],
-        #                         qtdorc = linha['Quant'],
-        #                         unidade = linha['Unid'],
-        #                         vlrunit = valor
-        #                         )
-        #     novaEAP.save()
-        #     nvCodEap += 1
-        #     if linha['CodAtvEAP'] and linha['CodAtvPad'] > 0:
-        #         if linha['CodAtvEAP'] > atvEapAtual:
-        #             # Criar atividade padrao para item da EAP
-        #             novaAtvEAP = g04AtvEap(
-        #                 id = nvCodAtvEap,
-        #                 eap = novaEAP,
-        #                 atvpadr = a15AtvsPad.objetos.get(pk=linha['CodAtvPad'])
-        #             )
-        #             novaAtvEAP.save()
-        #             nvCodAtvEap += 1
-        #             atvEapAtual = linha['CodAtvEAP']
-        #         if linha['CodInsumo'] > 0:
-        #             # Criar insumo para atividade padrao da EAP
-        #             novoInsEAP = g05InsEAP(
-        #                 atividade = novaAtvEAP,
-        #                 insumo = a11Insumos.objetos.get(codigo=linha['CodInsumo']),
-        #                 qtdprod = linha['Quant'],
-        #                 qtdimpr=0
-        #             )
-        #             novoInsEAP.save()
+
 
 def atualizar_custos_orc(codorcam):
     eapAt = g03EapOrc.objetos.filter(orcamento_id=codorcam)
@@ -777,34 +732,29 @@ def detalhar_servico(request, codorcam, id_entrega):
     elif request.method == "GET":
         if orcamento_escolhido.dtorc <= datetime.date(2021, 3, 16):
             return HttpResponseRedirect(reverse('orcs:detalhar_servico_antigo', args=(codorcam, id_entrega)))
-        atividades_eap = g03EapOrc.objetos.filter(orcamento_id=codorcam, tipo=1).only("id", "codeap")
-        codeap_entrega_eap = g03EapOrc.objetos.get(id=id_entrega).codeap
-        atividades_eap_entrega = [eap for eap in atividades_eap if eap.codeap[:5] == codeap_entrega_eap]
         insumos_atividade = []
         raw_query_insumo =  """
                             SELECT main_g05InsEAP.id, main_g05InsEAP.eap_id, CAST(main_g05InsEAP.qtdprod AS DECIMAL(12,2)) AS qtdprod, CAST(main_g05InsEAP.cstunpr AS DECIMAL(12,2)) AS cstunpr,
-                                   main_g03eaporc.codeap,
                                    main_a11Insumos.descricao AS descricao, main_a11Insumos.undbas AS undbas
                             FROM main_g05InsEAP 
                             INNER JOIN main_a11Insumos ON main_a11Insumos.id = main_g05InsEAP.insumo_id
-                            INNER JOIN main_g03eaporc ON main_g03eaporc.id = main_g05InsEAP.eap_id
                             WHERE main_g05InsEAP.eap_id = %s
                             ORDER BY main_g05InsEAP.eap_id
                             """
-        for item, atividade in enumerate(atividades_eap_entrega):
-            insumo_atividade = g05InsEAP.objetos.raw(raw_query_insumo, [atividade.id])
-            for insumo in insumo_atividade:
-                insumos_atividade.append(
-                    {
-                        "id": insumo.id,
-                        "item": item,
-                        "descricao": insumo.descricao,
-                        "quantidade": formatar_custos_para_template(insumo.qtdprod),
-                        "unidade": insumo.undbas,
-                        "custo": formatar_custos_para_template(insumo.cstunpr),
-                        "valorTotal": formatar_custos_para_template(insumo.qtdprod * insumo.cstunpr)
-                    }
-                )
+        insumos_entrega = g05InsEAP.objetos.raw(raw_query_insumo, [id_entrega])
+        for item, insumo in enumerate(insumos_entrega):
+            print(f"\n\n{insumo}\n\n")
+            insumos_atividade.append(
+                {
+                    "id": insumo.id,
+                    "item": item,
+                    "descricao": insumo.descricao,
+                    "quantidade": formatar_custos_para_template(insumo.qtdprod),
+                    "unidade": insumo.undbas,
+                    "custo": formatar_custos_para_template(insumo.cstunpr),
+                    "valorTotal": formatar_custos_para_template(insumo.qtdprod * insumo.cstunpr)
+                }
+            )
         return render(
             request, "orcs/detalhar-servico.html", 
             {"orcamento": orcamento, "idEap": id_entrega,
