@@ -29,7 +29,8 @@
 					</div>
 					<div class="divider"></div>
 					<br>
-					{% for itemeap in eaporcam %}
+					<div id="services_id">
+						{% for itemeap in eaporcam %}
 						<div class="row" style="text-align: center;">
 							<div class="col s1" style="text-align: left;">
 								{{itemeap.codeap}}
@@ -48,18 +49,19 @@
 							<div class="col s2">{{itemeap.vlrtot}}</div>
 							<div class="col s1">
 								{% if itemeap.tipo == 3 %}
-									<a href="./adicionar-desconto/{{itemeap.id}}">
-										<i class="material-icons">money_off</i>
-									</a>
+								<a href="./adicionar-desconto/{{itemeap.id}}">
+									<i class="material-icons">money_off</i>
+								</a>
 								{% endif %}
 							</div>
 							<div class="col s1" style="font-weight:bold;">
-								<a href="./excluir-serv/{{itemeap.codeap}}">
+								<button class="generic-action-icon-button" value="{{itemeap.codeap}}" onclick=deleteService(this.value)>
 									<i class="material-icons">delete</i>
-								</a>
+								</button>
 							</div>
 						</div>
-					{% endfor %}
+						{% endfor %}
+					</div>
 				{% endif %}
 				<br>
 				<form method="POST">
@@ -264,4 +266,39 @@
 		</button>
 		{% load static %}
 		<script src="{% static 'main/js/menuPagina.js' %}" type="text/javascript"></script>
+		<script>
+			function deleteService(codeEap) {
+				const request = new Request(`./ajax/excluir-serv/${codeEap}`,
+					{
+						method: "DELETE",
+						headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+					}
+				)
+				fetch(request, {
+					method: "DELETE",
+					mode: 'same-origin'
+				}).then(
+					function (response) {
+						if (response.status === 200) {
+							M.toast({ html: `Serviço ${codeEap} excluido`, classes: 'green rounded', displayLength: 2000 })
+							let xhttp = new XMLHttpRequest()
+							xhttp.onreadystatechange = function (data) {
+								if (this.readyState === 4 && this.status === 200) {
+									document.getElementById("services_id").innerHTML = this.response
+								}
+							}
+							xhttp.open("GET", "./ajax/carregar-servico/", true)
+							xhttp.send()
+						} else if (response.status === 400) {
+							M.toast({ html: "Erro no código da eap", classes: 'red rounded', displayLength: 3000 })
+						} else if (response.status === 500) {
+							M.toast({ html: "Erro interno do servidor", classes: 'red rounded', displayLength: 3000 })
+						} else {
+							M.toast({ html: "Erro ao atualizar lista de serviços, por favor recarregue a página", classes: 'red rounded', displayLength: 4000 })
+						}
+						
+					}
+				)
+			}	
+		</script>
 {% endblock content %}

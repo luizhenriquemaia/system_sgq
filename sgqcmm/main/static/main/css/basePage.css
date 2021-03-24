@@ -344,7 +344,18 @@ span.checkbox-grid {
 
 .submit-hover:hover:before, .submit-hover:hover:after{
   width:100%;
-  transition:.8s ease all;
+  transition:.4s ease all;
+}
+
+.generic-action-icon-button {
+  background: #FFFFFF;
+  cursor: pointer;
+  color: #138C11;
+  transition: .5s ease all;
+}
+
+.generic-action-icon-button:hover {
+  color: #8b1014;
 }
 
 a{

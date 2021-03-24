@@ -819,6 +819,49 @@ def excluir_servico(request, codorcam, codeap):
     return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(strcodorc,)))
 
 
+def ajax_excluir_servico(request, codorcam, codeap):
+    if request.method == "DELETE":
+        if request.user:
+            objetos_do_servico = g03EapOrc.objetos.filter(orcamento__id=codorcam, codeap__startswith=codeap)
+            if objetos_do_servico == []:
+                return HttpResponse(status=400)
+            else:
+                objetos_do_servico.delete()
+                return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=405)
+
+
+def ajax_carregar_servico(request, codorcam):
+    if request.method == "GET":
+        if request.user:
+            orcamento_escolhido = g01Orcamento.objetos.get(id=codorcam)
+            if orcamento_escolhido.dtorc <= datetime.date(2021, 3, 16):
+                return HttpResponseRedirect(reverse('orcs:editar_orcamento_antigo', args=(codorcam,)))
+            try:
+                raw_query_eaps = """ 
+                                SELECT id, codeap, descitem, CAST(qtdorc AS DECIMAL(12,2)), 
+                                unidade, CAST(vlrunit AS DECIMAL(12,2)), tipo
+                                FROM main_g03eaporc 
+                                WHERE orcamento_id = %s AND (tipo = 1 or tipo = 3 or tipo = 5)
+                                ORDER BY codeap
+                                """
+                eaps_do_orcamento = g03EapOrc.objetos.raw(raw_query_eaps, [orcamento_escolhido])
+            except DoesNotExist:
+                eaps_do_orcamento = []
+            eap_orc_5 = [eap for eap in eaps_do_orcamento if eap.tipo == 5]
+            eap_orc_3 = [eap for eap in eaps_do_orcamento if eap.tipo == 3]
+            eap_orc_1 = [eap for eap in eaps_do_orcamento if eap.tipo == 1]
+            lista_eaps = somar_custos_eap_editar_orcamento(eap_orc_1, eap_orc_3, eap_orc_5)
+            return render(request, 'orcs/carregar-servicos.html', {"eaporcam": lista_eaps})
+        else:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=405)
+
+
 def excluir_insumo_atividade(request, codorcam, idEap, idInsumo):
     try:
         g05InsEAP.objetos.get(id=idInsumo).delete()
