@@ -12,6 +12,7 @@ def escrever_eap_insumos(self):
 
 
 def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
+    eap_resultante = []
     for valores_vao in valores:
         repeticoes = float(valores_vao['repeticoes'])
         base_vao = float(valores_vao['base'])
@@ -27,7 +28,7 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
             texto_descricao = f"{repeticoes} vãos de "
         texto_descricao += f"{base_vao:.2f} x {altura_vao:.2f}m utilizando {objeto_aleta.descricao}"
         linha_eap = escrever_linha_eap(f'{prefixo_eap}.', texto_descricao, 5, area_vao, 'm²', 0, 0, 0)
-        eap_resultante = [linha_eap]
+        eap_resultante.append(linha_eap)
 
         # Entregas externas -> policarbonato
         texto_descricao = f"Policarbonato e acessórios"
@@ -163,4 +164,5 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
             f'{prefixo_eap}.0{linha_atual_entrega}.0{linha_atual_atividade}.', texto_descricao, 2, rebites.total_fixacao_modulos, 'cto', 0, 0, 0
         )
         eap_resultante.append(linha_eap)
+        prefixo_eap += 1
     return eap_resultante
