@@ -1641,17 +1641,19 @@ def venezianas(request, codigo_orcamento):
             atualizar_lista_insumos(codigo_orcamento)
             # # Atualizar custos do orcamento
             # #atualizar_custos_orc(cod_orc_atual)
-            return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(int(codigo_orcamento),)))
+            return HttpResponse(status=201)
         else:
             for form in forms:
                 print(f"\n\n{form.errors.as_data}\n\n")
             return HttpResponse(status=400)
-    else:
+    elif request.method == "GET":
         form = formMedidasVenezianas(prefix=1)
         orcamento = obter_dados_gerais_orc(codigo_orcamento)
         aletas = a11Insumos.objetos.filter(catins_id=48)
         return render(request, "orcs/orcamento-venezianas.html", {"orcamento": orcamento,
                                                             "aletas": aletas, "form": form})
+    else:
+        return HttpResponse(status=405)
 
 def adicionar_mais_vaos_veneziana(request, numberOfRows):
     form = formMedidasVenezianas(prefix=numberOfRows)

@@ -106,9 +106,11 @@
 			mode: 'same-origin'
 		}).then(
 			function(response) {
-				if (response.status === 200) {
-					console.log("OK")
+				if (response.status === 201) {
 					M.toast({ html: "Vãos adicionados", classes: 'green rounded', displayLength: 2000 })
+					setTimeout(function() {
+						window.location.href = "../../preorcamento/{{orcamento.codorcamento}}"
+					}, 2000)
 				} else if (response.status === 400) {
 					M.toast({ html: "Sem dados suficientes para prosseguir", classes: 'red rounded', displayLength: 3000 })
 				} else if (response.status === 500) {
