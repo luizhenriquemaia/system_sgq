@@ -27,7 +27,16 @@
     <a href="#" id="fasesOrcamento_id" onclick=add_data(this.id) class="collection-item black-text">
         Fases do orçamento
     </a>
+    <a href="#" id="categoriasInsumos_id" onclick=add_data(this.id) class="collection-item black-text">
+        Categorias insumos
+    </a>
+    <a href="#" id="insumos_id" onclick=add_data(this.id) class="collection-item black-text">
+        Insumos
+    </a>
 </div>
+<br>
+<br>
+<a href="../" style="text-align: left;"><i class="medium material-icons">reply_all</i></a>
 <script>
     function add_data(idField) {
         let request = ""
@@ -55,6 +64,12 @@
                 break
             case "fasesOrcamento_id":
                 request = new Request(`./ajax/fases-do-orcamento/`)
+                break
+            case "categoriasInsumos_id":
+                request = new Request(`./ajax/categorias-insumos/`)
+                break
+            case "insumos_id":
+                request = new Request(`./ajax/insumos/`)
                 break
             }
         fetch(request, {

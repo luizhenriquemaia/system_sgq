@@ -1,0 +1,16 @@
+{% for insumo in insumosCadastrados %}
+<tr>
+    <td data-lable="Numero">
+        <a href="./{{insumo.id}}/">{{insumo.id}}</a>
+    </td>
+    <td>
+        {{insumo.codigo}}
+    </td>
+    <td>
+        {{insumo.descricao}}
+    </td>
+    <td>
+        {{insumo.catins}}
+    </td>
+</tr>
+{% endfor %}

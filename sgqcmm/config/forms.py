@@ -1,6 +1,6 @@
 from django import forms
 
-from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, b01Empresas
+from main.models import a03Estados, a04Municipios, a05Bairros, a06Lograds, a10CatsInsumos, b01Empresas
 
 
 class formCadastrarEmpresa(forms.Form):
@@ -81,3 +81,18 @@ class formEditarCategoriaInsumo(forms.Form):
     hierarquia = forms.IntegerField(max_value=100, min_value=1, required=False)
     ordenador = forms.IntegerField(min_value=1, required=False)
     descricao = forms.CharField(max_length=50, required=False)
+
+class formCadastroInsumo(forms.Form):
+    categoria = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.all().order_by('ordenador'))
+    descricao = forms.CharField(max_length=200)
+    unidade_base = forms.CharField(max_length=10)
+    unidade_compra = forms.CharField(max_length=10, required=False)
+    fator_conversao = forms.FloatField(required=False)
+    custo_1 = forms.DecimalField(max_digits=12, decimal_places=4)
+    custo_2 = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    preco_unitario_venda = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    peso_unidade_basica = forms.DecimalField(max_digits=8, decimal_places=3, required=False)
+    quantidade_unidade_palete = forms.DecimalField(max_digits=8, decimal_places=2, required=False)
+    comprimento = forms.DecimalField(max_digits=8, decimal_places=1, required=False)
+    largura = forms.DecimalField(max_digits=8, decimal_places=1, required=False)
+    espessura = forms.DecimalField(max_digits=8, decimal_places=1, required=False)

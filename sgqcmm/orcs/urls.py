@@ -26,6 +26,10 @@ urlpatterns = [
         views.editar_orcamento,
         name='editar_orcamento'),
     path(
+        'preorcamento-antigo/<int:codorcam>/', 
+        views.editar_orcamento_antigo,
+        name='editar_orcamento_antigo'),
+    path(
         'preorcamento/<int:codorcam>/atualizar-custos/',
         views.view_para_atualizar_custos_orc,
         name='atualizar_custos_orc'),
@@ -42,13 +46,25 @@ urlpatterns = [
         views.excluir_servico, 
         name='excluir_servico'),
     path(
+        'preorcamento/<int:codorcam>/ajax/excluir-serv/<str:codeap>',
+        views.ajax_excluir_servico, 
+        name='ajax_excluir_servico'),
+    path(
+        'preorcamento/<int:codorcam>/ajax/carregar-servico/',
+        views.ajax_carregar_servico, 
+        name='ajax_carregar_servico'),
+    path(
         'preorcamento/<int:codorcam>/detalhar-serv/<int:idEap>/excluir-insumo-atividade/<int:idInsumo>',
         views.excluir_insumo_atividade, 
         name='excluir_insumo_atividade'),
     path(
-        'preorcamento/<int:codorcam>/detalhar-serv/<int:id>',
+        'preorcamento/<int:codorcam>/detalhar-serv/<int:id_entrega>',
         views.detalhar_servico, 
         name='detalhar_servico'),
+    path(
+        'preorcamento/<int:codorcam>/detalhar-serv-antigo/<int:id_entrega>',
+        views.detalhar_servico_antigo, 
+        name='detalhar_servico_antigo'),
     path(
         'preorcamento/<int:codorcam>/detalhar-serv/<int:idEap>/alterar-insumo-atividade/<int:idInsumo>',
         views.alterar_insumo_atividade, 
@@ -73,10 +89,6 @@ urlpatterns = [
         'visita-efetuada/<int:codVisita>/', 
         views.obra_visitada, 
         name='obra_visitada'),
-    path(
-        'imp-proposta/v1/<int:codorcam>/', 
-        views.imp_proposta_antiga,
-        name='imp_proposta_antiga'),
     path(
         'imp-proposta/<int:codorcam>/',
         views.imp_proposta,
@@ -122,9 +134,13 @@ urlpatterns = [
         views.cronog_visitas, 
         name='cronog_visitas'),
     path(
-        'venezianas/<int:codorcam>/', 
+        'venezianas/<int:codigo_orcamento>/', 
         views.venezianas, 
         name='venezianas'),
+    path(
+        'venezianas/ajax/adicionar-mais-vaos/<int:numberOfRows>/', 
+        views.adicionar_mais_vaos_veneziana, 
+        name='adicionar_mais_vaos_veneziana'),
     path(
         'poli-plano-fix/<int:codorcam>/', 
         views.poli_plano_fix, 

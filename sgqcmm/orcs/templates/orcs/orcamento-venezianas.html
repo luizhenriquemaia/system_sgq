@@ -1,0 +1,124 @@
+{% extends "main/basePage.html" %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="content">
+	<div class="title-page">
+		<h4>Orçamento para {{orcamento.nomecliente}}</h4>
+	</div>
+	<div class="endereco-orcamento">
+			{{orcamento.endereco}}
+		<div class="divider"></div>
+	</div>
+	<form method="POST" onsubmit=submitForm(event)>
+		{% csrf_token %}
+		<div class="row">
+			<div class="col s7">
+				<label>Tipo de Aleta:</label>
+				<select name="tipAleta" id="tipoAleta_id" required>
+					<option value="">-------</option>
+					{% for aleta in aletas %}
+					<option value="{{ aleta.codigo }}">{{ aleta.codigo }} - {{ aleta.descricao }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col s5">
+				<label>Selante</label>
+				{{ form.selante }}
+			</div>
+		</div>
+		<table class="highlight" id="tableVenezianas_id">
+			<thead>
+				<tr>
+					<th>Base</th>
+					<th>Altura</th>
+					<th>Repetições</th>
+					<th>Rebites por Aleta</th>
+				</tr>
+			</thead>
+			<tbody id="bodyVeneziana_id">
+				<tr>
+					<td>{{ form.base }}</td>
+					<td>{{ form.altura }}</td>
+					<td>{{ form.repeticoes }}</td>
+					<td>{{ form.rebite }}</td>
+				</tr>
+			</tbody>
+		</table>
+		<br>
+		<br>
+		<div class="row">
+			<div class="col s2">
+				<button class="submit-hover icon-button" type="button" onclick=addVao()><i class="material-icons">add</i></button>
+			</div>
+			<div class="col s1 offset-s9" style="padding:0px;">
+				<button class="submit-hover icon-button" name="btnProximo" type="submit"><i class="material-icons">navigate_next</i></button>
+			</div>
+		</div>
+	</form>
+</div>
+<script>
+	function addVao() {
+		const bodyOfTable = document.getElementById("bodyVeneziana_id")
+		let numberOfRows = document.getElementById("tableVenezianas_id").rows.length
+		let xhttp = new XMLHttpRequest()
+		xhttp.onreadystatechange = function (data) {
+			if (this.readyState === 4 && this.status === 200) {
+				bodyOfTable.innerHTML = bodyOfTable.innerHTML + this.response
+				numberOfRows += 1
+			} else if (this.readyState === 4 && this.status !== 200) {
+				M.toast({ html: "Erro ao adicionar mais vãos", classes: 'red rounded', displayLength: 3000 })
+			}
+		}
+		xhttp.open("GET", `../ajax/adicionar-mais-vaos/${numberOfRows}`, true)
+		xhttp.send()
+	}
+
+	function submitForm(e) {
+		e.preventDefault()
+		const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+		let numberOfRows = document.getElementById("tableVenezianas_id").rows.length
+		let data_to_backend = new FormData()
+		let totalVaos = 0
+		for (var i = 1; i < numberOfRows; i++) {
+			let base_vao = document.getElementById(`id_${i}-base`).value
+			let altura_vao = document.getElementById(`id_${i}-altura`).value
+			let repeticoes_vao = document.getElementById(`id_${i}-repeticoes`).value
+			let rebite_vao = document.getElementById(`id_${i}-rebite`).value
+			if (base_vao !== '' && altura_vao !== '' && repeticoes_vao !== '' && rebite_vao !== '') {
+				data_to_backend.append(`${i}-base`, base_vao)
+				data_to_backend.append(`${i}-altura`, altura_vao)
+				data_to_backend.append(`${i}-repeticoes`, repeticoes_vao)
+				data_to_backend.append(`${i}-rebite`, rebite_vao)
+				data_to_backend.append(`${i}-selante`, document.getElementById("id_1-selante").value)
+				totalVaos += 1
+			}
+		}
+		data_to_backend.append("totalVaos", totalVaos)
+		data_to_backend.append("aleta", document.getElementById("tipoAleta_id").value)
+		const request = new Request("./", 
+		{
+			method: 'POST',
+			headers: {'X-CSRFToken': csrftoken},
+			body: data_to_backend
+		})
+		fetch(request, {
+			method: 'POST',
+			mode: 'same-origin'
+		}).then(
+			function(response) {
+				if (response.status === 201) {
+					M.toast({ html: "Vãos adicionados", classes: 'green rounded', displayLength: 2000 })
+					setTimeout(function() {
+						window.location.href = "../../preorcamento/{{orcamento.codorcamento}}"
+					}, 2000)
+				} else if (response.status === 400) {
+					M.toast({ html: "Sem dados suficientes para prosseguir", classes: 'red rounded', displayLength: 3000 })
+				} else if (response.status === 500) {
+					M.toast({ html: "Erro interno do servidor", classes: 'red rounded', displayLength: 3000 })
+				}
+			}
+		)
+	}
+</script>
+{% endif %}
+{% endblock content %}

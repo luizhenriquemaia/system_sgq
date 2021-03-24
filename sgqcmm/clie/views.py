@@ -9,7 +9,6 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
                               redirect, render, reverse)
 from main.forms import formNovoEndereco
 from main.funcoes import format_list_telefone, nomesequencia, numpurotelefone
-from main.add_from_seeds import add_estados, add_municipios, add_tipos_de_telefone
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          a07TiposEnd, a09TiposFone, b01Empresas, e01Cadastros, e02FonesCad,
                          e03WebCad, e04EndCad, e06ContCad)
@@ -100,18 +99,9 @@ def criar_novo_cliente(request, nome, telefone, email):
     except ObjectDoesNotExist:
         cod_cliente = 1
     # Caso seja o primeiro cadastro de cliente
-    try:
-        a03Estados.objetos.get(id=1)
-    except:
-        add_estados()
-    try:
-        a04Municipios.objetos.get(id=1)
-    except:
-        add_municipios()
-    try:
-        a09TiposFone.objetos.get(id=1)
-    except:
-        add_tipos_de_telefone()
+    if not a09TiposFone.objetos.filter(id=1).exists():
+        messages.error(request, "Sem tipos de telefones cadastrados, vá para config/add-seeds")
+        return HttpResponseRedirect(reverse('main:inicio'))
     cliente = e01Cadastros(
         id=cod_cliente,
         usrcad=request.user,
@@ -121,19 +111,15 @@ def criar_novo_cliente(request, nome, telefone, email):
         tipo=1
     )
     cliente.save()
-    # Cadastrar telefone do cliente
     if telefone:
         e02FonesCad.novofonecad(e02FonesCad, cod_cliente, telefone)
-    # Cadastrar email do cliente
     if email == '' or email == '@':
         pass
     else:
         e03WebCad.novoemail(e03WebCad, cod_cliente, email)
-    # Requerer nome completo do cliente e tratamento (Sr., Sra., etc.)
     request.session['codcliente'] = cod_cliente
     request.session['novofone'] = '0'
     request.session['novoemail'] = '@'
-    return
 
 
 def selecionar_cliente(request):
@@ -313,6 +299,15 @@ def dados_cliente(request):
 def cadastrar_novo_endereco(request):
     codigo_cliente = request.session['codcliente']
     nome_cliente = e01Cadastros.objetos.get(id=codigo_cliente).descrcad
+    if not a03Estados.objetos.filter(id=1).exists():
+        messages.error(request, "Sem estados cadastrados, vá para config/add-seeds")
+        return HttpResponseRedirect(reverse('main:inicio'))
+    if not a04Municipios.objetos.filter(id=1).exists():
+        messages.error(request, "Sem municípios cadastrados, vá para config/add-seeds")
+        return HttpResponseRedirect(reverse('main:inicio'))
+    if not a07TiposEnd.objetos.filter(id=1).exists():
+        messages.error(request, "Sem tipos de endereço cadastrados, vá para config/add-seeds")
+        return HttpResponseRedirect(reverse('main:inicio'))
     if request.POST:
         form = formNovoEndereco(request.POST)
         if form.is_valid():
@@ -320,7 +315,7 @@ def cadastrar_novo_endereco(request):
             estado = request.POST['estado']
             cidade = request.POST['cidade']
             if form.cleaned_data['novo_bairro']:
-                if len(a05Bairros.objetos.filter(bairro=form.cleaned_data['novo_bairro'])) > 0:
+                if a05Bairros.objetos.filter(bairro=form.cleaned_data['novo_bairro']).exists():
                     bairro = a05Bairros.objetos.filter(bairro=form.cleaned_data['novo_bairro'])[0]
                 else:
                     bairro = a05Bairros(
@@ -336,7 +331,7 @@ def cadastrar_novo_endereco(request):
                 if request.POST['bairro'] != "":
                     bairro = a05Bairros.objetos.get(id=request.POST['bairro'])
             if form.cleaned_data['novo_logradouro']:
-                if len(a06Lograds.objetos.filter(logradouro=form.cleaned_data['novo_logradouro'])) > 0:
+                if a06Lograds.objetos.filter(logradouro=form.cleaned_data['novo_logradouro']).exists():
                     logradouro = a06Lograds.objetos.filter(logradouro=form.cleaned_data['novo_logradouro'])[0]
                 else:
                     logradouro = a06Lograds(
@@ -351,7 +346,7 @@ def cadastrar_novo_endereco(request):
                 if request.POST['logradouro'] != "":
                     logradouro = a06Lograds.objetos.get(id=request.POST['logradouro'])
             complemento = form.cleaned_data['complemento']
-            if len(e04EndCad.objetos.filter(complend=form.cleaned_data['complemento'], cadastro=e01Cadastros.objetos.get(id=codigo_cliente), lograd=logradouro)) > 0:
+            if e04EndCad.objetos.filter(complend=form.cleaned_data['complemento'], cadastro=e01Cadastros.objetos.get(id=codigo_cliente), lograd=logradouro).exists():
                 novo_endereco_cliente = e04EndCad.objetos.filter(complend=form.cleaned_data['complemento'], cadastro=e01Cadastros.objetos.get(id=codigo_cliente), lograd=logradouro)[0]
             else:
                 novo_endereco_cliente = e04EndCad(

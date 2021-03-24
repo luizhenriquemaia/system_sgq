@@ -229,7 +229,7 @@ class a10CatsInsumos(models.Model):
     objetos = models.Manager()
 
     def __str__(self):
-        return self.descricao
+        return f"{self.ordenador} {self.descricao}"
 
     def ordtxt(self):
         return str(self.ordenador)

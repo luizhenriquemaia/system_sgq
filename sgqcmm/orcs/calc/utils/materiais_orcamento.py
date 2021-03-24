@@ -1,7 +1,6 @@
 # Materiais utilizados nos orçamentos de policarbonato
 from main.models import a11Insumos
-from .funcoes_calculos import (arrend_cima, tot_peca_juncao,
-                                     tot_peca_sobras)
+from .funcoes_calculos import (arrend_cima, tot_peca_juncao, tot_pecas, tot_peca_sobras)
 
 
 class ChapaPolicarbonato():
@@ -24,6 +23,36 @@ class ChapaPolicarbonato():
         self.quantidade = arrend_cima(
             quant_total_pedacos / (pedacos_comp_chapa * pedacos_larg_chapa), 0
         )
+
+
+class VenezianaPolicarbonato():
+    def __init__(self, codigo):
+        self.codigo = codigo
+        veneziana_bd = a11Insumos.objetos.get(codigo=codigo)
+        self.descricao = veneziana_bd.descricao
+        self.espessura = int(veneziana_bd.espessura)
+        self.comprimento = float(round(veneziana_bd.comprimento / 1000, 2))
+
+    def quantificar(self, base, altura, repeticoes):
+        self.comprimento_peca = base / arrend_cima(base, 0)
+        if self.espessura == 3:
+            self.linhas_de_aleta = arrend_cima(altura / 0.227, 0)
+            # No catálogo para 2 aletas a altura do vão é 0.504
+            if altura <= 0.504:
+                self.linhas_de_aleta = 2
+            # Distância máxima entre aletas = 24cm, sendo que o no catálogo está 22.7cm
+            if altura / (self.linhas_de_aleta - 1) <= 0.24:
+                self.linhas_de_aleta -= 1
+        elif self.espessura == 5:
+            self.linhas_de_aleta = arrend_cima(altura / 0.316, 0)
+            # No catálogo para 2 aletas a altura do vão é 0.504
+            if altura <= 0.504:
+                self.linhas_de_aleta = 2
+            # Distância máxima entre aletas = 33.6cm, sendo que o no catálogo está 31.6cm
+            if altura / (self.linhas_de_aleta - 1) <= 0.336:
+                self.linhas_de_aleta -= 1
+        self.quantidade_aletas = repeticoes * arrend_cima(base, 0) * self.linhas_de_aleta
+        self.quantidade = tot_pecas(self.quantidade_aletas, self.comprimento_peca, self.comprimento)
 
 
 class ChapaMultiClick():
@@ -111,6 +140,33 @@ class PerfilArremate():
         ) if comprimento > 6 else tot_peca_sobras(
             2 * repeticoes * quant_modulos, comprimento, 6
         )
+
+
+
+class PerfilVenezianaAluminio():
+    def __init__(self, codigo):
+        self.codigo = codigo
+        perfil_bd = a11Insumos.objetos.get(codigo=codigo)
+        self.descricao = perfil_bd.descricao
+        self.comprimento = float(round(perfil_bd.comprimento / 1000, 2))
+
+    def quantificar(self, base, altura, repeticoes):
+        self.total_perfis_horizontais = arrend_cima(2 * repeticoes * base / self.comprimento, 0)
+        quantidade_perfis_verticais = 2 * repeticoes * (arrend_cima(base, 0) + 1)
+        self.total_perfis_verticais = arrend_cima(quantidade_perfis_verticais * altura / self.comprimento, 0)
+        self.quantidade = self.total_perfis_horizontais + self.total_perfis_verticais
+
+
+class Rebite():
+    def __init__(self, codigo):
+        self.codigo = codigo
+        self.descricao = a11Insumos.objetos.get(codigo=codigo).descricao
+
+    def quantificar(self, quantidade_aletas, quantidade_rebites_por_aleta, repeticoes):
+        self.total_fixacao_aletas = arrend_cima(quantidade_aletas * quantidade_rebites_por_aleta / 10, 0) / 10
+        self.total_fixacao_modulos = arrend_cima(repeticoes * 8 / 10, 0) / 10
+        self.quantidade = self.total_fixacao_aletas + self.total_fixacao_modulos
+
 
 
 class Tampa():
