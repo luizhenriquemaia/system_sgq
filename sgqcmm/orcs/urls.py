@@ -42,13 +42,13 @@ urlpatterns = [
         views.excluir_orcamento,
         name='excluir_orcamento'),
     path(
-        'preorcamento/<int:codorcam>/excluir-serv/<str:codeap>',
-        views.excluir_servico, 
-        name='excluir_servico'),
-    path(
         'preorcamento/<int:codorcam>/ajax/excluir-serv/<str:codeap>',
         views.ajax_excluir_servico, 
         name='ajax_excluir_servico'),
+    path(
+        'preorcamento/<int:codorcam>/ajax/inserir-serv/',
+        views.ajax_inserir_servico, 
+        name='ajax_inserir_servico'),
     path(
         'preorcamento/<int:codorcam>/ajax/carregar-servico/',
         views.ajax_carregar_servico, 

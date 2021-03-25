@@ -29,7 +29,7 @@ class formInserirServico(forms.Form):
     descricao = forms.CharField(max_length=255)
     codigo_eap = forms.CharField(max_length=30)
     tipo = forms.ChoiceField(choices=[
-        ('1', 'Atividade'), ('2', 'Entrega Interna'), ('3', 'Entrega Externa')])
+        ('3', 'Entrega Externa'), ('5', 'Totalizador de Entrega Externa')])
     
 
 class formCadInsumo(forms.Form):
