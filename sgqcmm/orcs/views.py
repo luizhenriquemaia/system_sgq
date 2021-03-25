@@ -684,29 +684,12 @@ def cadastrar_insumo(request):
     return render(request, "orcs/cad-insumo.html", {"form":form,})
 
 
-def detalhar_servico(request, codorcam, id_entrega):
-    request.session['eap_atividade'] = id_entrega
+def detalhar_servico(request, codorcam, codeap):
+    request.session['eap_atividade'] = codeap
     orcamento = obter_dados_gerais_orc(codorcam)
     orcamento_escolhido = g01Orcamento.objetos.get(pk=int(codorcam))
     form = formInserirInsumoNaAtividade()
-    if request.method == "POST":
-        form = formInserirInsumoNaAtividade(request.POST)
-        if form.is_valid():
-            id_novo_insumo = int(request.POST['insumo'])
-            quantidade_novo_insumo = formatar_custos_para_bd(form.cleaned_data['quant_insumo']) if form.cleaned_data['quant_insumo'] else 0
-            valor_novo_insumo = formatar_custos_para_bd(form.cleaned_data['valor_insumo']) if form.cleaned_data['valor_insumo'] else 0                
-            novo_insumo = g05InsEAP(
-                qtdprod=quantidade_novo_insumo,
-                qtdimpr=0,
-                cstunpr=valor_novo_insumo,
-                cstunim=0,
-                insumo=a11Insumos.objetos.get(id=id_novo_insumo),
-                eap_id=id_entrega
-            )
-            novo_insumo.save()
-    elif request.method == "GET":
-        if orcamento_escolhido.dtorc <= datetime.date(2021, 3, 16):
-            return HttpResponseRedirect(reverse('orcs:detalhar_servico_antigo', args=(codorcam, id_entrega)))
+    if request.method == "GET":
         insumos_atividade = []
         raw_query_insumo =  """
                             SELECT main_g05InsEAP.id, main_g05InsEAP.eap_id, CAST(main_g05InsEAP.qtdprod AS DECIMAL(12,2)) AS qtdprod, CAST(main_g05InsEAP.cstunpr AS DECIMAL(12,2)) AS cstunpr,
@@ -716,9 +699,8 @@ def detalhar_servico(request, codorcam, id_entrega):
                             WHERE main_g05InsEAP.eap_id = %s
                             ORDER BY main_g05InsEAP.eap_id
                             """
-        insumos_entrega = g05InsEAP.objetos.raw(raw_query_insumo, [id_entrega])
+        insumos_entrega = g05InsEAP.objetos.raw(raw_query_insumo, [codeap])
         for item, insumo in enumerate(insumos_entrega):
-            print(f"\n\n{insumo}\n\n")
             insumos_atividade.append(
                 {
                     "id": insumo.id,
@@ -732,49 +714,10 @@ def detalhar_servico(request, codorcam, id_entrega):
             )
         return render(
             request, "orcs/detalhar-servico.html", 
-            {"orcamento": orcamento, "idEap": id_entrega,
+            {"orcamento": orcamento, "idEap": codeap,
             "insumos": insumos_atividade, "form": form})
     else:
         HttpResponse(status=405)
-
-
-def detalhar_servico_antigo(request, codorcam, id_entrega):
-    request.session['eap_atividade'] = id_entrega
-    orcamento = obter_dados_gerais_orc(codorcam)
-    form = formInserirInsumoNaAtividade()
-    if request.method == "POST":
-        form = formInserirInsumoNaAtividade(request.POST)
-        if form.is_valid():
-            id_novo_insumo = int(request.POST['insumo'])
-            quantidade_novo_insumo = formatar_custos_para_bd(form.cleaned_data['quant_insumo']) if form.cleaned_data['quant_insumo'] else 0
-            valor_novo_insumo = formatar_custos_para_bd(form.cleaned_data['valor_insumo']) if form.cleaned_data['valor_insumo'] else 0                
-            novo_insumo = g05InsEAP(
-                qtdprod=quantidade_novo_insumo,
-                qtdimpr=0,
-                cstunpr=valor_novo_insumo,
-                cstunim=0,
-                insumo=a11Insumos.objetos.get(id=id_novo_insumo),
-                eap_id=id_entrega
-            )
-            novo_insumo.save()
-    insumos_eap = g05InsEAP.objetos.filter(eap_id=id_entrega)
-    insumos_para_template = []
-    for item, insumo in enumerate(insumos_eap, start=1):
-        insumo_db = a11Insumos.objetos.get(id=insumo.insumo_id)
-        insumo_objeto = {
-            "id": insumo.id,
-            "item": item,
-            "descricao": insumo_db,
-            "quantidade": round(insumo.qtdprod, 2),
-            "unidade": insumo_db.undbas,
-            "custo": formatar_custos_para_template(float(insumo.cstunpr)) if insumo.cstunpr else "0,00",
-            "valorTotal": formatar_custos_para_template(float(insumo.qtdprod) * float(insumo.cstunpr)) if insumo.cstunpr else "0,00"
-        }
-        insumos_para_template.append(insumo_objeto)
-    return render(
-        request, "orcs/detalhar-servico.html", 
-        {"orcamento": orcamento, "idEap": id_entrega,
-        "insumos": insumos_para_template, "form": form})
 
 
 def ajax_excluir_servico(request, codorcam, codeap):
@@ -854,16 +797,78 @@ def ajax_carregar_servico(request, codorcam):
         return HttpResponse(status=405)
 
 
-def excluir_insumo_atividade(request, codorcam, idEap, idInsumo):
-    try:
-        g05InsEAP.objetos.get(id=idInsumo).delete()
-        messages.info(request, "Insumo deletado com sucesso")
-    except:
-        messages.error(request, "Erro ao tentar deletar insumo")
-    # GERANDO O ERRO 504 PELA DEMORA, FAZER O PROCESSO SEPARADO
-    #atualizar_custos_orc(codorcam)
-    atualizar_lista_insumos(codorcam)
-    return HttpResponseRedirect(reverse('orcs:detalhar_servico', args=(str(codorcam), str(idEap), )))
+def ajax_carregar_insumo_servico(request, codorcam, codeap):
+    if request.method == "GET":
+        if request.user:
+            raw_query_insumo =  """
+                                SELECT main_g05InsEAP.id, main_g05InsEAP.eap_id, CAST(main_g05InsEAP.qtdprod AS DECIMAL(12,2)) AS qtdprod, CAST(main_g05InsEAP.cstunpr AS DECIMAL(12,2)) AS cstunpr,
+                                        main_a11Insumos.descricao AS descricao, main_a11Insumos.undbas AS undbas
+                                FROM main_g05InsEAP 
+                                INNER JOIN main_a11Insumos ON main_a11Insumos.id = main_g05InsEAP.insumo_id
+                                WHERE main_g05InsEAP.eap_id = %s
+                                ORDER BY main_g05InsEAP.eap_id
+                                """
+            insumos_entrega = g05InsEAP.objetos.raw(raw_query_insumo, [codeap])
+            insumos_atividade = []
+            for item, insumo in enumerate(insumos_entrega):
+                insumos_atividade.append(
+                    {
+                        "id": insumo.id,
+                        "item": item,
+                        "descricao": insumo.descricao,
+                        "quantidade": formatar_custos_para_template(insumo.qtdprod),
+                        "unidade": insumo.undbas,
+                        "custo": formatar_custos_para_template(insumo.cstunpr),
+                        "valorTotal": formatar_custos_para_template(insumo.qtdprod * insumo.cstunpr)
+                    }
+                )
+            return render(request, "orcs/carregar-insumos-servico.html", 
+                {"idEap": codeap, "insumos": insumos_atividade})
+        else:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=405)
+
+
+def ajax_inserir_insumo_servico(request, codorcam, codeap):
+    if request.method == "POST":
+        if request.user:
+            form = formInserirInsumoNaAtividade(request.POST)
+            if form.is_valid():
+                id_novo_insumo = int(request.POST['insumo'])
+                quantidade_novo_insumo = formatar_custos_para_bd(form.cleaned_data['quant_insumo']) if form.cleaned_data['quant_insumo'] else 0
+                valor_novo_insumo = formatar_custos_para_bd(form.cleaned_data['valor_insumo']) if form.cleaned_data['valor_insumo'] else 0                
+                novo_insumo = g05InsEAP(
+                    qtdprod=quantidade_novo_insumo,
+                    qtdimpr=0,
+                    cstunpr=valor_novo_insumo,
+                    cstunim=0,
+                    insumo=a11Insumos.objetos.get(id=id_novo_insumo),
+                    eap_id=codeap
+                )
+                novo_insumo.save()
+                return HttpResponse(status=200)
+            else:
+                return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=405)
+
+
+def ajax_excluir_insumo_servico(request, codorcam, idInsumo):
+    if request.method == "DELETE":
+        if request.user:
+            try:
+                g05InsEAP.objetos.get(id=idInsumo).delete()
+            except:
+                return HttpResponse(status=400)
+            atualizar_lista_insumos(codorcam)
+            return HttpResponse(status=204)
+        else:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=405)
 
 
 def marcar_visita(request, codorcam):
