@@ -379,7 +379,7 @@ def editar_orcamento(request, codorcam):
         lista_eaps = somar_custos_eap_editar_orcamento(eap_orc_1, eap_orc_3, eap_orc_5)
         # Obter Lista de Insumos do Orcamentos
         lista_insumos = []
-        for eap in g03EapOrc.objetos.filter(orcamento_id=orcamento_escolhido, tipo=1):
+        for eap in g03EapOrc.objetos.filter(orcamento_id=orcamento_escolhido, tipo=3):
             for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
                 insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
                 index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo_objeto_a11.descricao), None)
@@ -396,7 +396,6 @@ def editar_orcamento(request, codorcam):
                         'vlrTotal':  formatar_custos_para_template(round(insumo.qtdprod * insumo.cstunpr, 2))
                     }
                     lista_insumos.append(dados_insumo)
-
         return render(request, "orcs/editar-orcamento.html", {
             "orcamento": orcamento, "eaporcam": lista_eaps,
             "insumos": lista_insumos, "form": formInserirServico
