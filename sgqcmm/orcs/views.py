@@ -379,7 +379,7 @@ def editar_orcamento(request, codorcam):
         lista_eaps = somar_custos_eap_editar_orcamento(eap_orc_1, eap_orc_3, eap_orc_5)
         # Obter Lista de Insumos do Orcamentos
         lista_insumos = []
-        for eap in g03EapOrc.objetos.filter(orcamento_id=orcamento_escolhido, tipo=3):
+        for eap in eap_orc_3:
             for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
                 insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
                 index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo_objeto_a11.descricao), None)
@@ -790,6 +790,35 @@ def ajax_carregar_servico(request, codorcam):
             eap_orc_1 = [eap for eap in eaps_do_orcamento if eap.tipo == 1]
             lista_eaps = somar_custos_eap_editar_orcamento(eap_orc_1, eap_orc_3, eap_orc_5)
             return render(request, 'orcs/carregar-servicos.html', {"eaporcam": lista_eaps})
+        else:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=405)
+
+
+def ajax_carregar_insumo_orcamento(request, codorcam):
+    if request.method == "GET":
+        if request.user:
+            lista_insumos = []
+            for eap in g03EapOrc.objetos.filter(orcamento_id=codorcam, tipo=3):
+                for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
+                    insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
+                    index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo_objeto_a11.descricao), None)
+                    if index_existent_insumo != None:
+                        lista_insumos[index_existent_insumo]['qtdProd'] += insumo.qtdprod
+                    else:
+                        dados_insumo =  {
+                            'id': insumo_objeto_a11.id,
+                            'codigo':insumo_objeto_a11.codigo,
+                            'descricao':insumo_objeto_a11.descricao,
+                            'undBas':insumo_objeto_a11.undbas,
+                            'qtdProd': round(insumo.qtdprod, 2),
+                            'cstUnPr': round(insumo.cstunpr, 2),
+                            'vlrTotal':  formatar_custos_para_template(round(insumo.qtdprod * insumo.cstunpr, 2))
+                        }
+                        lista_insumos.append(dados_insumo)
+            return render(request, "orcs/carregar-insumos-orcamento.html", {
+                    "insumos": lista_insumos})
         else:
             return HttpResponse(status=403)
     else:

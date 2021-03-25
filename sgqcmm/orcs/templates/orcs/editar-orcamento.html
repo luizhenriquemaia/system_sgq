@@ -88,35 +88,37 @@
 				<br>
 				<div class="divider"></div>
 				<br>
-				{% if insumos %}
-					<br>
-					<h5 style="text-align:center;">Lista de Insumos</h5>
-					<br>
-					<table>
-						<tr>
-							<th style="text-align: center">Código</th>
-							<th style="text-align: center">Descrição</th>
-							<th style="text-align: center">Unid.</th>
-							<th style="text-align: center">Quant. Prod.</th>
-							<th style="text-align: center">Cst. Prod.</th>
-							<th style="text-align: center">Vlr. Total</th>
-						</tr>
-						{% for insumo in insumos %}
-							<tr style="text-align: right">
-								<td style="text-align: center">{{insumo.codigo}}</td>
-								<td style="text-align: left">
-									<a href="../../atualizar-dados-insumo/{{insumo.codigo}}">
-										<strong>{{insumo.descricao}}</strong>
-									</a>
-								</td>
-								<td style="text-align: center">{{insumo.undBas}}</td>
-								<td>{{insumo.qtdProd}}</td>
-								<td>{{insumo.cstUnPr}}</td>
-								<td>{{insumo.vlrTotal}}</td>
+				<div id="id_listaInsumos">
+					{% if insumos %}
+						<br>
+						<h5 style="text-align:center;">Lista de Insumos</h5>
+						<br>
+						<table>
+							<tr>
+								<th style="text-align: center">Código</th>
+								<th style="text-align: center">Descrição</th>
+								<th style="text-align: center">Unid.</th>
+								<th style="text-align: center">Quant. Prod.</th>
+								<th style="text-align: center">Cst. Prod.</th>
+								<th style="text-align: center">Vlr. Total</th>
 							</tr>
-						{% endfor %}
-					</table>
-				{% endif %}
+							{% for insumo in insumos %}
+								<tr style="text-align: right">
+									<td style="text-align: center">{{insumo.codigo}}</td>
+									<td style="text-align: left">
+										<a href="../../atualizar-dados-insumo/{{insumo.codigo}}">
+											<strong>{{insumo.descricao}}</strong>
+										</a>
+									</td>
+									<td style="text-align: center">{{insumo.undBas}}</td>
+									<td>{{insumo.qtdProd}}</td>
+									<td>{{insumo.cstUnPr}}</td>
+									<td>{{insumo.vlrTotal}}</td>
+								</tr>
+							{% endfor %}
+						</table>
+					{% endif %}
+				</div>
 				<br>
 				<br>
 				<h5 style="text-align:center;">Incluir Serviço</h5>
@@ -283,14 +285,24 @@
 					function (response) {
 						if (response.status === 200) {
 							M.toast({ html: `Serviço ${codeEap} excluido`, classes: 'green rounded', displayLength: 2000 })
-							let xhttp = new XMLHttpRequest()
-							xhttp.onreadystatechange = function (data) {
+							let xhttpServicos = new XMLHttpRequest()
+							xhttpServicos.onreadystatechange = function (data) {
 								if (this.readyState === 4 && this.status === 200) {
 									document.getElementById("services_id").innerHTML = this.response
+									let xhttpInsumos = new XMLHttpRequest()
+									xhttpInsumos.onreadystatechange = function(data) {
+										if (this.readyState === 4 && this.status === 200) {
+											document.getElementById("id_listaInsumos").innerHTML = this.response
+										} else if (this.readyState === 4 && this.status !== 200) {
+											M.toast({ html: "Erro ao atualizar a lista de insumos", classes: 'red rounded', displayLength: 3000 })
+										}
+									}
+									xhttpInsumos.open("GET", "./ajax/carregar-insumo-orcamento/", true)
+									xhttpInsumos.send()
 								}
 							}
-							xhttp.open("GET", "./ajax/carregar-servico/", true)
-							xhttp.send()
+							xhttpServicos.open("GET", "./ajax/carregar-servico/", true)
+							xhttpServicos.send()
 						} else if (response.status === 400) {
 							M.toast({ html: "Erro no código da eap", classes: 'red rounded', displayLength: 3000 })
 						} else if (response.status === 500) {
@@ -322,14 +334,14 @@
 					function(response) {
 						if (response.status === 201) {
 							M.toast({ html: "Serviço adicionado", classes: 'green rounded', displayLength: 2000 })
-							let xhttp = new XMLHttpRequest()
-							xhttp.onreadystatechange = function (data) {
+							let xhttpServicos = new XMLHttpRequest()
+							xhttpServicos.onreadystatechange = function (data) {
 								if (this.readyState === 4 && this.status === 200) {
 									document.getElementById("services_id").innerHTML = this.response
 								}
 							}
-							xhttp.open("GET", "./ajax/carregar-servico/", true)
-							xhttp.send()
+							xhttpServicos.open("GET", "./ajax/carregar-servico/", true)
+							xhttpServicos.send()
 						} else if (response.status === 400) {
 							M.toast({ html: "Dados inválidos", classes: 'red rounded', displayLength: 3000 })
 						} else {
