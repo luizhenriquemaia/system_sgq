@@ -9,7 +9,7 @@ from .utils.funcoes_calculos import (arrend_cima, escrever_linha_eap,
 from .utils.materiais_orcamento import (
     Calha, ChapaMultiClick, DiscoCorte, Eletrodo, FitaVentTape, Garra,
     ParafusosPolicarbonato, ParafusoTercasMultiTelha, PerfilArremate,
-    PerfisEstruturaisDiferentes, Roldana, Rufo, Selante, Tampa)
+    PerfisEstruturaisDiferentes, PerfisEstruturaisIguais, Roldana, Rufo, Selante, Tampa)
 
 
 ############ Conferencia Distancia Apoios Multi-Click ########################
@@ -84,14 +84,14 @@ def orc_multi_click_plano(prefEap, **valores):
         elif estrutura_retratil:
             text_desc = f"{valores['repeticoes']} Coberturas planas retráteis de policarbonato multi-click com dimensões {valores['largura']:.2f} x {(comp_real):.2f}m e com {valores['declividade']}% de inclinação utilizando {desc_poli}"
     linha_eap = escrever_linha_eap(
-        prefEap, text_desc, 3, f"{float(comp_real * valores['largura'] * valores['repeticoes']):.2f}", 'm²', 0, 0, 0)
+        prefEap, text_desc, 5, f"{float(comp_real * valores['largura'] * valores['repeticoes']):.2f}", 'm²', 0, 0, 0)
     eap_result = [linha_eap]
     linha_ant += 1
 
-    ##################### Atividade -> Policarbonato #####################
+    ##################### Entrega externa -> Policarbonato #####################
     text_desc = f"Policarbonato e acessórios"
     linha_eap = escrever_linha_eap(
-        f'{prefEap}01.', text_desc, 1, 1, 'un', 1, 0, 0)
+        f'{prefEap}01.', text_desc, 3, 1, 'un', 1, 0, 0)
     linha_ant += 1
     eap_result.append(linha_eap)
 
@@ -195,10 +195,10 @@ def orc_multi_click_plano(prefEap, **valores):
     eap_result.append(
         escrever_eap_insumos(selante))
 
-    ##################### Atividade -> Estrutura #####################
-    text_desc = f"Estrutura"
+    ##################### Entrega externa -> Outros insumos e MO #####################
+    text_desc = f"Outros insumos e mão de obra"
     linha_eap = escrever_linha_eap(
-        f'{prefEap}02.', text_desc, 1, 1, 'un', 1, 0, 0)
+        f'{prefEap}02.', text_desc, 3, 1, 'un', 1, 0, 0)
     linha_ant += 1
     eap_result.append(linha_eap)
 
@@ -485,18 +485,12 @@ def orc_multi_click_plano(prefEap, **valores):
             a11Insumos.objetos.get(codigo=6309).custo01)
     else:
         pass
-        
-    ################### Atividade -> Mão de Obra #############################
-    #mObra = arrend_cima((comp_real*valores['largura']*valores['repeticoes']*valores['dificuldade'])/10, 0)
-    linha_eap = escrever_linha_eap(f'{prefEap}03.', "Mão de Obra", 1, 1, 'un', 3, 0, 0)
-    linha_ant += 1
-    eap_result.append(linha_eap)
 
     # Serralheiro
     if not int(valores['dias_serralheiro']) == 0 or not int(valores['quantidade_serralheiro']) == 0:
         serralheiros = 8 * valores['quantidade_serralheiro'] * valores['dias_serralheiro']
         linha_eap = escrever_linha_eap(
-            f'{prefEap}03.01.', f"Serralheiro", -1, serralheiros, 'h', 3, 0, 1163)
+            '', '', -1, serralheiros, 'h', 0, 0, 1163)
         linha_ant += 1
         eap_result.append(linha_eap)
         custo_total += float(serralheiros) * float(
@@ -505,15 +499,15 @@ def orc_multi_click_plano(prefEap, **valores):
     if not int(valores['dias_auxiliar']) == 0 or not int(valores['quantidade_auxiliar']) == 0:
         auxiliares = 8 * valores['quantidade_auxiliar'] * valores['dias_auxiliar']
         linha_eap = escrever_linha_eap(
-            f'{prefEap}03.02.', f"Auxiliar de Serralheria", -1, auxiliares, 'h', 3, 0, 1152)
+            '', '', -1, auxiliares, 'h', 0, 0, 1152)
         linha_ant += 1
         eap_result.append(linha_eap)
         custo_total += float(auxiliares) * float(
             a11Insumos.objetos.get(codigo=1152).custo01)
 
 
-    ################### Atividade -> Riscos Incidentes e Bonificações #############################
-    linha_eap = escrever_linha_eap(f'{prefEap}04.', "Riscos Incidentes", 1, 1, 'un', 4, 0, 0)
+    ################### Entrega interna -> Riscos Incidentes e Bonificações #############################
+    linha_eap = escrever_linha_eap(f'{prefEap}03.', "Riscos Incidentes", 2, 1, 'un', 4, 0, 0)
     linha_ant += 1
     eap_result.append(linha_eap)
 

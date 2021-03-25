@@ -98,7 +98,7 @@ def orc_poli_plano(prefEap, **valores):
             largura_orcamento = valores['largPoli'] / valores['quantModulos']
     linha_ant = 0
     custo_total = 0
-    desc_poli = f"{a11Insumos.objetos.get(codigo=valores['codPoli']).descricao} {a11Insumos.objetos.get(codigo=valores['codPoli']).espessura}mm"
+    desc_poli = a11Insumos.objetos.get(codigo=valores['codPoli']).descricao
     if orcamento_com_chapa_compacta:
         if valores['repetPoli'] <= 1:
             if not estrutura_retratil:
@@ -122,14 +122,14 @@ def orc_poli_plano(prefEap, **valores):
             elif estrutura_retratil:
                 text_desc = f"{valores['repetPoli']} Coberturas planas retráteis de policarbonato alveolar com dimensões {valores['largPoli']:.2f} x {(comp_real):.2f}m e com {valores['declPoli']}% de inclinação utilizando {desc_poli}"
     linha_eap = escrever_linha_eap(
-        prefEap, text_desc, 3, f"{float(comp_real * valores['largPoli'] * valores['repetPoli']):.2f}", 'm²', 0, 0, 0)
+        prefEap, text_desc, 5, f"{float(comp_real * valores['largPoli'] * valores['repetPoli']):.2f}", 'm²', 0, 0, 0)
     eap_result = [linha_eap]
     linha_ant += 1
 
-    ##################### Atividade -> Policarbonato #####################
+    ##################### Entrega externa -> Policarbonato #####################
     text_desc = f"Policarbonato e acessórios"
     linha_eap = escrever_linha_eap(
-        f'{prefEap}01.', text_desc, 1, 1, 'un', 1, 0, 0)
+        f'{prefEap}01.', text_desc, 3, 1, 'un', 1, 0, 0)
     linha_ant += 1
     eap_result.append(linha_eap)
 
@@ -282,10 +282,10 @@ def orc_poli_plano(prefEap, **valores):
         escrever_eap_insumos(selante)
     )
 
-    ##################### Atividade -> Estrutura #####################
-    text_desc = f"Estrutura"
+    ##################### Entrega externa -> Outros insumos e MO #####################
+    text_desc = f"Outros insumos e mão de obra"
     linha_eap = escrever_linha_eap(
-        f'{prefEap}02.', text_desc, 1, 1, 'un', 1, 0, 0)
+        f'{prefEap}02.', text_desc, 3, 1, 'un', 1, 0, 0)
     linha_ant += 1
     eap_result.append(linha_eap)
 
@@ -613,18 +613,12 @@ def orc_poli_plano(prefEap, **valores):
             a11Insumos.objetos.get(codigo=6309).custo01)
     else:
         pass
-        
-    ################### Atividade -> Mão de Obra #############################
-    #mObra = arrend_cima((comp_real*valores['largPoli']*valores['repetPoli']*valores['dificuldade'])/10, 0)
-    linha_eap = escrever_linha_eap(f'{prefEap}03.', "Mão de Obra", 1, 1, 'un', 3, 0, 0)
-    linha_ant += 1
-    eap_result.append(linha_eap)
 
     # Serralheiro
     if not int(valores['diasSerralheiro']) == 0 or not int(valores['quantSerralheiros']) == 0:
         serralheiros = 8 * valores['quantSerralheiros'] * valores['diasSerralheiro']
         linha_eap = escrever_linha_eap(
-            f'{prefEap}03.01.', f"Serralheiro", -1, serralheiros, 'h', 3, 0, 1163)
+            '', '', -1, serralheiros, 'h', 0, 0, 1163)
         linha_ant += 1
         eap_result.append(linha_eap)
         custo_total += float(serralheiros) * float(
@@ -633,15 +627,15 @@ def orc_poli_plano(prefEap, **valores):
     if not int(valores['diasAuxiliar']) == 0 or not int(valores['quantAuxiliares']) == 0:
         auxiliares = 8 * valores['quantAuxiliares'] * valores['diasAuxiliar']
         linha_eap = escrever_linha_eap(
-            f'{prefEap}03.02.', f"Auxiliar de Serralheria", -1, auxiliares, 'h', 3, 0, 1152)
+            '', '', -1, auxiliares, 'h', 0, 0, 1152)
         linha_ant += 1
         eap_result.append(linha_eap)
         custo_total += float(auxiliares) * float(
             a11Insumos.objetos.get(codigo=1152).custo01)
 
 
-    ################### Atividade -> Riscos Incidentes e Bonificações #############################
-    linha_eap = escrever_linha_eap(f'{prefEap}04.', "Riscos Incidentes", 1, 1, 'un', 4, 0, 0)
+    ################### Entrega interna -> Riscos Incidentes e Bonificações #############################
+    linha_eap = escrever_linha_eap(f'{prefEap}03.', "Riscos Incidentes", 2, 1, 'un', 4, 0, 0)
     linha_ant += 1
     eap_result.append(linha_eap)
 
@@ -704,14 +698,14 @@ def orc_poli_curvo(prefEap, **valores):
             elif estrutura_retratil:
                 text_desc = f"{valores['repetPoli']} Coberturas curvas retráteis de policarbonato alveolar com dimensões {valores['largPoli']:.2f} x {(arcoCurva):.2f}m utilizando {desc_poli}"
     linha_eap = escrever_linha_eap(
-        prefEap, text_desc, 3, f"{float(arcoCurva * valores['largPoli'] * valores['repetPoli']):.2f}", 'm²', 0, 0, 0)
+        prefEap, text_desc, 5, f"{float(arcoCurva * valores['largPoli'] * valores['repetPoli']):.2f}", 'm²', 0, 0, 0)
     eap_result = [linha_eap]
     linha_ant += 1
 
-    ##################### Atividade -> Policarbonato #####################
+    ##################### Entrega externa -> Policarbonato #####################
     text_desc = f"Policarbonato e acessórios"
     linha_eap = escrever_linha_eap(
-        f'{prefEap}01.', text_desc, 1, 1, 'un', 1, 0, 0)
+        f'{prefEap}01.', text_desc, 3, 1, 'un', 1, 0, 0)
     linha_ant += 1
     eap_result.append(linha_eap)
 
@@ -808,13 +802,6 @@ def orc_poli_curvo(prefEap, **valores):
     ################# Fita Alumínio ####################
     if not orcamento_com_chapa_compacta:
         # Não utilizar fita alumínio em coberturas arqueadas
-        # fita_aluminio = FitaAluminio(valores['codFitaAlum'])
-        # fita_aluminio.calcular_quantidade(valores['largPoli'], valores['repetPoli'])
-        # linha_ant += 1
-        # eap_result.append(
-        #     escrever_eap_insumos(fita_aluminio)
-        # )
-        
         ################# Fita Vent Tape ###################
         fita_vent = FitaVentTape(valores['codFitaVent'])
         fita_vent.calcular_quantidade(
@@ -887,10 +874,10 @@ def orc_poli_curvo(prefEap, **valores):
         escrever_eap_insumos(parafuso_uniao)
     )
 
-    ##################### Atividade -> Estrutura #####################
-    text_desc = f"Estrutura"
+    ##################### Entrega externa -> Outros insumos e MO #####################
+    text_desc = f"Outros insumos e mão de obra"
     linha_eap = escrever_linha_eap(
-        f'{prefEap}02.', text_desc, 1, 1, 'un', 1, 0, 0)
+        f'{prefEap}02.', text_desc, 3, 1, 'un', 1, 0, 0)
     linha_ant += 1
     eap_result.append(linha_eap)
 
@@ -1236,13 +1223,6 @@ def orc_poli_curvo(prefEap, **valores):
             a11Insumos.objetos.get(codigo=6309).custo01)
     else:
         pass
-    
-    ################### Atividade -> Mão de Obra #############################
-    #mObra = arrend_cima((comp_real*valores['largPoli']*valores['repetPoli']*valores['dificuldade'])/10, 0)
-    linha_eap=escrever_linha_eap(
-        f'{prefEap}03.', "Mão de Obra", 1, 1, 'un', 3, 0, 0)
-    linha_ant += 1
-    eap_result.append(linha_eap)
 
     # Serralheiro
     if not int(valores['diasSerralheiro']) == 0 or not int(valores['quantSerralheiros']) == 0:
@@ -1265,9 +1245,9 @@ def orc_poli_curvo(prefEap, **valores):
             a11Insumos.objetos.get(codigo=1152).custo01)
 
 
-    ################### Atividade -> Riscos Incidentes e Bonificações #############################
+    ################### Entrega interna -> Riscos Incidentes e Bonificações #############################
     linha_eap=escrever_linha_eap(
-        f'{prefEap}04.', "Riscos Incidentes", 1, 1, 'un', 4, 0, 0)
+        f'{prefEap}03.', "Riscos Incidentes", 2, 1, 'un', 4, 0, 0)
     linha_ant += 1
     eap_result.append(linha_eap)
 
