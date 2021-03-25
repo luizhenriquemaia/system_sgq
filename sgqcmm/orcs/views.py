@@ -355,36 +355,11 @@ def novo_orcamento(request):
 
 
 def editar_orcamento(request, codorcam):
-    # Obter dados gerais do orcamento
     orcamento = obter_dados_gerais_orc(codorcam)
     orcamento_escolhido = g01Orcamento.objetos.get(pk=int(codorcam))
     request.session['codorcamento'] = codorcam
-    if request.method == "POST":
-        form = formInserirServico(request.POST)
-        if form.is_valid():
-            descricao_servico = form.cleaned_data['descricao']
-            tipo_servico = int(request.POST['tipo'])
-            codigo_eap_servico = form.cleaned_data['codigo_eap']
-            try:
-                codigo_nova_eap = g03EapOrc.objetos.latest('id').id + 1
-            except ObjectDoesNotExist:
-                codigo_nova_eap = 0
-            novo_servico = g03EapOrc(
-                id=codigo_nova_eap,
-                codeap=codigo_eap_servico,
-                coditem=codigo_eap_servico,
-                descitem=descricao_servico,
-                tipo=tipo_servico,
-                qtdorc=1,
-                unidade='un',
-                vlrunit=0,
-                orcamento_id=orcamento_escolhido.id
-            )
-            novo_servico.save()
-        else:
-            messages.error(request, "Erro ao adicionar serviço")
     # se o orçamento for de antes de 23-03-2021 -> ir para antiga view
-    elif request.method == "GET":
+    if request.method == "GET":
         if orcamento_escolhido.dtorc <= datetime.date(2021, 3, 16):
             return HttpResponseRedirect(reverse('orcs:editar_orcamento_antigo', args=(codorcam,)))
         try:
@@ -802,23 +777,6 @@ def detalhar_servico_antigo(request, codorcam, id_entrega):
         "insumos": insumos_para_template, "form": form})
 
 
-def excluir_servico(request, codorcam, codeap):
-    try:
-        list_cod_eap = [eap.codeap for eap in g03EapOrc.objetos.filter(orcamento_id=codorcam, codeap__startswith=codeap[:-3], tipo=1)]
-        cod_atv = request.session['eap_atividade']
-        g05InsEAP.objetos.filter(atividade_id=g04AtvEap.objetos.get(eap_id=cod_atv).id)[list_cod_eap.index(codeap)].delete()
-    # Quando o usuário tenta excluir mais do que só um item da eap
-    except:
-        pass
-    # Deletar eap do orçamento na g03
-    g03EapOrc.objetos.filter(orcamento__id=codorcam, codeap__startswith=codeap).delete()
-    strcodorc = str(codorcam)
-    # GERANDO O ERRO 504 PELA DEMORA, FAZER O PROCESSO SEPARADO
-    #atualizar_custos_orc(codorcam)
-    atualizar_lista_insumos(codorcam)
-    return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(strcodorc,)))
-
-
 def ajax_excluir_servico(request, codorcam, codeap):
     if request.method == "DELETE":
         if request.user:
@@ -828,6 +786,40 @@ def ajax_excluir_servico(request, codorcam, codeap):
             else:
                 objetos_do_servico.delete()
                 return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=405)
+
+
+def ajax_inserir_servico(request, codorcam):
+    if request.method == "POST":
+        if request.user:
+            form = formInserirServico(request.POST)
+            if form.is_valid():
+                orcamento_escolhido = g01Orcamento.objetos.get(id=codorcam)
+                descricao_servico = form.cleaned_data['descricao']
+                tipo_servico = int(request.POST['tipo'])
+                codigo_eap_servico = form.cleaned_data['codigo_eap'] if form.cleaned_data['codigo_eap'][-1:] == '.' else form.cleaned_data['codigo_eap'] + '.'
+                try:
+                    codigo_nova_eap = g03EapOrc.objetos.latest('id').id + 1
+                except ObjectDoesNotExist:
+                    codigo_nova_eap = 0
+                novo_servico = g03EapOrc(
+                    id=codigo_nova_eap,
+                    codeap=codigo_eap_servico,
+                    coditem=codigo_eap_servico,
+                    descitem=descricao_servico,
+                    tipo=tipo_servico,
+                    qtdorc=1,
+                    unidade='un',
+                    vlrunit=0,
+                    orcamento_id=orcamento_escolhido.id
+                )
+                novo_servico.save()
+                return HttpResponse(status=201)
+            else:
+                return HttpResponse(status=400)
         else:
             return HttpResponse(status=403)
     else:
