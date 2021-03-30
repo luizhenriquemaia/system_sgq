@@ -26,8 +26,7 @@ from .forms import (formAdicionarDesconto, formAlterarInsumoOrc,
                     formInserirInsumoNaAtividade, formInserirServico,
                     formMarcarVisita, formMedidasVenezianas,
                     formOrcamentoMultiClickPlanoFixo,
-                    formOrcamentoTelhaTrapezoidalFixo, formPoliCurvoFix,
-                    formPoliCurvoRet, formPoliPlanFix, formPoliPlanRet,
+                    formOrcamentoTelhaTrapezoidalFixo,
                     FormChapasPolicarbonato, FormEstruturaCobertura, FormMedidasCoberturaPlana,
                     FormCoberturaRetratil, FormMedidasCoberturaCurva, FormEstruturaCoberturaCurva)
 
@@ -1901,6 +1900,7 @@ def dicionario_de_dimensoes_planas(form):
         'quantidade_maos_francesas': form.cleaned_data['quantidade_maos_francesas'] if form.cleaned_data['quantidade_maos_francesas'] else 0,
     }
     return dados_dimensoes
+
 
 def dicionario_de_dimensoes_curvas(form):
     dados_dimensoes = {
