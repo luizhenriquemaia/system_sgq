@@ -520,6 +520,11 @@ class FormEstruturaCobertura(forms.Form):
     aproveitar_estrutura = forms.BooleanField(required=False)
 
 
+class FormEstruturaCoberturaCurva(forms.Form):
+    tipo_calandra = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=51).order_by("descricao"),
+                                              to_field_name="codigo")
+
+
 class FormMedidasCoberturaPlana(forms.Form):
     comprimento_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
     largura_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
@@ -535,6 +540,7 @@ class FormMedidasCoberturaCurva(forms.Form):
     largura_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
     repeticoes_cobertura = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0)
     distancia_apoios_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    quantidade_maos_francesas = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
 
 
 class FormCoberturaRetratil(forms.Form):

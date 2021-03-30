@@ -241,7 +241,7 @@ def orc_poli_plano(prefEap, **valores):
         # Parafuso arremate -> 10-16x3/4"
         parafuso_arremate = ParafusosPolicarbonato(14132)
         parafuso_arremate.calc_parafuso_arremate(
-            comp_real, valores['dados_dimensoes']['repeticoes_cobertura'], quantidade_de_modulos, round(Decimal(0.3), 3)
+            comp_real, valores['dados_dimensoes']['repeticoes_cobertura'], quantidade_de_modulos, Decimal(round(0.3, 2))
         )
         linha_ant += 1
         eap_result.append(
@@ -640,11 +640,11 @@ def orc_poli_plano(prefEap, **valores):
 
 def orc_poli_curvo(prefEap, **valores):
     ################# Cálculos ###########################
-    raioCirculo = (pow(valores['cordaPoli'] / 2, 2) + pow(valores['flechaPoli'], 2)) / (2 * valores['flechaPoli'])
-    anguloCurva = Decimal(asin((valores['cordaPoli'] / 2) / raioCirculo))
+    raioCirculo = (pow(valores['dados_dimensoes']['corda_cobertura'] / 2, 2) + pow(valores['dados_dimensoes']['flecha_cobertura'], 2)) / (2 * valores['dados_dimensoes']['flecha_cobertura'])
+    anguloCurva = Decimal(asin((valores['dados_dimensoes']['corda_cobertura'] / 2) / raioCirculo))
     arcoCurva = (anguloCurva * 2) * raioCirculo
-    if arcoCurva - valores['cordaPoli'] <= 0.02:
-        arcoCurva = valores['cordaPoli']
+    if arcoCurva - valores['dados_dimensoes']['corda_cobertura'] <= 0.02:
+        arcoCurva = valores['dados_dimensoes']['corda_cobertura']
     else:
         pass
     linha_ant = 0
@@ -652,10 +652,15 @@ def orc_poli_curvo(prefEap, **valores):
     # definir booleans para ifs futuros
     perfil_uniao_igual_ao_arremate = True if valores['dados_policarbonato']['cod_perfil_uniao'] == valores['dados_policarbonato']['cod_perfil_arremate'] else False
     orcamento_com_chapa_compacta = True if a11Insumos.objetos.get(codigo=valores['dados_policarbonato']['cod_policarbonato']).catins_id == 55 else False
-    estrutura_retratil = True if valores['estrutura'] == 1 else False
+    try: 
+        if valores['dados_retratil']:
+            estrutura_retratil = True
+            quantidade_de_modulos = valores['dados_retratil']['quantidade_modulos']
+    except KeyError:
+        estrutura_retratil = False
+        quantidade_de_modulos = 1
     largura_orcamento = valores['dados_dimensoes']['largura_cobertura']
     comprimento_orcamento = arcoCurva
-    estrutura_retratil = True if valores['estrutura'] == 1 else False
     if estrutura_retratil:
         estrutura_retratil_direcao_largura = True if valores['dados_retratil']['direcao_movimento'] == 1 else False
         estrutura_retratil_direcao_comprimento = True if valores['dados_retratil']['direcao_movimento'] == 0 else False
@@ -823,7 +828,7 @@ def orc_poli_curvo(prefEap, **valores):
             comprimento_orcamento, 
             valores['dados_dimensoes']['repeticoes_cobertura'], 
             quantidade_de_modulos, 
-            0.3
+            Decimal(round(0.3, 2))
         )
         linha_ant += 1
         eap_result.append(
@@ -875,13 +880,13 @@ def orc_poli_curvo(prefEap, **valores):
     distApoios = conf_dist_apoios(
         chapa_policarbonato.espessura, valores['dados_dimensoes']['distancia_apoios_cobertura'], 2, raioCirculo, orcamento_com_chapa_compacta)
     if not valores['dados_estrutura']['aproveitar_estrutura']:
-        if valores['codPerfEsEx'] == valores['codPerfEsIn']:
-            perfil_estrutural = PerfisEstruturaisIguais(valores['codPerfEsEx'])
+        if valores['dados_estrutura']['cod_perfil_estrutural_externo'] == valores['dados_estrutura']['cod_perfil_estrutural_interno']:
+            perfil_estrutural = PerfisEstruturaisIguais(valores['dados_estrutura']['cod_perfil_estrutural_externo'])
             perfil_estrutural.calcular_quantidade(
                 largura_orcamento, 
-                valores['cordaPoli'],
+                valores['dados_dimensoes']['corda_cobertura'],
                 comprimento_orcamento + Decimal(0.2),
-                valores['flechaPoli'],
+                valores['dados_dimensoes']['flecha_cobertura'],
                 distApoios, 
                 valores['dados_dimensoes']['repeticoes_cobertura'], 
                 quantidade_de_modulos, 
@@ -894,12 +899,12 @@ def orc_poli_curvo(prefEap, **valores):
             custo_total += perfil_estrutural.preco()
         else:
             perfil_estrutural_interno = PerfisEstruturaisDiferentes(
-                valores['codPerfEsIn'], "interno")
+                valores['dados_estrutura']['cod_perfil_estrutural_interno'], "interno")
             perfil_estrutural_interno.calcular_quantidade(
                 largura_orcamento, 
-                valores['cordaPoli'],
+                valores['dados_dimensoes']['corda_cobertura'],
                 comprimento_orcamento + Decimal(0.2),
-                valores['flechaPoli'], 
+                valores['dados_dimensoes']['flecha_cobertura'], 
                 distApoios, 
                 valores['dados_dimensoes']['repeticoes_cobertura'], 
                 quantidade_de_modulos, 
@@ -912,14 +917,14 @@ def orc_poli_curvo(prefEap, **valores):
             )
             custo_total += perfil_estrutural_interno.preco()
             perfil_estrutural_externo = PerfisEstruturaisDiferentes(
-                valores['codPerfEsEx'], 
+                valores['dados_estrutura']['cod_perfil_estrutural_externo'], 
                 "externo"
             )
             perfil_estrutural_externo.calcular_quantidade(
                 largura_orcamento, 
-                valores['cordaPoli'],
+                valores['dados_dimensoes']['corda_cobertura'],
                 comprimento_orcamento + Decimal(0.2), 
-                valores['flechaPoli'], 
+                valores['dados_dimensoes']['flecha_cobertura'], 
                 distApoios, 
                 valores['dados_dimensoes']['repeticoes_cobertura'], 
                 quantidade_de_modulos, 
@@ -936,7 +941,7 @@ def orc_poli_curvo(prefEap, **valores):
     ########################## Calhas ############################
     calha = Calha(valores['dados_estrutura']['cod_chapa_calha'])
     calha.calcular_quantidade(
-        valores['cordaPoli'], 
+        valores['dados_dimensoes']['corda_cobertura'], 
         valores['dados_dimensoes']['largura_cobertura'], 
         valores['dados_estrutura']['lateral_direita'],
         valores['dados_estrutura']['lateral_esquerda'], 
@@ -962,7 +967,7 @@ def orc_poli_curvo(prefEap, **valores):
     ########################## Rufos ############################
     rufo = Rufo(valores['dados_estrutura']['cod_chapa_rufo'])
     rufo.calcular_quantidade(
-        valores['cordaPoli'], 
+        valores['dados_dimensoes']['corda_cobertura'], 
         valores['dados_dimensoes']['largura_cobertura'], 
         valores['dados_estrutura']['lateral_direita'],
         valores['dados_estrutura']['lateral_esquerda'], 
@@ -983,9 +988,9 @@ def orc_poli_curvo(prefEap, **valores):
         quantidade_de_apoios_calandra = Decimal(arrend_cima(round(largura_orcamento / distApoios, 5), 0) + 1)
         quantCalandra = Decimal(arrend_cima(quantidade_de_apoios_calandra * (
                         comprimento_orcamento + Decimal(0.20)) * valores['dados_dimensoes']['repeticoes_cobertura'] * quantidade_de_modulos, 0))
-        objCalandra = a11Insumos.objetos.get(codigo=valores['codCalandra'])
+        objCalandra = a11Insumos.objetos.get(codigo=valores['dados_estrutura_curva']['cod_calandra'])
         linha_eap = escrever_linha_eap(f'{prefEap}01.02.04.', f"{quantCalandra} m de {objCalandra.descricao}",
-                                -1, quantCalandra, 'm', 2, 21, valores['codCalandra'])
+                                -1, quantCalandra, 'm', 2, 21, valores['dados_estrutura_curva']['cod_calandra'])
         linha_ant += 1
         eap_result.append(linha_eap)
         custo_total += quantCalandra * objCalandra.custo01

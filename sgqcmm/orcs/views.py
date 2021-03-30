@@ -29,7 +29,7 @@ from .forms import (formAdicionarDesconto, formAlterarInsumoOrc,
                     formOrcamentoTelhaTrapezoidalFixo, formPoliCurvoFix,
                     formPoliCurvoRet, formPoliPlanFix, formPoliPlanRet,
                     FormChapasPolicarbonato, FormEstruturaCobertura, FormMedidasCoberturaPlana,
-                    FormCoberturaRetratil)
+                    FormCoberturaRetratil, FormMedidasCoberturaCurva, FormEstruturaCoberturaCurva)
 
 
 # funções genéricas views
@@ -1884,11 +1884,29 @@ def dicionario_de_estrutura(form):
     return dados_estrutura
 
 
-def dicionario_de_dimensoes(form):
+def dicionario_de_estrutura_curva(form):
+    dados_estrutura_curva = {
+        'cod_calandra': form.cleaned_data['tipo_calandra'].codigo
+    }
+    return dados_estrutura_curva
+
+
+def dicionario_de_dimensoes_planas(form):
     dados_dimensoes = {
         'comprimento_cobertura': form.cleaned_data['comprimento_cobertura'],
         'largura_cobertura': form.cleaned_data['largura_cobertura'],
         'declividade_cobertura': form.cleaned_data['declividade_cobertura'],
+        'repeticoes_cobertura': form.cleaned_data['repeticoes_cobertura'] if form.cleaned_data['repeticoes_cobertura'] > 0 else 1,
+        'distancia_apoios_cobertura': form.cleaned_data['distancia_apoios_cobertura'],
+        'quantidade_maos_francesas': form.cleaned_data['quantidade_maos_francesas'] if form.cleaned_data['quantidade_maos_francesas'] else 0,
+    }
+    return dados_dimensoes
+
+def dicionario_de_dimensoes_curvas(form):
+    dados_dimensoes = {
+        'corda_cobertura': form.cleaned_data['corda_cobertura'],
+        'flecha_cobertura': form.cleaned_data['flecha_cobertura'],
+        'largura_cobertura': form.cleaned_data['largura_cobertura'],
         'repeticoes_cobertura': form.cleaned_data['repeticoes_cobertura'] if form.cleaned_data['repeticoes_cobertura'] > 0 else 1,
         'distancia_apoios_cobertura': form.cleaned_data['distancia_apoios_cobertura'],
         'quantidade_maos_francesas': form.cleaned_data['quantidade_maos_francesas'] if form.cleaned_data['quantidade_maos_francesas'] else 0,
@@ -1910,7 +1928,6 @@ def dicionario_cobertura_retratil(form):
     return dados_retratil
 
 
-
 def poli_plano_fix(request, codorcam):
     orcamento = obter_dados_gerais_orc(codorcam)
     if request.method == "POST":
@@ -1922,7 +1939,7 @@ def poli_plano_fix(request, codorcam):
             dados_orcamento = {
                 'dados_policarbonato': dicionario_de_policarbonato(form_policarbonato),
                 'dados_estrutura': dicionario_de_estrutura(form_estrutura),
-                'dados_dimensoes': dicionario_de_dimensoes(form_dimensoes)
+                'dados_dimensoes': dicionario_de_dimensoes_planas(form_dimensoes)
             }
             try:
               ultNumItemEAP = int((g03EapOrc.objetos.filter(orcamento_id=codorcam).order_by('-id')[0].codeap)[:1])
@@ -1943,7 +1960,7 @@ def poli_plano_fix(request, codorcam):
         form_policarbonato = FormChapasPolicarbonato()
         form_estrutura = FormEstruturaCobertura()
         form_dimensoes = FormMedidasCoberturaPlana()
-        return render(request, "orcs/orcamento-policarbonato-plano.html", {
+        return render(request, "orcs/orcamento-chapa-policarbonato.html", {
             "formPolicarbonato": form_policarbonato,
             "formEstrutura": form_estrutura,
             "formDimensoes": form_dimensoes,
@@ -1964,10 +1981,9 @@ def poli_plano_ret(request, codorcam):
             dados_orcamento = {
                 'dados_policarbonato': dicionario_de_policarbonato(form_policarbonato),
                 'dados_estrutura': dicionario_de_estrutura(form_estrutura),
-                'dados_dimensoes': dicionario_de_dimensoes(form_dimensoes),
+                'dados_dimensoes': dicionario_de_dimensoes_planas(form_dimensoes),
                 'dados_retratil': dicionario_cobertura_retratil(form_retratil)
             }
-            print(f"\n\n{dados_orcamento}\n\n")
             try:
               ultNumItemEAP = int((g03EapOrc.objetos.filter(orcamento_id=codorcam).order_by('-id')[0].codeap)[:1])
             except:
@@ -1988,7 +2004,7 @@ def poli_plano_ret(request, codorcam):
         form_estrutura = FormEstruturaCobertura()
         form_dimensoes = FormMedidasCoberturaPlana()
         form_retratil = FormCoberturaRetratil()
-        return render(request, "orcs/orcamento-policarbonato-plano.html", {
+        return render(request, "orcs/orcamento-chapa-policarbonato.html", {
             "formPolicarbonato": form_policarbonato,
             "formEstrutura": form_estrutura,
             "formDimensoes": form_dimensoes,
@@ -1998,261 +2014,95 @@ def poli_plano_ret(request, codorcam):
         HttpResponse(status=405)
 
 
-
-# def poli_plano_ret(request, codorcam):
-#     orcamento = obter_dados_gerais_orc(codorcam)
-#     codOrcAtual = request.session['codorcamento']
-#     if request.POST:
-#         form = formPoliPlanRet(request.POST)
-#         if "btnProximo" in request.POST:
-#             if form.is_valid():
-#                 #Obter dados para calculos
-#                 dadosOrcPoliPlano = {'codPoli': request.POST['combPolicarbonato'],
-#                                      'codPerfUn': request.POST['combPerfUn'],
-#                                      'codPerfAr': request.POST['combPerfAr'],
-#                                      'codPerfU': request.POST['combPerfU'],
-#                                      'cod_selante': request.POST['comb_selante'],
-#                                      'codPerfEsExterno': request.POST['combPerfEsExterno'],
-#                                      'codPerfEsInterno': request.POST['combPerfEsInterno'],
-#                                      'codRufo': request.POST['combRufo'],
-#                                      'codCalha': request.POST['combCalha'],
-#                                      'codPerfGuar': request.POST['combPerfGuar'],
-#                                      'codPerfGax': request.POST['combPerfGax'],
-#                                      'codFitaVent': request.POST['combFitaVent'],
-#                                      'codFitaAlum': request.POST['combFitaAlum'],
-#                                      'codMotor': request.POST['combMotores'],
-#                                      'quantMotor': form.cleaned_data['quantMotores'],
-#                                      'quantModulos': form.cleaned_data['quantModulos'],
-#                                      'quantModMoveis': form.cleaned_data['quantModMoveis'],
-#                                      'codCantoneira': request.POST['combCantoneira'],
-#                                      'codPerfCant': request.POST['combPerfCant'],
-#                                      'codRoldanas': request.POST['combRoldanas'],
-#                                      'direcMovimento': form.cleaned_data['direcMovimento'],
-#                                      'codPintura': request.POST['combPintura'],
-#                                      'quantPintura': form.cleaned_data['quantPintura'] if form.cleaned_data['quantPintura'] else 0,
-#                                      'compPoli': form.cleaned_data['compPoli'],
-#                                      'largPoli': form.cleaned_data['largPoli'],
-#                                      'declPoli': form.cleaned_data['declPoli'],
-#                                      'repetPoli': form.cleaned_data['repetPoli'] if form.cleaned_data['repetPoli'] > 0 else 1,
-#                                      'distApoios': form.cleaned_data['distApoios'],
-#                                      'distMaosF': 0,
-#                                      'montante': form.cleaned_data['montante'],
-#                                      'jusante': form.cleaned_data['jusante'],
-#                                      'latEsq': form.cleaned_data['latEsq'],
-#                                      'latDir': form.cleaned_data['latDir'],
-#                                      'diasSerralheiro': form.cleaned_data['diasSerralheiro'],
-#                                      'quantSerralheiros': form.cleaned_data['quantSerralheiros'],
-#                                      'diasAuxiliar': form.cleaned_data['diasAuxiliar'],
-#                                      'quantAuxiliares': form.cleaned_data['quantAuxiliares'],
-#                                      'dificuldade': form.cleaned_data['dificuldade'],
-#                                      'apEstr': form.cleaned_data['apEstr'],
-#                                      'estrutura': 1
-#                                     }
-#                 try:
-#                     ultNumItemEAP = int((g03EapOrc.objetos.filter(orcamento_id=codOrcAtual).order_by('-id')[0].codeap)[:1])
-#                 except:
-#                     ultNumItemEAP = 0
-#             resultados = orc_poli_plano(
-#                 f'{ultNumItemEAP+1}.', **dadosOrcPoliPlano)
-#             inserir_dados_eap(request, *resultados)
-#             # Atualizar custos do orcamento
-#             # GERANDO O ERRO 504 PELA DEMORA, FAZER O PROCESSO SEPARADO
-#             #atualizar_custos_orc(codOrcAtual)
-#             atualizar_lista_insumos(codOrcAtual)
-#             # Editar orcamento atual
-#             strCodOrc = int(codOrcAtual)
-#         return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
-#     else:
-#         form = formPoliPlanRet()
-#         return render(request, "orcs/poli-plano-ret.html", {"form":form, "orcamento": orcamento,})
-
-
-# def poli_plano_fix(request, codorcam):
-#     orcamento = obter_dados_gerais_orc(codorcam)
-#     codOrcAtual = request.session['codorcamento']
-#     if request.POST:
-#         form = formPoliPlanFix(request.POST)
-#         if "btnProximo" in request.POST:
-#             if form.is_valid():
-#                 #Obter dados para calculos
-#                 dadosOrcPoliPlano = {'codPoli': request.POST['combPolicarbonato'],
-#                                      'codPerfUn': request.POST['combPerfUn'],
-#                                      'codPerfAr': request.POST['combPerfAr'],
-#                                      'codPerfU': request.POST['combPerfU'],
-#                                      'codPerfEsExterno': request.POST['combPerfEsExterno'],
-#                                      'codPerfEsInterno': request.POST['combPerfEsInterno'],
-#                                      'cod_selante': request.POST['comb_selante'],
-#                                      'codRufo': request.POST['combRufo'],
-#                                      'codCalha': request.POST['combCalha'],
-#                                      'codPerfGuar': request.POST['combPerfGuar'],
-#                                      'codPerfGax': request.POST['combPerfGax'],
-#                                      'codFitaVent': request.POST['combFitaVent'],
-#                                      'codFitaAlum': request.POST['combFitaAlum'],
-#                                      'quantModulos': 1,
-#                                      'codPintura': request.POST['combPintura'],
-#                                      'quantPintura': form.cleaned_data['quantPintura'] if form.cleaned_data['quantPintura'] else 0,
-#                                      'compPoli': form.cleaned_data['compPoli'],
-#                                      'largPoli': form.cleaned_data['largPoli'],
-#                                      'declPoli': form.cleaned_data['declPoli'],
-#                                      'repetPoli': form.cleaned_data['repetPoli'] if form.cleaned_data['repetPoli'] > 0 else 1,
-#                                      'distApoios': form.cleaned_data['distApoios'],
-#                                      'distMaosF': form.cleaned_data['distMaosF'] if form.cleaned_data['distMaosF'] else 0,
-#                                      'montante': form.cleaned_data['montante'],
-#                                      'jusante': form.cleaned_data['jusante'],
-#                                      'latEsq': form.cleaned_data['latEsq'],
-#                                      'latDir': form.cleaned_data['latDir'],
-#                                      'diasSerralheiro': form.cleaned_data['diasSerralheiro'],
-#                                      'quantSerralheiros': form.cleaned_data['quantSerralheiros'],
-#                                      'diasAuxiliar': form.cleaned_data['diasAuxiliar'],
-#                                      'quantAuxiliares': form.cleaned_data['quantAuxiliares'],
-#                                      'dificuldade': form.cleaned_data['dificuldade'],
-#                                      'apEstr': form.cleaned_data['apEstr'],
-#                                      'estrutura': 0
-#                                     }
-#                 try:
-#                     ultNumItemEAP = int((g03EapOrc.objetos.filter(orcamento_id=codOrcAtual).order_by('-id')[0].codeap)[:1])
-#                 except:
-#                     ultNumItemEAP = 0
-#                 resultados = orc_poli_plano(
-#                     f'{ultNumItemEAP+1}.', **dadosOrcPoliPlano)
-#                 inserir_dados_eap(request, *resultados)
-#                 # Atualizar custos do orcamento
-#                 # GERANDO O ERRO 504 PELA DEMORA, FAZER O PROCESSO SEPARADO
-#                 #atualizar_custos_orc(codOrcAtual)
-#                 atualizar_lista_insumos(codOrcAtual)
-#                 # Editar orcamento atual
-#                 strCodOrc = int(codOrcAtual)
-#                 return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
-#     else:
-#         form = formPoliPlanFix()
-#         return render(request, "orcs/poli-plano-fixo.html", {"form":form, "orcamento": orcamento,})
-
-
-
 def poli_curvo_fix(request, codorcam):
     orcamento = obter_dados_gerais_orc(codorcam)
-    codOrcAtual = request.session['codorcamento']
-    if request.POST:
-        form = formPoliCurvoFix(request.POST)
-        if "btnProximo" in request.POST:
-            if form.is_valid():
-                #Obter dados para calculos
-                dadosOrcPoliPlano = {'codPoli': request.POST['combPolicarbonato'],
-                                     'codPerfUn': request.POST['combPerfUn'],
-                                     'codPerfAr': request.POST['combPerfAr'],
-                                     'codPerfU': request.POST['combPerfU'],
-                                     'cod_selante': request.POST['comb_selante'],
-                                     'codPerfEsEx': request.POST['combPerfEsExterno'],
-                                     'codPerfEsIn': request.POST['combPerfEsInterno'],
-                                     'codCalandra': request.POST['combCalandra'],
-                                     'codRufo': request.POST['combRufo'],
-                                     'codCalha': request.POST['combCalha'],
-                                     'codPerfGuar': request.POST['combPerfGuar'],
-                                     'codPerfGax': request.POST['combPerfGax'],
-                                     'codFitaVent': request.POST['combFitaVent'],
-                                     'quantModulos': 1,
-                                     'codPintura': request.POST['combPintura'],
-                                     'quantPintura': form.cleaned_data['quantPintura'] if form.cleaned_data['quantPintura'] else 0,
-                                     'cordaPoli': form.cleaned_data['cordaPoli'],
-                                     'flechaPoli': form.cleaned_data['flechaPoli'],
-                                     'largPoli': form.cleaned_data['largPoli'],
-                                     'repetPoli': form.cleaned_data['repetPoli'] if form.cleaned_data['repetPoli'] > 0 else 1,
-                                     'distApoios': form.cleaned_data['distApoios'],
-                                     'distMaosF': form.cleaned_data['distMaosF'] if form.cleaned_data['distMaosF'] else 0,
-                                     'montante': form.cleaned_data['montante'],
-                                     'jusante': form.cleaned_data['jusante'],
-                                     'latEsq': form.cleaned_data['latEsq'],
-                                     'latDir': form.cleaned_data['latDir'],
-                                     'diasSerralheiro': form.cleaned_data['diasSerralheiro'],
-                                     'quantSerralheiros': form.cleaned_data['quantSerralheiros'],
-                                     'diasAuxiliar': form.cleaned_data['diasAuxiliar'],
-                                     'quantAuxiliares': form.cleaned_data['quantAuxiliares'],
-                                     'dificuldade': form.cleaned_data['dificuldade'],
-                                     'apEstr': form.cleaned_data['apEstr'],
-                                     'estrutura': 0
-                                    }
-                try:
-                    ultNumItemEAP = int((g03EapOrc.objetos.filter(orcamento_id=codOrcAtual).order_by('-id')[0].codeap)[:1])
-                except:
-                    ultNumItemEAP = 0
-                resultados = orc_poli_curvo(
-                    f'{ultNumItemEAP+1}.', **dadosOrcPoliPlano)
-                inserir_dados_eap(request, *resultados)
-                # Atualizar custos do orcamento
-                # GERANDO O ERRO 504 PELA DEMORA, FAZER O PROCESSO SEPARADO
-                #atualizar_custos_orc(codOrcAtual)
-                atualizar_lista_insumos(codOrcAtual)
-                # Editar orcamento atual
-                strCodOrc = int(codOrcAtual)
-                return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
+    if request.method == "POST":
+        form_policarbonato = FormChapasPolicarbonato(request.POST)
+        form_estrutura = FormEstruturaCobertura(request.POST)
+        form_estrutura_curva = FormEstruturaCoberturaCurva(request.POST)
+        form_dimensoes = FormMedidasCoberturaCurva(request.POST)
+        forms = [form_policarbonato, form_estrutura, form_estrutura_curva, form_dimensoes]
+        if all(form.is_valid() for form in forms):
+            dados_orcamento = {
+                'dados_policarbonato': dicionario_de_policarbonato(form_policarbonato),
+                'dados_estrutura': dicionario_de_estrutura(form_estrutura),
+                'dados_estrutura_curva': dicionario_de_estrutura_curva(form_estrutura_curva),
+                'dados_dimensoes': dicionario_de_dimensoes_curvas(form_dimensoes)
+            }
+            try:
+              ultNumItemEAP = int((g03EapOrc.objetos.filter(orcamento_id=codorcam).order_by('-id')[0].codeap)[:1])
+            except:
+              ultNumItemEAP = 0
+            resultados = orc_poli_curvo(f'{ultNumItemEAP+1}.', **dados_orcamento)
+            inserir_dados_eap(request, *resultados)
+            ##Atualizar custos do orcamento
+            ##GERANDO O ERRO 504 PELA DEMORA, FAZER O PROCESSO SEPARADO
+            #atualizar_custos_orc(codorcam)
+            atualizar_lista_insumos(codorcam)
+            return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
+        else:
+            for form in forms:
+                print(f"\n {form.errors.as_data} \n")
+            return HttpResponse(status=400)
+    elif request.method == "GET":
+        form_policarbonato = FormChapasPolicarbonato()
+        form_estrutura = FormEstruturaCobertura()
+        form_estrutura_curva = FormEstruturaCoberturaCurva()
+        form_dimensoes = FormMedidasCoberturaCurva()
+        return render(request, "orcs/orcamento-chapa-policarbonato.html", {
+            "formPolicarbonato": form_policarbonato,
+            "formEstrutura": form_estrutura,
+            "formEstruturaCurva": form_estrutura_curva,
+            "formDimensoes": form_dimensoes,
+            "orcamento": orcamento})
     else:
-        form = formPoliCurvoFix()
-        return render(request, "orcs/poli-curvo-fix.html", {"form": form, "orcamento": orcamento, })
+        HttpResponse(status=405)
 
 
 def poli_curvo_ret(request, codorcam):
     orcamento = obter_dados_gerais_orc(codorcam)
-    codOrcAtual = request.session['codorcamento']
-    if request.POST:
-        form = formPoliCurvoRet(request.POST)
-        if "btnProximo" in request.POST:
-            if form.is_valid():
-                #Obter dados para calculos
-                dadosOrcPoliPlano = {'codPoli': request.POST['combPolicarbonato'],
-                                     'codPerfUn': request.POST['combPerfUn'],
-                                     'codPerfAr': request.POST['combPerfAr'],
-                                     'codPerfU': request.POST['combPerfU'],
-                                     'cod_selante': request.POST['comb_selante'],
-                                     'codPerfEsEx': request.POST['combPerfEsExterno'],
-                                     'codPerfEsIn': request.POST['combPerfEsInterno'],
-                                     'codCalandra': request.POST['combCalandra'],
-                                     'codRufo': request.POST['combRufo'],
-                                     'codCalha': request.POST['combCalha'],
-                                     'codPerfGuar': request.POST['combPerfGuar'],
-                                     'codPerfGax': request.POST['combPerfGax'],
-                                     'codFitaVent': request.POST['combFitaVent'],
-                                     'codMotor': request.POST['combMotores'],
-                                     'quantMotor': form.cleaned_data['quantMotores'],
-                                     'quantModulos': form.cleaned_data['quantModulos'],
-                                     'quantModMoveis': form.cleaned_data['quantModMoveis'],
-                                     'codCantoneira': request.POST['combCantoneira'],
-                                     'codPerfCant': request.POST['combPerfCant'],
-                                     'codRoldanas': request.POST['combRoldanas'],
-                                     'direcMovimento': form.cleaned_data['direcMovimento'],
-                                     'codPintura': request.POST['combPintura'],
-                                     'quantPintura': form.cleaned_data['quantPintura'] if form.cleaned_data['quantPintura'] else 0,
-                                     'cordaPoli': form.cleaned_data['cordaPoli'],
-                                     'flechaPoli': form.cleaned_data['flechaPoli'],
-                                     'largPoli': form.cleaned_data['largPoli'],
-                                     'repetPoli': form.cleaned_data['repetPoli'] if form.cleaned_data['repetPoli'] > 0 else 1,
-                                     'distApoios': form.cleaned_data['distApoios'],
-                                     'distMaosF': 0,
-                                     'montante': form.cleaned_data['montante'],
-                                     'jusante': form.cleaned_data['jusante'],
-                                     'latEsq': form.cleaned_data['latEsq'],
-                                     'latDir': form.cleaned_data['latDir'],
-                                     'diasSerralheiro': form.cleaned_data['diasSerralheiro'],
-                                     'quantSerralheiros': form.cleaned_data['quantSerralheiros'],
-                                     'diasAuxiliar': form.cleaned_data['diasAuxiliar'],
-                                     'quantAuxiliares': form.cleaned_data['quantAuxiliares'],
-                                     'dificuldade': form.cleaned_data['dificuldade'],
-                                     'apEstr': form.cleaned_data['apEstr'],
-                                     'estrutura': 1
-                                    }
-                try:
-                    ultNumItemEAP = int((g03EapOrc.objetos.filter(orcamento_id=codOrcAtual).order_by('-id')[0].codeap)[:1])
-                except:
-                    ultNumItemEAP = 0
-            resultados = orc_poli_curvo(
-                f'{ultNumItemEAP+1}.', **dadosOrcPoliPlano)
+    if request.method == "POST":
+        form_policarbonato = FormChapasPolicarbonato(request.POST)
+        form_estrutura = FormEstruturaCobertura(request.POST)
+        form_estrutura_curva = FormEstruturaCoberturaCurva(request.POST)
+        form_dimensoes = FormMedidasCoberturaCurva(request.POST)
+        form_retratil = FormCoberturaRetratil(request.POST)
+        forms = [form_policarbonato, form_estrutura, form_estrutura_curva, form_dimensoes, form_retratil]
+        if all(form.is_valid() for form in forms):
+            dados_orcamento = {
+                'dados_policarbonato': dicionario_de_policarbonato(form_policarbonato),
+                'dados_estrutura': dicionario_de_estrutura(form_estrutura),
+                'dados_estrutura_curva': dicionario_de_estrutura_curva(form_estrutura_curva),
+                'dados_dimensoes': dicionario_de_dimensoes_curvas(form_dimensoes),
+                'dados_retratil': dicionario_cobertura_retratil(form_retratil)
+            }
+            try:
+              ultNumItemEAP = int((g03EapOrc.objetos.filter(orcamento_id=codorcam).order_by('-id')[0].codeap)[:1])
+            except:
+              ultNumItemEAP = 0
+            resultados = orc_poli_curvo(f'{ultNumItemEAP+1}.', **dados_orcamento)
             inserir_dados_eap(request, *resultados)
-            # Atualizar custos do orcamento
-            # GERANDO O ERRO 504 PELA DEMORA, FAZER O PROCESSO SEPARADO
-            #atualizar_custos_orc(codOrcAtual)
-            atualizar_lista_insumos(codOrcAtual)
-            # Editar orcamento atual
-            strCodOrc = int(codOrcAtual)
-        return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
+            ##Atualizar custos do orcamento
+            ##GERANDO O ERRO 504 PELA DEMORA, FAZER O PROCESSO SEPARADO
+            #atualizar_custos_orc(codorcam)
+            atualizar_lista_insumos(codorcam)
+            return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
+        else:
+            for form in forms:
+                print(f"\n {form.errors.as_data} \n")
+            return HttpResponse(status=400)
+    elif request.method == "GET":
+        form_policarbonato = FormChapasPolicarbonato()
+        form_estrutura = FormEstruturaCobertura()
+        form_estrutura_curva = FormEstruturaCoberturaCurva()
+        form_dimensoes = FormMedidasCoberturaCurva()
+        form_retratil = FormCoberturaRetratil()
+        return render(request, "orcs/orcamento-chapa-policarbonato.html", {
+            "formPolicarbonato": form_policarbonato,
+            "formEstrutura": form_estrutura,
+            "formEstruturaCurva": form_estrutura_curva,
+            "formDimensoes": form_dimensoes,
+            "formRetratil": form_retratil,
+            "orcamento": orcamento})
     else:
-        form = formPoliCurvoRet()
-        return render(request, "orcs/poli-curvo-ret.html", {"form": form, "orcamento": orcamento, })
+        HttpResponse(status=405)

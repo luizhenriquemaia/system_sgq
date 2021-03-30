@@ -70,6 +70,14 @@
           {{ formEstrutura.tipo_perfil_interno }}
         </div>
       </div>
+      {% if formEstruturaCurva %}
+      <div class="row">
+        <div class="col s12">
+          <label>Tipo de Calandra</label>
+          {{ formEstruturaCurva.tipo_calandra }}
+        </div>
+      </div>
+      {% endif %}
       <div class="row">
         <div class="col s6">
           <label>Pintura</label>
@@ -144,6 +152,21 @@
           <p class="title-forms-fields">Medidas</p>
         </div>
       </div>
+      {% if formEstruturaCurva %}
+      <div class="row">
+        <div class="col s2 input-field">
+          {{ formDimensoes.corda_cobertura }}
+          <label for="id_corda_cobertura">Corda</label>
+        </div>
+        <div class="col s2 input-field">
+          {{ formDimensoes.flecha_cobertura }}
+          <label for="id_flecha_cobertura">Flecha</label>
+        </div>
+        <div class="col s2 input-field">
+          {{ formDimensoes.largura_cobertura }}
+          <label for="id_largura_cobertura">Largura</label>
+        </div>
+      {% else %}
       <div class="row">
         <div class="col s2 input-field">
           {{ formDimensoes.comprimento_cobertura }}
@@ -157,6 +180,7 @@
           {{ formDimensoes.declividade_cobertura }}
           <label for="id_declividade_cobertura">Declividade</label>
         </div>
+        {% endif %}
         <div class="col s2 input-field">
           {{ formDimensoes.repeticoes_cobertura }}
           <label for="id_repeticoes_cobertura">Repeticoes</label>
