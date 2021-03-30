@@ -471,3 +471,82 @@ class formPoliCurvoRet(forms.Form):
     dificuldade = forms.ChoiceField(
         choices=[(1, 'fácil'), (2, 'médio'), (3, 'difícil')], required=False)
     apEstr = forms.BooleanField(required=False)
+
+
+
+class FormChapasPolicarbonato(forms.Form):
+    tipo_policarbonato = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=41) | Q(catins_id=49) | Q(catins_id=55)).order_by("descricao"),
+                                               to_field_name="codigo")
+    tipo_perfil_uniao = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=42).order_by("descricao"),
+                                        to_field_name="codigo")
+    tipo_perfil_arremate = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=43) | Q(catins_id=42)).order_by("descricao"),
+                                        to_field_name="codigo")
+    tipo_perfil_u = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=44).order_by("descricao"),
+                                       to_field_name="codigo")
+    tipo_guarnicao = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
+                                          to_field_name="codigo")
+    tipo_gaxeta = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
+                                         to_field_name="codigo")
+    tipo_fita_vent = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=46).order_by("descricao"),
+                                          to_field_name="codigo")
+    tipo_fita_aluminio = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=46).order_by("descricao"),
+                                          to_field_name="codigo")
+    tipo_selante = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=38).order_by("descricao"),
+                                          to_field_name="codigo")
+
+
+class FormEstruturaCobertura(forms.Form):
+    tipo_perfil_externo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
+                                               to_field_name="codigo")
+    tipo_perfil_interno = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
+                                               to_field_name="codigo")
+    tipo_pintura = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=52).order_by("descricao").order_by("descricao"),
+                                              to_field_name="codigo")
+    quantidade_pintura = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0, required=False)
+    chapa_rufo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
+                                              to_field_name="codigo")
+    chapa_calha = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
+                                               to_field_name="codigo")
+    montante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
+    jusante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
+    lateral_esquerda = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
+    lateral_direita = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
+    dias_serralheiro = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    quantidade_serralheiro = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    dias_auxiliar = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    quantidade_auxiliar = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    dificuldade = forms.ChoiceField(
+        choices=[(1, 'fácil'), (2, 'médio'), (3, 'difícil')], required=False)
+    aproveitar_estrutura = forms.BooleanField(required=False)
+
+
+class FormMedidasCoberturaPlana(forms.Form):
+    comprimento_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    largura_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    declividade_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    repeticoes_cobertura = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0)
+    distancia_apoios_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    quantidade_maos_francesas = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+
+
+class FormMedidasCoberturaCurva(forms.Form):
+    corda_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    flecha_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    largura_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    repeticoes_cobertura = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0)
+    distancia_apoios_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+
+
+class FormCoberturaRetratil(forms.Form):
+    tipo_motor = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=53).order_by("descricao"),
+                                              to_field_name="codigo")
+    quantidade_motor = forms.DecimalField(max_digits=12, decimal_places=0, min_value=0)
+    quantidade_modulos = forms.DecimalField(max_digits=12, decimal_places=0, min_value=0)
+    quantidade_modulos_moveis = forms.DecimalField(max_digits=12, decimal_places=0, min_value=0)
+    direcao_movimento = forms.ChoiceField(choices=[('0', 'comprimento'), ('1', 'largura')], required=True)
+    tipo_cantoneira = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
+                                            to_field_name="codigo")
+    tipo_perfil_cantoneira = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
+                                            to_field_name="codigo")
+    tipo_roldana = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=54).order_by("descricao"),
+                                            to_field_name="codigo")

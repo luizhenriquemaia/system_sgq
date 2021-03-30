@@ -20,75 +20,75 @@
         <div class="row">
           <div class="col s6">
             <label>Chapa</label>
-            {{ form.combPolicarbonato }}
+            {{ formPolicarbonato.tipo_policarbonato }}
           </div>
           <div class="col s6">
             <label>Perfil União</label>
-            {{ form.combPerfUn }}
+            {{ formPolicarbonato.tipo_perfil_uniao }}
           </div>
         </div>
         <div class="row">
           <div class="col s6">
             <label>Perfil Arremate</label>
-            {{ form.combPerfAr }}
+            {{ formPolicarbonato.tipo_perfil_arremate }}
           </div>
           <div class="col s6">
             <label>Perfil U</label>
-            {{ form.combPerfU }}
+            {{ formPolicarbonato.tipo_perfil_u }}
           </div>
         </div>
         <div class="row">
           <div class="col s6">
             <label>Perfil Guarnição</label>
-            {{ form.combPerfGuar }}
+            {{ formPolicarbonato.tipo_guarnicao }}
           </div>
           <div class="col s6">
             <label>Perfil Gaxeta</label>
-            {{ form.combPerfGax }}
+            {{ formPolicarbonato.tipo_gaxeta }}
           </div>
         </div>
         <div class="row">
           <div class="col s4">
             <label>Fita Vent Tape</label>
-            {{ form.combFitaVent }}
+            {{ formPolicarbonato.tipo_fita_vent }}
           </div>
           <div class="col s4">
             <label>Fita de Alumínio</label>
-            {{ form.combFitaAlum }}
+            {{ formPolicarbonato.tipo_fita_aluminio }}
           </div>
           <div class="col s4">
             <label>Selante</label>
-            {{ form.comb_selante }}
+            {{ formPolicarbonato.tipo_selante }}
           </div>
         </div>
         <div class="row">
           <div class="col s6">
             <label>Perfil Estrutural Externo</label>
-            {{ form.combPerfEsExterno }}
+            {{ formEstrutura.tipo_perfil_externo }}
           </div>
           <div class="col s6">
             <label>Perfil Estrutural Interno</label>
-            {{ form.combPerfEsInterno }}
+            {{ formEstrutura.tipo_perfil_interno }}
           </div>
         </div>
         <div class="row">
           <div class="col s6">
             <label>Pintura</label>
-            {{ form.combPintura }}
+            {{ formEstrutura.tipo_pintura }}
           </div>
           <div class="col s6 input-field" style="margin-top:20px;">
-            {{ form.quantPintura }}
+            {{ formEstrutura.quantidade_pintura }}
             <label for="id_quantPintura">Quantidade Pintura (m²)</label>
           </div>
         </div>
         <div class="row">
           <div class="col s6">
             <label>Rufo</label>
-            {{ form.combRufo }}
+            {{ formEstrutura.chapa_rufo }}
           </div>
           <div class="col s6">
             <label>Calha</label>
-            {{ form.combCalha }}
+            {{ formEstrutura.chapa_calha }}
           </div>
         </div>
       <br>
@@ -99,28 +99,28 @@
       </div>
       <div class="row">
         <div class="col s2 input-field">
-          {{ form.compPoli }}
-          <label for="id_compPoli">Comprimento</label>
+          {{ formDimensoes.comprimento_cobertura }}
+          <label for="id_comprimento_cobertura">Comprimento</label>
         </div>
         <div class="col s2 input-field">
-          {{ form.largPoli }}
-          <label for="id_largPoli">Largura</label>
+          {{ formDimensoes.largura_cobertura }}
+          <label for="id_largura_cobertura">Largura</label>
         </div>
         <div class="col s2 input-field">
-          {{ form.declPoli }}
-          <label for="id_declPoli">Declividade</label>
+          {{ formDimensoes.declividade_cobertura }}
+          <label for="id_declividade_cobertura">Declividade</label>
         </div>
         <div class="col s2 input-field">
-          {{ form.repetPoli }}
-          <label for="id_repetPoli">Repeticoes</label>
+          {{ formDimensoes.repeticoes_cobertura }}
+          <label for="id_repeticoes_cobertura">Repeticoes</label>
         </div>
         <div class="col s2 input-field">
-          {{ form.distApoios }}
-          <label for="id_distApoios">Distância Apoios</label>
+          {{ formDimensoes.distancia_apoios_cobertura }}
+          <label for="id_distancia_apoios_cobertura">Distância Apoios</label>
         </div>
         <div class="col s2 input-field">
-          {{ form.distMaosF }}
-          <label for="id_distMaosF">Dist. Maos Franc.</label>
+          {{ formDimensoes.quantidade_maos_francesas }}
+          <label for="id_quantidade_maos_francesas">Quant. Maos Franc.</label>
         </div>
       </div>
       <br>
@@ -132,19 +132,19 @@
       <div class="row">
         <div class="col s3">
           <label>Montante</label>
-          {{ form.montante }}
+          {{ formEstrutura.montante }}
         </div>
         <div class="col s3">
           <label>Jusante</label>
-          {{ form.jusante }}
+          {{ formEstrutura.jusante }}
         </div>
         <div class="col s3">
           <label>Lateral Esquerda</label>
-          {{ form.latEsq }}
+          {{ formEstrutura.lateral_esquerda }}
         </div>
         <div class="col s3">
           <label>Lateral Direita</label>
-          {{ form.latDir }}
+          {{ formEstrutura.lateral_direita }}
         </div>
       </div>
       <br>
@@ -155,19 +155,19 @@
       </div>
       <div class="row">
         <div class="col s3 input-field">
-          {{ form.diasSerralheiro }}
+          {{ formEstrutura.dias_serralheiro }}
           <label for="id_diasObra">Quantidade de Dias Serralheiro</label>
         </div>
         <div class="col s3 input-field">
-          {{ form.quantSerralheiros }}
+          {{ formEstrutura.quantidade_serralheiro }}
           <label for="id_quantFunc">Quantidade de Serralheiros</label>
         </div>
         <div class="col s3 input-field">
-          {{ form.diasAuxiliar }}
+          {{ formEstrutura.dias_auxiliar }}
           <label for="id_diasObra">Quantidade de Dias Auxiliar</label>
         </div>
         <div class="col s3 input-field">
-          {{ form.quantAuxiliares }}
+          {{ formEstrutura.quantidade_auxiliar }}
           <label for="id_quantFunc">Quantidade de Auxiliares</label>
         </div>
       </div>
@@ -179,11 +179,11 @@
       <div class="row">
         <div class="col s3">
           <label>Dificuldade da Obra</label>
-          {{ form.dificuldade }}
+          {{ formEstrutura.dificuldade }}
         </div>
         <div class="col s3">
           <label>
-            {{ form.apEstr }}
+            {{ formEstrutura.aproveitar_estrutura }}
             <span class="checkbox-grid" style="font-size:12px;">Considerar aproveitamento de estrutura</span>
           </label>
         </div>

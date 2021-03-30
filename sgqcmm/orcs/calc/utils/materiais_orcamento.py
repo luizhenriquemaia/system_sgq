@@ -101,13 +101,10 @@ class PerfilUniao():
                 comprimento, 6
             )
         else:
+            quantidade_apoios = Decimal(arrend_cima(round(largura / dist_apoios, 5), 0) - 1)
             # para ver o motivo da utilização de round faça 8,40/0,7 no python
             self.quantidade = tot_peca_sobras(
-                (
-                    arrend_cima(
-                        round(largura / dist_apoios, 5), 0
-                    ) - 1
-                ) * quant_modulos * repeticoes, comprimento, 6
+                quantidade_apoios * quant_modulos * repeticoes, comprimento, 6
             )
 
 
@@ -222,15 +219,17 @@ class Guarnicao():
 
     def calc_perfil_guarnicao(self, largura, comprimento, dist_apoios, repeticoes, quant_modulos, perf_uniao_no_lugar_do_arremate):
         if perf_uniao_no_lugar_do_arremate:
+            quantidade_de_apoios = Decimal(arrend_cima(largura / dist_apoios, 0) + 1)
             quant_guarnicao = arrend_cima(
                 (
-                    Decimal(arrend_cima(largura / dist_apoios, 0) + 1) * comprimento * repeticoes * quant_modulos
+                    quantidade_de_apoios * comprimento * repeticoes * quant_modulos
                 ), 0
             )
         else:
+            quantidade_de_apoios = Decimal(arrend_cima(largura / dist_apoios, 0) - 1)
             quant_guarnicao = arrend_cima(
                 (
-                    (arrend_cima(largura / dist_apoios, 0) - 1) * comprimento * repeticoes * quant_modulos
+                    quantidade_de_apoios * comprimento * repeticoes * quant_modulos
                 ), 0
             )
         self.quantidade = quant_guarnicao + 10 - \
