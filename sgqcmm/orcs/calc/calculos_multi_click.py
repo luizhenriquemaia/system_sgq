@@ -1,5 +1,6 @@
 # Orçamentos de perfil multi-click (multi telha)
 from math import sqrt
+from decimal import *
 
 from main.models import a11Insumos
 from numpy import arange
@@ -38,22 +39,22 @@ def escrever_eap_insumos(self):
 ############ Calculo de  Orelinhas, Parafusos e Buchas ########################
 # quantidade de parafusos é igual a quantidade de orelinhas e a de buchas
 def calc_orelinhas(comprimento, largura, repeticoes):
-    quant_orelinhas = arrend_cima(2.5 * (comprimento + largura) * repeticoes / 1 , 0)
+    quant_orelinhas = arrend_cima(Decimal(2.5) * (comprimento + largura) * repeticoes / 1 , 0)
     quant_orelinhas = quant_orelinhas + 10 - quant_orelinhas % 10 if quant_orelinhas % 10 != 0 else quant_orelinhas
-    return quant_orelinhas
+    return Decimal(quant_orelinhas)
 
 
 ############ Calculo de  Riscos e Bonificações ########################
 def calc_riscos_bonificacoes(custo_total, dificuldade):
-    riscos = custo_total * dificuldade * 0.1
-    bonificacoes = (custo_total * 0.3) + riscos
-    return bonificacoes
+    riscos = custo_total * Decimal(dificuldade) * Decimal(0.1)
+    bonificacoes = (custo_total * Decimal(0.3)) + riscos
+    return Decimal(bonificacoes)
 
 
 def orc_multi_click_plano(prefEap, **valores):
     ################# Cálculos ###########################
     altura = valores['comprimento'] * (valores['declividade'] / 100)
-    comp_real = sqrt(pow(valores['comprimento'], 2) + pow(altura, 2))
+    comp_real = Decimal(sqrt(pow(valores['comprimento'], 2) + pow(altura, 2)))
     if comp_real - valores['comprimento'] <= 0.02:
             comp_real = valores['comprimento']
     categoria_chapa = a11Insumos.objetos.get(codigo=valores['codigo_perfil_multi_click']).catins_id
@@ -158,7 +159,7 @@ def orc_multi_click_plano(prefEap, **valores):
 
     ################## Parafusos #######################
     # Parafuso arremate
-    distancia_furos_arremate = arrend_cima(comp_real / valores['distancia_entre_apoios'], 1)
+    distancia_furos_arremate = Decimal(arrend_cima(comp_real / valores['distancia_entre_apoios'], 1))
     parafuso_arremate = ParafusosPolicarbonato(valores['codigo_parafuso_arremate'])
     parafuso_arremate.calc_parafuso_arremate(
         comp_real, valores['repeticoes'], valores['quantidade_modulos'], distancia_furos_arremate)
@@ -269,7 +270,7 @@ def orc_multi_click_plano(prefEap, **valores):
                                        -1, quant_fech_calha, '', 0, 0, 6164)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_fech_calha * float(obj_fech_calha.custo01)
+        custo_total += quant_fech_calha * obj_fech_calha.custo01
             
     ########################## Rufos ############################
     rufo = Rufo(valores['codigo_rufo'])
@@ -292,8 +293,7 @@ def orc_multi_click_plano(prefEap, **valores):
             linha_eap = escrever_linha_eap('', '', -1, valores['quantidade_pintura'], '', 0, 0, valores['codigo_pintura'])
             linha_ant += 1
             eap_result.append(linha_eap)
-            custo_total += valores['quantidade_pintura'] * \
-                float(objPintura.custo01)
+            custo_total += valores['quantidade_pintura'] * objPintura.custo01
 
     ######################### Motores ###########################
     # Se a estrutura for retrátil
@@ -301,15 +301,13 @@ def orc_multi_click_plano(prefEap, **valores):
         linha_eap = escrever_linha_eap('', '', -1, valores['quantMotor'], '', 0, 0, valores['codMotor'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += valores['quantMotor'] * float(
-            a11Insumos.objetos.get(codigo=valores['codMotor']).custo01)
+        custo_total += valores['quantMotor'] * a11Insumos.objetos.get(codigo=valores['codMotor']).custo01
 
         ######################### Suporte Motor #####################
         linha_eap = escrever_linha_eap('', '', -1, valores['quantMotor'], '', 0, 0, 14225)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += valores['quantMotor'] * float(
-            a11Insumos.objetos.get(codigo=14225).custo01)
+        custo_total += valores['quantMotor'] * a11Insumos.objetos.get(codigo=14225).custo01
 
         ######################### Cantoneiras #######################
         quantCantoneiras = 0
@@ -354,16 +352,14 @@ def orc_multi_click_plano(prefEap, **valores):
                 '', '', -1, quantCantoneiras, '', 0, 0, valores['codCantoneira'])
             linha_ant += 1
             eap_result.append(linha_eap)
-            custo_total += quantCantoneiras * float(
-                a11Insumos.objetos.get(codigo=valores['codCantoneira']).custo01)
+            custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['codCantoneira']).custo01
 
         ####################### Perfis Cantoneiras ####################
         linha_eap = escrever_linha_eap(
             '', '', -1, quantCantoneiras, '', 0, 0, valores['codPerfCant'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quantCantoneiras * float(
-            a11Insumos.objetos.get(codigo=valores['codPerfCant']).custo01)
+        custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['codPerfCant']).custo01
 
         ####################### Roldanas ##############################
         roldana = Roldana(valores['codRoldanas'])
@@ -380,8 +376,7 @@ def orc_multi_click_plano(prefEap, **valores):
             '', '', -1, 10, '', 0, 0, 6325)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += 10 * float(
-            a11Insumos.objetos.get(codigo=6325).custo01)
+        custo_total += 10 * a11Insumos.objetos.get(codigo=6325).custo01
 
         ##################### Fita Isolante ###########################
         # Adicionar 1 fita isolante por padrão quando a estrutura for retrátil
@@ -389,8 +384,7 @@ def orc_multi_click_plano(prefEap, **valores):
             '', '', -1, 1, '', 0, 0, 6326)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += 1 * float(
-            a11Insumos.objetos.get(codigo=6326).custo01)
+        custo_total += 1 * a11Insumos.objetos.get(codigo=6326).custo01
         
         #################### Parafuso Para Suporte do Motor ##########
         # Adicionar 4 parafusos por suporte do motor quando a estrutura for retrátil
@@ -399,24 +393,21 @@ def orc_multi_click_plano(prefEap, **valores):
             '', '', -1, quant_parafuso_suporte, '', 0, 0, 6327)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_parafuso_suporte * float(
-            a11Insumos.objetos.get(codigo=6327).custo01)
+        custo_total += quant_parafuso_suporte * a11Insumos.objetos.get(codigo=6327).custo01
         
         #################### Porca Para Suporte do Motor ##########
         # Adicionar 4 porcas por suporte do motor quando a estrutura for retrátil
         linha_eap = escrever_linha_eap('', '', -1, quant_parafuso_suporte, '', 0, 0, 6328)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_parafuso_suporte * float(
-            a11Insumos.objetos.get(codigo=6328).custo01)
+        custo_total += quant_parafuso_suporte * a11Insumos.objetos.get(codigo=6328).custo01
 
         ################## Arruelas Para Suporte do Motor #########
         # Adicionar 4 arruelas por suporte do motor quando a estrutura for retrátil
         linha_eap = escrever_linha_eap('', '', -1, quant_parafuso_suporte, '', 0, 0, 6329)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_parafuso_suporte * float(
-            a11Insumos.objetos.get(codigo=6329).custo01)
+        custo_total += quant_parafuso_suporte * a11Insumos.objetos.get(codigo=6329).custo01
 
     else:
         pass
@@ -445,8 +436,7 @@ def orc_multi_click_plano(prefEap, **valores):
             '', '', -1, quant_orelinhas, '', 0, 0, 14217)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_orelinhas * float(
-            a11Insumos.objetos.get(codigo=14217).custo01)
+        custo_total += quant_orelinhas * a11Insumos.objetos.get(codigo=14217).custo01
 
         ####################### Parafusos 10 #######################
         quant_paraf_est = quant_orelinhas
@@ -454,8 +444,7 @@ def orc_multi_click_plano(prefEap, **valores):
             '', '', -1, quant_paraf_est, '', 0, 0, 6307)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_paraf_est * float(
-            a11Insumos.objetos.get(codigo=6307).custo01)
+        custo_total += quant_paraf_est * a11Insumos.objetos.get(codigo=6307).custo01
 
         ####################### Bucha 10 #######################
         quant_bucha_est = quant_paraf_est
@@ -463,8 +452,7 @@ def orc_multi_click_plano(prefEap, **valores):
             '', '', -1, quant_bucha_est, '', 0, 0, 6306)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_bucha_est * float(
-            a11Insumos.objetos.get(codigo=6306).custo01)
+        custo_total += quant_bucha_est * a11Insumos.objetos.get(codigo=6306).custo01
 
         ####################### Broca de Concreto #######################
         quant_broca_conc = 1
@@ -472,8 +460,7 @@ def orc_multi_click_plano(prefEap, **valores):
             '', '', -1, quant_broca_conc, '', 0, 0, 6308)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_broca_conc * float(
-            a11Insumos.objetos.get(codigo=6308).custo01)
+        custo_total += quant_broca_conc * a11Insumos.objetos.get(codigo=6308).custo01
 
         ####################### Broca de Aço #######################
         quant_broca_aco = 1
@@ -481,29 +468,26 @@ def orc_multi_click_plano(prefEap, **valores):
             '', '', -1, quant_broca_aco, '', 0, 0, 6309)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_broca_aco * float(
-            a11Insumos.objetos.get(codigo=6309).custo01)
+        custo_total += quant_broca_aco * a11Insumos.objetos.get(codigo=6309).custo01
     else:
         pass
 
     # Serralheiro
-    if not int(valores['dias_serralheiro']) == 0 or not int(valores['quantidade_serralheiro']) == 0:
+    if not valores['dias_serralheiro'] == 0 or not valores['quantidade_serralheiro'] == 0:
         serralheiros = 8 * valores['quantidade_serralheiro'] * valores['dias_serralheiro']
         linha_eap = escrever_linha_eap(
             '', '', -1, serralheiros, 'h', 0, 0, 1163)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += float(serralheiros) * float(
-            a11Insumos.objetos.get(codigo=1163).custo01)
+        custo_total += serralheiros * a11Insumos.objetos.get(codigo=1163).custo01
     # Auxiliar
-    if not int(valores['dias_auxiliar']) == 0 or not int(valores['quantidade_auxiliar']) == 0:
+    if not valores['dias_auxiliar'] == 0 or not valores['quantidade_auxiliar'] == 0:
         auxiliares = 8 * valores['quantidade_auxiliar'] * valores['dias_auxiliar']
         linha_eap = escrever_linha_eap(
             '', '', -1, auxiliares, 'h', 0, 0, 1152)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += float(auxiliares) * float(
-            a11Insumos.objetos.get(codigo=1152).custo01)
+        custo_total += auxiliares * a11Insumos.objetos.get(codigo=1152).custo01
 
 
     ################### Entrega interna -> Riscos Incidentes e Bonificações #############################

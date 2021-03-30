@@ -1,5 +1,6 @@
 # Orçamentos de chapa de policarbonato
 from math import asin, pi, sqrt
+from decimal import *
 
 from main.models import a11Insumos
 from numpy import arange
@@ -59,15 +60,15 @@ def escrever_eap_insumos(self):
 ############ Calculo de  Orelinhas, Parafusos e Buchas ########################
 # quantidade de parafusos é igual a quantidade de orelinhas e a de buchas
 def calc_orelinhas(comprimento, largura, repeticoes):
-    quant_orelinhas = arrend_cima(2.5 * (comprimento + largura) * repeticoes / 1 , 0)
+    quant_orelinhas = arrend_cima(Decimal(2.5) * (comprimento + largura) * repeticoes / 1 , 0)
     quant_orelinhas = quant_orelinhas + 10 - quant_orelinhas % 10 if quant_orelinhas % 10 != 0 else quant_orelinhas
-    return quant_orelinhas
+    return Decimal(quant_orelinhas)
 
 
 ############ Calculo de  Riscos e Bonificações ########################
 def calc_riscos_bonificacoes(custo_total, dificuldade):
-    riscos = custo_total * dificuldade * 0.1
-    bonificacoes = (custo_total * 0.3) + riscos
+    riscos = custo_total * int(dificuldade) * Decimal(0.1)
+    bonificacoes = (custo_total * Decimal(0.3)) + riscos
     return bonificacoes
 
 
@@ -77,7 +78,7 @@ def calc_riscos_bonificacoes(custo_total, dificuldade):
 def orc_poli_plano(prefEap, **valores):
     ################# Cálculos ###########################
     altura = valores['compPoli'] * (valores['declPoli'] / 100)
-    comp_real = sqrt(pow(valores['compPoli'], 2) + pow(altura, 2))
+    comp_real =  round(Decimal(sqrt(pow(valores['compPoli'], 2) + pow(altura, 2))), 4)
     ##### Limite para não haver erro na hora de quantificar chapa #####
     ##### Até 2cm pode-se completar a chapa com fita #####
     if comp_real - valores['compPoli'] <= 0.02:
@@ -234,7 +235,7 @@ def orc_poli_plano(prefEap, **valores):
         # Parafuso arremate -> 10-16x3/4"
         parafuso_arremate = ParafusosPolicarbonato(14132)
         parafuso_arremate.calc_parafuso_arremate(
-            comp_real, valores['repetPoli'], valores['quantModulos'], 0.3
+            comp_real, valores['repetPoli'], valores['quantModulos'], round(Decimal(0.3, 3))
         )
         linha_ant += 1
         eap_result.append(
@@ -246,20 +247,20 @@ def orc_poli_plano(prefEap, **valores):
         # Parafuso união -> trapézio chapa 06 >> 12-14x1.1/2"
         if valores['codPerfUn'] == 10416:
             cod_parafuso = 14130
-            dist_parafusos = 0.3
+            dist_parafusos = round(Decimal(0.3), 3)
         # Parafuso união -> barra chata chapa 06 >> 12-14x1.1/4"
         else:
             cod_parafuso = 14128
-            dist_parafusos = 0.2
+            dist_parafusos = round(Decimal(0.2), 3)
     else:
         # Parafuso união -> trapezio chapa 10 >> 12-14x2"
         if valores['codPerfUn'] == 10416:
             cod_parafuso = 14129
-            dist_parafusos = 0.3
+            dist_parafusos = round(Decimal(0.3), 3)
         # Parafuso união -> barra chata chapa 10 >> 12-14x1.1/2"
         else:
             cod_parafuso = 14130
-            dist_parafusos = 0.2
+            dist_parafusos = round(Decimal(0.2), 3)
     parafuso_uniao = ParafusosPolicarbonato(cod_parafuso)
     parafuso_uniao.calc_parafuso_uniao(
         valores['largPoli'], 
@@ -371,7 +372,7 @@ def orc_poli_plano(prefEap, **valores):
                                        -1, quant_fech_calha, '', 0, 0, 6164)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_fech_calha * float(obj_fech_calha.custo01)
+        custo_total += quant_fech_calha * obj_fech_calha.custo01
             
     ########################## Rufos ############################
     rufo = Rufo(valores['codRufo'])
@@ -401,8 +402,7 @@ def orc_poli_plano(prefEap, **valores):
             linha_eap = escrever_linha_eap('', '', -1, valores['quantPintura'], '', 0, 0, valores['codPintura'])
             linha_ant += 1
             eap_result.append(linha_eap)
-            custo_total += valores['quantPintura'] * \
-                float(objPintura.custo01)
+            custo_total += valores['quantPintura'] * objPintura.custo01
 
     ######################### Motores ###########################
     # Se a estrutura for retrátil
@@ -410,15 +410,13 @@ def orc_poli_plano(prefEap, **valores):
         linha_eap = escrever_linha_eap('', '', -1, valores['quantMotor'], '', 0, 0, valores['codMotor'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += valores['quantMotor'] * float(
-            a11Insumos.objetos.get(codigo=valores['codMotor']).custo01)
+        custo_total += valores['quantMotor'] * a11Insumos.objetos.get(codigo=valores['codMotor']).custo01
 
         ######################### Suporte Motor #####################
         linha_eap = escrever_linha_eap('', '', -1, valores['quantMotor'], '', 0, 0, 14225)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += valores['quantMotor'] * float(
-            a11Insumos.objetos.get(codigo=14225).custo01)
+        custo_total += valores['quantMotor'] * a11Insumos.objetos.get(codigo=14225).custo01
 
         ######################### Cantoneiras #######################
         quantCantoneiras = 0
@@ -456,23 +454,21 @@ def orc_poli_plano(prefEap, **valores):
             elif valores['quantModulos'] > 1 and estrutura_retratil_direcao_comprimento:
                 quantCantoneiras = (
                     (valores['quantModulos'] * 2) - 1) * valores['compPoli'] / valores['quantModulos'] * 2
-        quantCantoneiras = tot_peca_juncao(quantCantoneiras, 6)
+        quantCantoneiras = Decimal(tot_peca_juncao(quantCantoneiras, 6))
         # Se for rolete de tecnil não precisa de cantoneira
         if not valores['codRoldanas'] == 14219 or valores['codRoldanas'] == 14297:
             linha_eap = escrever_linha_eap(
                 '', '', -1, quantCantoneiras, '', 0, 0, valores['codCantoneira'])
             linha_ant += 1
             eap_result.append(linha_eap)
-            custo_total += quantCantoneiras * float(
-                a11Insumos.objetos.get(codigo=valores['codCantoneira']).custo01)
+            custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['codCantoneira']).custo01
 
         ####################### Perfis Cantoneiras ####################
         linha_eap = escrever_linha_eap(
             '', '', -1, quantCantoneiras, '', 0, 0, valores['codPerfCant'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quantCantoneiras * float(
-            a11Insumos.objetos.get(codigo=valores['codPerfCant']).custo01)
+        custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['codPerfCant']).custo01
 
         ####################### Roldanas ##############################
         roldana = Roldana(valores['codRoldanas'])
@@ -495,8 +491,7 @@ def orc_poli_plano(prefEap, **valores):
             '', '', -1, 10, '', 0, 0, 6325)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += 10 * float(
-            a11Insumos.objetos.get(codigo=6325).custo01)
+        custo_total += 10 * a11Insumos.objetos.get(codigo=6325).custo01
 
         ##################### Fita Isolante ###########################
         # Adicionar 1 fita isolante por padrão quando a estrutura for retrátil
@@ -504,8 +499,7 @@ def orc_poli_plano(prefEap, **valores):
             '', '', -1, 1, '', 0, 0, 6326)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += 1 * float(
-            a11Insumos.objetos.get(codigo=6326).custo01)
+        custo_total += 1 * a11Insumos.objetos.get(codigo=6326).custo01
         
         #################### Parafuso Para Suporte do Motor ##########
         # Adicionar 4 parafusos por suporte do motor quando a estrutura for retrátil
@@ -514,24 +508,21 @@ def orc_poli_plano(prefEap, **valores):
             '', '', -1, quant_parafuso_suporte, '', 0, 0, 6327)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_parafuso_suporte * float(
-            a11Insumos.objetos.get(codigo=6327).custo01)
+        custo_total += quant_parafuso_suporte * a11Insumos.objetos.get(codigo=6327).custo01
         
         #################### Porca Para Suporte do Motor ##########
         # Adicionar 4 porcas por suporte do motor quando a estrutura for retrátil
         linha_eap = escrever_linha_eap('', '', -1, quant_parafuso_suporte, '', 0, 0, 6328)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_parafuso_suporte * float(
-            a11Insumos.objetos.get(codigo=6328).custo01)
+        custo_total += quant_parafuso_suporte * a11Insumos.objetos.get(codigo=6328).custo01
 
         ################## Arruelas Para Suporte do Motor #########
         # Adicionar 4 arruelas por suporte do motor quando a estrutura for retrátil
         linha_eap = escrever_linha_eap('', '', -1, quant_parafuso_suporte, '', 0, 0, 6329)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_parafuso_suporte * float(
-            a11Insumos.objetos.get(codigo=6329).custo01)
+        custo_total += quant_parafuso_suporte * a11Insumos.objetos.get(codigo=6329).custo01
 
     else:
         pass
@@ -573,8 +564,7 @@ def orc_poli_plano(prefEap, **valores):
             '', '', -1, quant_orelinhas, '', 0, 0, 14217)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_orelinhas * float(
-            a11Insumos.objetos.get(codigo=14217).custo01)
+        custo_total += quant_orelinhas * a11Insumos.objetos.get(codigo=14217).custo01
 
         ####################### Parafusos 10 #######################
         quant_paraf_est = quant_orelinhas
@@ -582,8 +572,7 @@ def orc_poli_plano(prefEap, **valores):
             '', '', -1, quant_paraf_est, '', 0, 0, 6307)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_paraf_est * float(
-            a11Insumos.objetos.get(codigo=6307).custo01)
+        custo_total += quant_paraf_est * a11Insumos.objetos.get(codigo=6307).custo01
 
         ####################### Bucha 10 #######################
         quant_bucha_est = quant_paraf_est
@@ -591,8 +580,7 @@ def orc_poli_plano(prefEap, **valores):
             '', '', -1, quant_bucha_est, '', 0, 0, 6306)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_bucha_est * float(
-            a11Insumos.objetos.get(codigo=6306).custo01)
+        custo_total += quant_bucha_est * a11Insumos.objetos.get(codigo=6306).custo01
 
         ####################### Broca de Concreto #######################
         quant_broca_conc = 1
@@ -600,8 +588,7 @@ def orc_poli_plano(prefEap, **valores):
             '', '', -1, quant_broca_conc, '', 0, 0, 6308)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_broca_conc * float(
-            a11Insumos.objetos.get(codigo=6308).custo01)
+        custo_total += quant_broca_conc * a11Insumos.objetos.get(codigo=6308).custo01
 
         ####################### Broca de Aço #######################
         quant_broca_aco = 1
@@ -609,8 +596,7 @@ def orc_poli_plano(prefEap, **valores):
             '', '', -1, quant_broca_aco, '', 0, 0, 6309)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_broca_aco * float(
-            a11Insumos.objetos.get(codigo=6309).custo01)
+        custo_total += quant_broca_aco * a11Insumos.objetos.get(codigo=6309).custo01
     else:
         pass
 
@@ -621,8 +607,7 @@ def orc_poli_plano(prefEap, **valores):
             '', '', -1, serralheiros, 'h', 0, 0, 1163)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += float(serralheiros) * float(
-            a11Insumos.objetos.get(codigo=1163).custo01)
+        custo_total += serralheiros * a11Insumos.objetos.get(codigo=1163).custo01
     # Auxiliar
     if not int(valores['diasAuxiliar']) == 0 or not int(valores['quantAuxiliares']) == 0:
         auxiliares = 8 * valores['quantAuxiliares'] * valores['diasAuxiliar']
@@ -630,8 +615,7 @@ def orc_poli_plano(prefEap, **valores):
             '', '', -1, auxiliares, 'h', 0, 0, 1152)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += float(auxiliares) * float(
-            a11Insumos.objetos.get(codigo=1152).custo01)
+        custo_total += auxiliares * a11Insumos.objetos.get(codigo=1152).custo01
 
 
     ################### Entrega interna -> Riscos Incidentes e Bonificações #############################
@@ -651,7 +635,7 @@ def orc_poli_plano(prefEap, **valores):
 def orc_poli_curvo(prefEap, **valores):
     ################# Cálculos ###########################
     raioCirculo = (pow(valores['cordaPoli'] / 2, 2) + pow(valores['flechaPoli'], 2)) / (2 * valores['flechaPoli'])
-    anguloCurva = asin((valores['cordaPoli'] / 2) / raioCirculo)
+    anguloCurva = Decimal(asin((valores['cordaPoli'] / 2) / raioCirculo))
     arcoCurva = (anguloCurva * 2) * raioCirculo
     if arcoCurva - valores['cordaPoli'] <= 0.02:
         arcoCurva = valores['cordaPoli']
@@ -845,20 +829,20 @@ def orc_poli_curvo(prefEap, **valores):
         # Parafuso união -> trapézio chapa 06 >> 12-14x1.1/2"
         if valores['codPerfUn'] == 10416:
             cod_parafuso = 14130
-            dist_parafusos = 0.3
+            dist_parafusos = Decimal(round(0.3, 2))
         # Parafuso união -> barra chata chapa 06 >> 12-14x1.1/4"
         else:
             cod_parafuso = 14128
-            dist_parafusos = 0.2
+            dist_parafusos = Decimal(round(0.2, 2))
     else:
         # Parafuso união -> trapezio chapa 10 >> 12-14x2"
         if valores['codPerfUn'] == 10416:
             cod_parafuso = 14129
-            dist_parafusos = 0.3
+            dist_parafusos = Decimal(round(0.3, 2))
         # Parafuso união -> barra chata chapa 10 >> 12-14x1.1/2"
         else:
             cod_parafuso = 14130
-            dist_parafusos = 0.2
+            dist_parafusos = Decimal(round(0.2, 2))
 
     parafuso_uniao = ParafusosPolicarbonato(cod_parafuso)
     parafuso_uniao.calc_parafuso_uniao(
@@ -890,7 +874,7 @@ def orc_poli_curvo(prefEap, **valores):
             perfil_estrutural.calcular_quantidade(
                 largura_orcamento, 
                 valores['cordaPoli'],
-                comprimento_orcamento + 0.2,
+                comprimento_orcamento + Decimal(0.2),
                 valores['flechaPoli'],
                 distApoios, 
                 valores['repetPoli'], 
@@ -908,7 +892,7 @@ def orc_poli_curvo(prefEap, **valores):
             perfil_estrutural_interno.calcular_quantidade(
                 largura_orcamento, 
                 valores['cordaPoli'],
-                comprimento_orcamento + 0.2, 
+                comprimento_orcamento + Decimal(0.2),
                 valores['flechaPoli'], 
                 distApoios, 
                 valores['repetPoli'], 
@@ -928,7 +912,7 @@ def orc_poli_curvo(prefEap, **valores):
             perfil_estrutural_externo.calcular_quantidade(
                 largura_orcamento, 
                 valores['cordaPoli'],
-                comprimento_orcamento + 0.2, 
+                comprimento_orcamento + Decimal(0.2), 
                 valores['flechaPoli'], 
                 distApoios, 
                 valores['repetPoli'], 
@@ -967,7 +951,7 @@ def orc_poli_curvo(prefEap, **valores):
         linha_eap = escrever_linha_eap('', '', -1, quant_fech_calha, '', 0, 0, 6164)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_fech_calha * float(obj_fech_calha.custo01)
+        custo_total += quant_fech_calha * obj_fech_calha.custo01
 
     ########################## Rufos ############################
     rufo = Rufo(valores['codRufo'])
@@ -990,17 +974,15 @@ def orc_poli_curvo(prefEap, **valores):
     #################### Calandrar Material ######################
     # arcoCurva + 0.20 -> perde 20cm de metalon na calandra
     if valores['apEstr'] == False:
-        quantCalandra = arrend_cima((
-            arrend_cima(
-                round(
-                    largura_orcamento / distApoios, 5), 0) + 1) * (
-                        comprimento_orcamento + 0.20) * valores['repetPoli'] * valores['quantModulos'], 0)
+        quantidade_de_apoios_calandra = Decimal(arrend_cima(round(largura_orcamento / distApoios, 5), 0) + 1)
+        quantCalandra = Decimal(arrend_cima(quantidade_de_apoios_calandra * (
+                        comprimento_orcamento + Decimal(0.20)) * valores['repetPoli'] * valores['quantModulos'], 0))
         objCalandra = a11Insumos.objetos.get(codigo=valores['codCalandra'])
         linha_eap = escrever_linha_eap(f'{prefEap}01.02.04.', f"{quantCalandra} m de {objCalandra.descricao}",
                                 -1, quantCalandra, 'm', 2, 21, valores['codCalandra'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quantCalandra * float(objCalandra.custo01)
+        custo_total += quantCalandra * objCalandra.custo01
 
     ######################### Pintura #############################
     if valores['apEstr'] == False:
@@ -1011,7 +993,7 @@ def orc_poli_curvo(prefEap, **valores):
             linha_eap = escrever_linha_eap('', '', -1, valores['quantPintura'], '', 0, 0, valores['codPintura'])
             linha_ant += 1
             eap_result.append(linha_eap)
-            custo_total += valores['quantPintura'] * float(objPintura.custo01)
+            custo_total += valores['quantPintura'] * objPintura.custo01
 
     ######################### Motores ###########################
     if estrutura_retratil:
@@ -1019,15 +1001,13 @@ def orc_poli_curvo(prefEap, **valores):
             '', '', -1, valores['quantMotor'], '', 0, 0, valores['codMotor'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += valores['quantMotor'] * float(
-            a11Insumos.objetos.get(codigo=valores['codMotor']).custo01)
+        custo_total += valores['quantMotor'] * a11Insumos.objetos.get(codigo=valores['codMotor']).custo01
 
         ######################### Suporte Motor #####################
         linha_eap = escrever_linha_eap('', '', -1, valores['quantMotor'], '', 0, 0, 14225)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += valores['quantMotor'] * float(
-            a11Insumos.objetos.get(codigo=14225).custo01)
+        custo_total += valores['quantMotor'] * a11Insumos.objetos.get(codigo=14225).custo01
 
         ######################### Cantoneiras #######################
         quantCantoneiras = 0
@@ -1066,23 +1046,21 @@ def orc_poli_curvo(prefEap, **valores):
                             quantCantoneiras += 2 * (larguraModulos * i + larguraModulos)
             elif valores['quantModulos'] > 1 and estrutura_retratil_direcao_comprimento:
                 quantCantoneiras = ((valores['quantModulos']*2)-1)*comprimento_orcamento*2
-        quantCantoneiras = tot_peca_juncao(quantCantoneiras, 6)
+        quantCantoneiras = Decimal(tot_peca_juncao(quantCantoneiras, 6))
         # Se for roldana para 75mm não precisa de cantoneira
         if not valores['codRoldanas'] == 14219 and not valores['codRoldanas'] == 14297:
             linha_eap = escrever_linha_eap(
                 '', '', -1, quantCantoneiras, '', 0, 0, valores['codCantoneira'])
             linha_ant += 1
             eap_result.append(linha_eap)
-            custo_total += quantCantoneiras * float(
-                a11Insumos.objetos.get(codigo=valores['codCantoneira']).custo01)
+            custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['codCantoneira']).custo01
 
         ####################### Perfis Cantoneiras ####################
         linha_eap = escrever_linha_eap(
             '', '', -1, quantCantoneiras, '', 0, 0, valores['codPerfCant'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quantCantoneiras * float(
-            a11Insumos.objetos.get(codigo=valores['codPerfCant']).custo01)
+        custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['codPerfCant']).custo01
 
         ####################### Roldanas ##############################
         roldana = Roldana(valores['codRoldanas'])
@@ -1104,16 +1082,14 @@ def orc_poli_curvo(prefEap, **valores):
         linha_eap = escrever_linha_eap('', '', -1, 10, '', 0, 0, 6325)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += 10 * float(
-            a11Insumos.objetos.get(codigo=6325).custo01)
+        custo_total += 10 * a11Insumos.objetos.get(codigo=6325).custo01
 
         ##################### Fita Isolante ###########################
         # Adicionar 1 fita isolante por padrão quando a estrutura for retrátil
         linha_eap = escrever_linha_eap('', '', -1, 1, '', 0, 0, 6326)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += 1 * float(
-            a11Insumos.objetos.get(codigo=6326).custo01)
+        custo_total += 1 * a11Insumos.objetos.get(codigo=6326).custo01
 
         #################### Parafuso Para Suporte do Motor ##########
         # Adicionar 4 parafusos por suporte do motor quando a estrutura for retrátil
@@ -1122,8 +1098,7 @@ def orc_poli_curvo(prefEap, **valores):
             '', '', -1, quant_parafuso_suporte, '', 0, 0, 6327)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_parafuso_suporte * float(
-            a11Insumos.objetos.get(codigo=6327).custo01)
+        custo_total += quant_parafuso_suporte * a11Insumos.objetos.get(codigo=6327).custo01
 
         #################### Porca Para Suporte do Motor ##########
         # Adicionar 4 porcas por suporte do motor quando a estrutura for retrátil
@@ -1131,8 +1106,7 @@ def orc_poli_curvo(prefEap, **valores):
             '', '', -1, quant_parafuso_suporte, '', 0, 0, 6328)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_parafuso_suporte * float(
-            a11Insumos.objetos.get(codigo=6328).custo01)
+        custo_total += quant_parafuso_suporte * a11Insumos.objetos.get(codigo=6328).custo01
 
         ################## Arruelas Para Suporte do Motor #########
         # Adicionar 4 arruelas por suporte do motor quando a estrutura for retrátil
@@ -1140,8 +1114,7 @@ def orc_poli_curvo(prefEap, **valores):
             '', '', -1, quant_parafuso_suporte, '', 0, 0, 6329)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_parafuso_suporte * float(
-            a11Insumos.objetos.get(codigo=6329).custo01)
+        custo_total += quant_parafuso_suporte * a11Insumos.objetos.get(codigo=6329).custo01
     else:
         pass
 
@@ -1183,8 +1156,7 @@ def orc_poli_curvo(prefEap, **valores):
             '', '', -1, quant_orelinhas, '', 0, 0, 14217)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_orelinhas * float(
-            a11Insumos.objetos.get(codigo=14217).custo01)
+        custo_total += quant_orelinhas * a11Insumos.objetos.get(codigo=14217).custo01
 
         ####################### Parafusos 10 #######################
         quant_paraf_est = quant_orelinhas
@@ -1192,8 +1164,7 @@ def orc_poli_curvo(prefEap, **valores):
             '', '', -1, quant_paraf_est, '', 0, 0, 6307)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_paraf_est * float(
-            a11Insumos.objetos.get(codigo=6307).custo01)
+        custo_total += quant_paraf_est * a11Insumos.objetos.get(codigo=6307).custo01
 
         ####################### Bucha 10 #######################
         quant_bucha_est = quant_paraf_est
@@ -1201,8 +1172,7 @@ def orc_poli_curvo(prefEap, **valores):
             '', '', -1, quant_bucha_est, '', 0, 0, 6306)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_bucha_est * float(
-            a11Insumos.objetos.get(codigo=6306).custo01)
+        custo_total += quant_bucha_est * a11Insumos.objetos.get(codigo=6306).custo01
 
         ####################### Broca de Concreto #######################
         quant_broca_conc = 1
@@ -1210,8 +1180,7 @@ def orc_poli_curvo(prefEap, **valores):
             '', '', -1, quant_broca_conc, '', 0, 0, 6308)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_broca_conc * float(
-            a11Insumos.objetos.get(codigo=6308).custo01)
+        custo_total += quant_broca_conc * a11Insumos.objetos.get(codigo=6308).custo01
 
         ####################### Broca de Aço #######################
         quant_broca_aco = 1
@@ -1219,30 +1188,27 @@ def orc_poli_curvo(prefEap, **valores):
             '', '',  -1, quant_broca_aco, '', 0, 0, 6309)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quant_broca_aco * float(
-            a11Insumos.objetos.get(codigo=6309).custo01)
+        custo_total += quant_broca_aco * a11Insumos.objetos.get(codigo=6309).custo01
     else:
         pass
 
     # Serralheiro
-    if not int(valores['diasSerralheiro']) == 0 or not int(valores['quantSerralheiros']) == 0:
+    if not valores['diasSerralheiro'] == 0 or not valores['quantSerralheiros'] == 0:
         serralheiros = 8 * \
             valores['quantSerralheiros'] * valores['diasSerralheiro']
         linha_eap = escrever_linha_eap(
             '', '', -1, serralheiros, '', 0, 0, 1163)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += float(serralheiros) * float(
-            a11Insumos.objetos.get(codigo=1163).custo01)
+        custo_total += serralheiros * a11Insumos.objetos.get(codigo=1163).custo01
     # Auxiliar
-    if not int(valores['diasAuxiliar']) == 0 or not int(valores['quantAuxiliares']) == 0:
+    if not valores['diasAuxiliar'] == 0 or not valores['quantAuxiliares'] == 0:
         auxiliares = 8 * valores['quantAuxiliares'] * valores['diasAuxiliar']
         linha_eap = escrever_linha_eap(
             '', '', -1, auxiliares, '', 0, 0, 1152)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += float(auxiliares) * float(
-            a11Insumos.objetos.get(codigo=1152).custo01)
+        custo_total += auxiliares * a11Insumos.objetos.get(codigo=1152).custo01
 
 
     ################### Entrega interna -> Riscos Incidentes e Bonificações #############################
