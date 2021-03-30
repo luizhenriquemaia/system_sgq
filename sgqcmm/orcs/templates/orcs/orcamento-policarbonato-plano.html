@@ -11,86 +11,133 @@
     </div>
     <form method="POST">
       {% csrf_token %}
-      <div class="form-field">
-        <div class="row">
-          <div class="col s12">
-            <p class="title-forms-fields">Especificação de Materiais</p>
-          </div>
+      <div class="row">
+        <div class="col s12">
+          <p class="title-forms-fields">Especificação de Materiais</p>
         </div>
-        <div class="row">
-          <div class="col s6">
-            <label>Chapa</label>
-            {{ formPolicarbonato.tipo_policarbonato }}
-          </div>
-          <div class="col s6">
-            <label>Perfil União</label>
-            {{ formPolicarbonato.tipo_perfil_uniao }}
-          </div>
+      </div>
+      <div class="row">
+        <div class="col s6">
+          <label>Chapa</label>
+          {{ formPolicarbonato.tipo_policarbonato }}
         </div>
-        <div class="row">
-          <div class="col s6">
-            <label>Perfil Arremate</label>
-            {{ formPolicarbonato.tipo_perfil_arremate }}
-          </div>
-          <div class="col s6">
-            <label>Perfil U</label>
-            {{ formPolicarbonato.tipo_perfil_u }}
-          </div>
+        <div class="col s6">
+          <label>Perfil União</label>
+          {{ formPolicarbonato.tipo_perfil_uniao }}
         </div>
-        <div class="row">
-          <div class="col s6">
-            <label>Perfil Guarnição</label>
-            {{ formPolicarbonato.tipo_guarnicao }}
-          </div>
-          <div class="col s6">
-            <label>Perfil Gaxeta</label>
-            {{ formPolicarbonato.tipo_gaxeta }}
-          </div>
+      </div>
+      <div class="row">
+        <div class="col s6">
+          <label>Perfil Arremate</label>
+          {{ formPolicarbonato.tipo_perfil_arremate }}
         </div>
-        <div class="row">
-          <div class="col s4">
-            <label>Fita Vent Tape</label>
-            {{ formPolicarbonato.tipo_fita_vent }}
-          </div>
-          <div class="col s4">
-            <label>Fita de Alumínio</label>
-            {{ formPolicarbonato.tipo_fita_aluminio }}
-          </div>
-          <div class="col s4">
-            <label>Selante</label>
-            {{ formPolicarbonato.tipo_selante }}
-          </div>
+        <div class="col s6">
+          <label>Perfil U</label>
+          {{ formPolicarbonato.tipo_perfil_u }}
         </div>
-        <div class="row">
-          <div class="col s6">
-            <label>Perfil Estrutural Externo</label>
-            {{ formEstrutura.tipo_perfil_externo }}
-          </div>
-          <div class="col s6">
-            <label>Perfil Estrutural Interno</label>
-            {{ formEstrutura.tipo_perfil_interno }}
-          </div>
+      </div>
+      <div class="row">
+        <div class="col s6">
+          <label>Perfil Guarnição</label>
+          {{ formPolicarbonato.tipo_guarnicao }}
         </div>
-        <div class="row">
-          <div class="col s6">
-            <label>Pintura</label>
-            {{ formEstrutura.tipo_pintura }}
-          </div>
-          <div class="col s6 input-field" style="margin-top:20px;">
-            {{ formEstrutura.quantidade_pintura }}
-            <label for="id_quantPintura">Quantidade Pintura (m²)</label>
-          </div>
+        <div class="col s6">
+          <label>Perfil Gaxeta</label>
+          {{ formPolicarbonato.tipo_gaxeta }}
         </div>
-        <div class="row">
-          <div class="col s6">
-            <label>Rufo</label>
-            {{ formEstrutura.chapa_rufo }}
-          </div>
-          <div class="col s6">
-            <label>Calha</label>
-            {{ formEstrutura.chapa_calha }}
-          </div>
+      </div>
+      <div class="row">
+        <div class="col s4">
+          <label>Fita Vent Tape</label>
+          {{ formPolicarbonato.tipo_fita_vent }}
         </div>
+        <div class="col s4">
+          <label>Fita de Alumínio</label>
+          {{ formPolicarbonato.tipo_fita_aluminio }}
+        </div>
+        <div class="col s4">
+          <label>Selante</label>
+          {{ formPolicarbonato.tipo_selante }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6">
+          <label>Perfil Estrutural Externo</label>
+          {{ formEstrutura.tipo_perfil_externo }}
+        </div>
+        <div class="col s6">
+          <label>Perfil Estrutural Interno</label>
+          {{ formEstrutura.tipo_perfil_interno }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6">
+          <label>Pintura</label>
+          {{ formEstrutura.tipo_pintura }}
+        </div>
+        <div class="col s6 input-field" style="margin-top:20px;">
+          {{ formEstrutura.quantidade_pintura }}
+          <label for="id_quantPintura">Quantidade Pintura (m²)</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6">
+          <label>Rufo</label>
+          {{ formEstrutura.chapa_rufo }}
+        </div>
+        <div class="col s6">
+          <label>Calha</label>
+          {{ formEstrutura.chapa_calha }}
+        </div>
+      </div>
+      {% if formRetratil %}
+      <br>
+      <div class="row">
+        <div class="col s12">
+          <p class="title-forms-fields">Especificações Cobertura Retrátil</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6">
+          <label>Tipo de Motor</label>
+          {{ formRetratil.tipo_motor }}
+        </div>
+        <div class="col s6 input-field" style="margin-top:20px;">
+          {{ formRetratil.quantidade_motor }}
+          <label for="id_quantidade_motor">Quantidade Motores</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6 input-field">
+          {{ formRetratil.quantidade_modulos }}
+          <label for="id_quantidade_modulos">Quantidade Total Módulos</label>
+        </div>
+        <div class="col s6 input-field">
+          {{ formRetratil.quantidade_modulos_moveis }}
+          <label for="id_quantidade_modulos_moveis">Quantidade Módulos Móveis</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6">
+          <label>Direção do Movimento</label>
+          {{ formRetratil.direcao_movimento }}
+        </div>
+        <div class="col s6">
+          <label>Cantoneiras</label>
+          {{ formRetratil.tipo_cantoneira }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6">
+          <label>Perfil Cantoneiras</label>
+          {{ formRetratil.tipo_perfil_cantoneira }}
+        </div>
+        <div class="col s6">
+          <label>Roldanas</label>
+          {{ formRetratil.tipo_roldana }}
+        </div>
+      </div>
+      {% endif %}
       <br>
       <div class="row">
         <div class="col s12">

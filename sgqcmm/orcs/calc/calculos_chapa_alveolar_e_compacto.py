@@ -88,15 +88,21 @@ def orc_poli_plano(prefEap, **valores):
     orcamento_com_chapa_compacta = True if a11Insumos.objetos.get(codigo=valores['dados_policarbonato']['cod_policarbonato']).catins_id == 55 else False
     comprimento_orcamento = comp_real
     largura_orcamento = valores['dados_dimensoes']['largura_cobertura']
-    estrutura_retratil = True if valores['dados_estrutura']['estrutura'] == 1 else False
+    try: 
+        if valores['dados_retratil']:
+            estrutura_retratil = True
+            quantidade_de_modulos = valores['dados_retratil']['quantidade_modulos']
+    except KeyError:
+        estrutura_retratil = False
+        quantidade_de_modulos = 1
     if estrutura_retratil:
-        estrutura_retratil_direcao_largura = True if valores['dados_estrutura']['direcMovimento'] == 1 else False
-        estrutura_retratil_direcao_comprimento = True if valores['dados_estrutura']['direcMovimento'] == 0 else False
+        estrutura_retratil_direcao_largura = True if valores['dados_retratil']['direcao_movimento'] == 1 else False
+        estrutura_retratil_direcao_comprimento = True if valores['dados_retratil']['direcao_movimento'] == 0 else False
         # Tamanho do módulo da estrutura para cálculos
         if estrutura_retratil_direcao_comprimento:
-            comprimento_orcamento = comp_real / valores['dados_estrutura']['quantidade_modulos']
+            comprimento_orcamento = comp_real / quantidade_de_modulos
         else:
-            largura_orcamento = valores['dados_estrutura']['largura_cobertura'] / valores['dados_estrutura']['quantidade_modulos']
+            largura_orcamento = valores['dados_dimensoes']['largura_cobertura'] / quantidade_de_modulos
     linha_ant = 0
     custo_total = 0
     desc_poli = a11Insumos.objetos.get(codigo=valores['dados_policarbonato']['cod_policarbonato']).descricao
@@ -137,7 +143,7 @@ def orc_poli_plano(prefEap, **valores):
     ##################### Chapas #############################
     chapa_policarbonato = ChapaPolicarbonato(valores['dados_policarbonato']['cod_policarbonato'])
     chapa_policarbonato.calc_poli_alveolar(
-        comprimento_orcamento, largura_orcamento, valores['dados_dimensoes']['distancia_apoios_cobertura'], valores['dados_dimensoes']['repeticoes_cobertura'] * valores['dados_estrutura']['quantidade_modulos']
+        comprimento_orcamento, largura_orcamento, valores['dados_dimensoes']['distancia_apoios_cobertura'], valores['dados_dimensoes']['repeticoes_cobertura'] * quantidade_de_modulos
     )
     linha_ant += 1
     eap_result.append(
@@ -147,7 +153,7 @@ def orc_poli_plano(prefEap, **valores):
     ##################### Perfil União ######################
     perfil_uniao = PerfilUniao(valores['dados_policarbonato']['cod_perfil_uniao'])
     perfil_uniao.calc_perfil_uniao(largura_orcamento, comprimento_orcamento, valores['dados_dimensoes']['distancia_apoios_cobertura'], 
-        valores['dados_estrutura']['quantidade_modulos'], valores['dados_dimensoes']['repeticoes_cobertura'], perfil_uniao_igual_ao_arremate
+        quantidade_de_modulos, valores['dados_dimensoes']['repeticoes_cobertura'], perfil_uniao_igual_ao_arremate
     )
     linha_ant += 1
     eap_result.append(
@@ -156,7 +162,7 @@ def orc_poli_plano(prefEap, **valores):
 
     ################# Perfil U ###########################
     perfil_u = PerfilU(valores['dados_policarbonato']['cod_perfil_u'])
-    perfil_u.calc_perfil_u(largura_orcamento, valores['dados_dimensoes']['repeticoes_cobertura'], valores['dados_estrutura']['quantidade_modulos'])
+    perfil_u.calc_perfil_u(largura_orcamento, valores['dados_dimensoes']['repeticoes_cobertura'], quantidade_de_modulos)
     linha_ant += 1
     eap_result.append(
         escrever_eap_insumos(perfil_u)
@@ -168,7 +174,7 @@ def orc_poli_plano(prefEap, **valores):
         perfil_arremate.calc_perfil_arremate(
             comprimento_orcamento, 
             valores['dados_dimensoes']['repeticoes_cobertura'], 
-            valores['dados_estrutura']['quantidade_modulos']
+            quantidade_de_modulos
         )
         linha_ant += 1
         eap_result.append(
@@ -189,7 +195,7 @@ def orc_poli_plano(prefEap, **valores):
         comprimento_orcamento, 
         dist_apoios,
         valores['dados_dimensoes']['repeticoes_cobertura'], 
-        valores['dados_estrutura']['quantidade_modulos'], 
+        quantidade_de_modulos, 
         perfil_uniao_igual_ao_arremate
     )
     linha_ant += 1
@@ -204,7 +210,7 @@ def orc_poli_plano(prefEap, **valores):
         comprimento_orcamento, 
         dist_apoios, 
         valores['dados_dimensoes']['repeticoes_cobertura'], 
-        valores['dados_estrutura']['quantidade_modulos'], 
+        quantidade_de_modulos, 
         perfil_uniao_igual_ao_arremate
     )
     linha_ant += 1
@@ -235,7 +241,7 @@ def orc_poli_plano(prefEap, **valores):
         # Parafuso arremate -> 10-16x3/4"
         parafuso_arremate = ParafusosPolicarbonato(14132)
         parafuso_arremate.calc_parafuso_arremate(
-            comp_real, valores['dados_dimensoes']['repeticoes_cobertura'], valores['dados_estrutura']['quantidade_modulos'], round(Decimal(0.3), 3)
+            comp_real, valores['dados_dimensoes']['repeticoes_cobertura'], quantidade_de_modulos, round(Decimal(0.3), 3)
         )
         linha_ant += 1
         eap_result.append(
@@ -303,7 +309,7 @@ def orc_poli_plano(prefEap, **valores):
                 altura, 
                 distApoios, 
                 valores['dados_dimensoes']['repeticoes_cobertura'],
-                valores['dados_estrutura']['quantidade_modulos'], 
+                quantidade_de_modulos, 
                 valores['dados_dimensoes']['quantidade_maos_francesas']
             )
             linha_ant += 1
@@ -320,7 +326,7 @@ def orc_poli_plano(prefEap, **valores):
                 altura, 
                 distApoios, 
                 valores['dados_dimensoes']['repeticoes_cobertura'],
-                valores['dados_estrutura']['quantidade_modulos'], 
+                quantidade_de_modulos, 
                 valores['dados_dimensoes']['quantidade_maos_francesas'], 
                 False
             )
@@ -337,7 +343,7 @@ def orc_poli_plano(prefEap, **valores):
                 altura, 
                 distApoios, 
                 valores['dados_dimensoes']['repeticoes_cobertura'],
-                valores['dados_estrutura']['quantidade_modulos'], 
+                quantidade_de_modulos, 
                 valores['dados_dimensoes']['quantidade_maos_francesas'], 
                 False
             )
@@ -407,23 +413,23 @@ def orc_poli_plano(prefEap, **valores):
     ######################### Motores ###########################
     # Se a estrutura for retrátil
     if estrutura_retratil:
-        linha_eap = escrever_linha_eap('', '', -1, valores['quantMotor'], '', 0, 0, valores['codMotor'])
+        linha_eap = escrever_linha_eap('', '', -1, valores['dados_retratil']['quantidade_motor'], '', 0, 0, valores['dados_retratil']['cod_motor'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += valores['quantMotor'] * a11Insumos.objetos.get(codigo=valores['codMotor']).custo01
+        custo_total += valores['dados_retratil']['quantidade_motor'] * a11Insumos.objetos.get(codigo=valores['dados_retratil']['cod_motor']).custo01
 
         ######################### Suporte Motor #####################
-        linha_eap = escrever_linha_eap('', '', -1, valores['quantMotor'], '', 0, 0, 14225)
+        linha_eap = escrever_linha_eap('', '', -1, valores['dados_retratil']['quantidade_motor'], '', 0, 0, 14225)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += valores['quantMotor'] * a11Insumos.objetos.get(codigo=14225).custo01
+        custo_total += valores['dados_retratil']['quantidade_motor'] * a11Insumos.objetos.get(codigo=14225).custo01
 
         ######################### Cantoneiras #######################
         quantCantoneiras = 0
         larguraModulos = arrend_cima(
-            valores['dados_dimensoes']['largura_cobertura'] / valores['dados_estrutura']['quantidade_modulos'], 0)
-        if valores['dados_estrutura']['quantidade_modulos'] == 1 and estrutura_retratil_direcao_comprimento:
-            if valores['dados_estrutura']['quantidade_modulos'] == valores['quantModMoveis']:
+            valores['dados_dimensoes']['largura_cobertura'] / quantidade_de_modulos, 0)
+        if quantidade_de_modulos == 1 and estrutura_retratil_direcao_comprimento:
+            if quantidade_de_modulos == valores['dados_retratil']['quantidade_modulos_moveis']:
                 if valores['dados_dimensoes']['largura_cobertura'] >= 5:
                     # tem que ser sempre par esta divisão para a estrutura não ficar com um lado fazendo mais esforço
                     if (valores['dados_dimensoes']['largura_cobertura']/3) % 2:
@@ -432,52 +438,52 @@ def orc_poli_plano(prefEap, **valores):
                         valores['dados_dimensoes']['largura_cobertura'] / 3) * 2 * valores['dados_dimensoes']['comprimento_cobertura'] * 2
                 else:
                     quantCantoneiras = 2 * 2 * valores['dados_dimensoes']['comprimento_cobertura']
-        elif valores['dados_estrutura']['quantidade_modulos'] == 1 and estrutura_retratil_direcao_largura:
-            if valores['dados_estrutura']['quantidade_modulos'] == valores['quantModMoveis']:
+        elif quantidade_de_modulos == 1 and estrutura_retratil_direcao_largura:
+            if quantidade_de_modulos == valores['dados_retratil']['quantidade_modulos_moveis']:
                 quantCantoneiras = 2 * 2 * valores['dados_dimensoes']['largura_cobertura']
         else:
-            if valores['dados_estrutura']['quantidade_modulos'] > 1 and estrutura_retratil_direcao_largura:
-                if valores['dados_estrutura']['quantidade_modulos'] == valores['quantModMoveis']:
-                    for i in arange(1, valores['dados_estrutura']['quantidade_modulos'], 1):
-                        if i == valores['dados_estrutura']['quantidade_modulos']-1:
+            if quantidade_de_modulos > 1 and estrutura_retratil_direcao_largura:
+                if quantidade_de_modulos == valores['dados_retratil']['quantidade_modulos_moveis']:
+                    for i in arange(1, quantidade_de_modulos, 1):
+                        if i == quantidade_de_modulos-1:
                             quantCantoneiras += larguraModulos*i + larguraModulos
                         else:
                             quantCantoneiras += (larguraModulos *
                                                 i + larguraModulos)*2
-                elif valores['dados_estrutura']['quantidade_modulos'] > valores['quantModMoveis']:
-                    for i in arange(valores['dados_estrutura']['quantidade_modulos'] - valores['quantModMoveis']-1, valores['dados_estrutura']['quantidade_modulos'], 1):
-                        if i == (valores['dados_estrutura']['quantidade_modulos']) - 1:
+                elif quantidade_de_modulos > valores['dados_retratil']['quantidade_modulos_moveis']:
+                    for i in arange(quantidade_de_modulos - valores['dados_retratil']['quantidade_modulos_moveis']-1, quantidade_de_modulos, 1):
+                        if i == (quantidade_de_modulos) - 1:
                             quantCantoneiras += larguraModulos*i + larguraModulos
                         else:
                             quantCantoneiras += 2 * \
                                 (larguraModulos*i + larguraModulos)
-            elif valores['dados_estrutura']['quantidade_modulos'] > 1 and estrutura_retratil_direcao_comprimento:
+            elif quantidade_de_modulos > 1 and estrutura_retratil_direcao_comprimento:
                 quantCantoneiras = (
-                    (valores['dados_estrutura']['quantidade_modulos'] * 2) - 1) * valores['dados_dimensoes']['comprimento_cobertura'] / valores['dados_estrutura']['quantidade_modulos'] * 2
+                    (quantidade_de_modulos * 2) - 1) * valores['dados_dimensoes']['comprimento_cobertura'] / quantidade_de_modulos * 2
         quantCantoneiras = Decimal(tot_peca_juncao(quantCantoneiras, 6))
         # Se for rolete de tecnil não precisa de cantoneira
-        if not valores['codRoldanas'] == 14219 or valores['codRoldanas'] == 14297:
+        if not valores['dados_retratil']['cod_roldana'] == 14219 or valores['dados_retratil']['cod_roldana'] == 14297:
             linha_eap = escrever_linha_eap(
-                '', '', -1, quantCantoneiras, '', 0, 0, valores['codCantoneira'])
+                '', '', -1, quantCantoneiras, '', 0, 0, valores['dados_retratil']['cod_cantoneira'])
             linha_ant += 1
             eap_result.append(linha_eap)
-            custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['codCantoneira']).custo01
+            custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['dados_retratil']['cod_cantoneira']).custo01
 
         ####################### Perfis Cantoneiras ####################
         linha_eap = escrever_linha_eap(
-            '', '', -1, quantCantoneiras, '', 0, 0, valores['codPerfCant'])
+            '', '', -1, quantCantoneiras, '', 0, 0, valores['dados_retratil']['cod_perfil_cantoneira'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['codPerfCant']).custo01
+        custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['dados_retratil']['cod_perfil_cantoneira']).custo01
 
         ####################### Roldanas ##############################
-        roldana = Roldana(valores['codRoldanas'])
+        roldana = Roldana(valores['dados_retratil']['cod_roldana'])
         roldana.calcular_quantidade(
             comprimento_orcamento, 
             largura_orcamento,
-            valores['direcMovimento'], 
+            valores['dados_retratil']['direcao_movimento'], 
             valores['dados_dimensoes']['repeticoes_cobertura'], 
-            valores['quantModMoveis']
+            valores['dados_retratil']['quantidade_modulos_moveis']
         )
         linha_ant += 1
         eap_result.append(
@@ -503,7 +509,7 @@ def orc_poli_plano(prefEap, **valores):
         
         #################### Parafuso Para Suporte do Motor ##########
         # Adicionar 4 parafusos por suporte do motor quando a estrutura for retrátil
-        quant_parafuso_suporte = valores['quantMotor'] * 4
+        quant_parafuso_suporte = valores['dados_retratil']['quantidade_motor'] * 4
         linha_eap = escrever_linha_eap(
             '', '', -1, quant_parafuso_suporte, '', 0, 0, 6327)
         linha_ant += 1
@@ -651,13 +657,13 @@ def orc_poli_curvo(prefEap, **valores):
     comprimento_orcamento = arcoCurva
     estrutura_retratil = True if valores['estrutura'] == 1 else False
     if estrutura_retratil:
-        estrutura_retratil_direcao_largura = True if valores['direcMovimento'] == 1 else False
-        estrutura_retratil_direcao_comprimento = True if valores['direcMovimento'] == 0 else False
+        estrutura_retratil_direcao_largura = True if valores['dados_retratil']['direcao_movimento'] == 1 else False
+        estrutura_retratil_direcao_comprimento = True if valores['dados_retratil']['direcao_movimento'] == 0 else False
         # Tamanho do módulo da estrutura para cálculos
         if estrutura_retratil_direcao_comprimento:
-            comprimento_orcamento = arcoCurva / valores['dados_estrutura']['quantidade_modulos']
+            comprimento_orcamento = arcoCurva / quantidade_de_modulos
         else:
-            largura_orcamento = valores['dados_dimensoes']['largura_cobertura'] / valores['dados_estrutura']['quantidade_modulos']
+            largura_orcamento = valores['dados_dimensoes']['largura_cobertura'] / quantidade_de_modulos
     desc_poli = a11Insumos.objetos.get(codigo=valores['dados_policarbonato']['cod_policarbonato']).descricao
     if orcamento_com_chapa_compacta:
         if valores['dados_dimensoes']['repeticoes_cobertura'] <= 1:
@@ -699,7 +705,7 @@ def orc_poli_curvo(prefEap, **valores):
         comprimento_orcamento, 
         largura_orcamento, 
         valores['dados_dimensoes']['distancia_apoios_cobertura'], 
-        valores['dados_dimensoes']['repeticoes_cobertura'] * valores['dados_estrutura']['quantidade_modulos']
+        valores['dados_dimensoes']['repeticoes_cobertura'] * quantidade_de_modulos
     )
     linha_ant += 1
     eap_result.append(
@@ -712,7 +718,7 @@ def orc_poli_curvo(prefEap, **valores):
         largura_orcamento, 
         comprimento_orcamento,
         valores['dados_dimensoes']['distancia_apoios_cobertura'],
-        valores['dados_estrutura']['quantidade_modulos'], 
+        quantidade_de_modulos, 
         valores['dados_dimensoes']['repeticoes_cobertura'], 
         perfil_uniao_igual_ao_arremate
     )
@@ -726,7 +732,7 @@ def orc_poli_curvo(prefEap, **valores):
     perfil_u.calc_perfil_u(
         largura_orcamento, 
         valores['dados_dimensoes']['repeticoes_cobertura'], 
-        valores['dados_estrutura']['quantidade_modulos']
+        quantidade_de_modulos
     )
     linha_ant += 1
     eap_result.append(
@@ -739,7 +745,7 @@ def orc_poli_curvo(prefEap, **valores):
         perfil_arremate.calc_perfil_arremate(
             comprimento_orcamento, 
             valores['dados_dimensoes']['repeticoes_cobertura'], 
-            valores['dados_estrutura']['quantidade_modulos']
+            quantidade_de_modulos
         )
         linha_ant += 1
         eap_result.append(
@@ -760,7 +766,7 @@ def orc_poli_curvo(prefEap, **valores):
         comprimento_orcamento, 
         dist_apoios,
         valores['dados_dimensoes']['repeticoes_cobertura'], 
-        valores['dados_estrutura']['quantidade_modulos'], 
+        quantidade_de_modulos, 
         perfil_uniao_igual_ao_arremate
     )
     linha_ant += 1
@@ -775,7 +781,7 @@ def orc_poli_curvo(prefEap, **valores):
         comprimento_orcamento, 
         dist_apoios, 
         valores['dados_dimensoes']['repeticoes_cobertura'], 
-        valores['dados_estrutura']['quantidade_modulos'], 
+        quantidade_de_modulos, 
         perfil_uniao_igual_ao_arremate
     )
     linha_ant += 1
@@ -800,7 +806,7 @@ def orc_poli_curvo(prefEap, **valores):
     selante.calcular_quantidade(
         largura_orcamento, 
         comprimento_orcamento, 
-        valores['dados_dimensoes']['repeticoes_cobertura'] * valores['dados_estrutura']['quantidade_modulos'], 
+        valores['dados_dimensoes']['repeticoes_cobertura'] * quantidade_de_modulos, 
         estrutura_retratil
     )
     linha_ant += 1
@@ -816,7 +822,7 @@ def orc_poli_curvo(prefEap, **valores):
         parafuso_arremate.calc_parafuso_arremate(
             comprimento_orcamento, 
             valores['dados_dimensoes']['repeticoes_cobertura'], 
-            valores['dados_estrutura']['quantidade_modulos'], 
+            quantidade_de_modulos, 
             0.3
         )
         linha_ant += 1
@@ -849,7 +855,7 @@ def orc_poli_curvo(prefEap, **valores):
         largura_orcamento, 
         valores['dados_dimensoes']['distancia_apoios_cobertura'],
         comprimento_orcamento, 
-        valores['dados_dimensoes']['repeticoes_cobertura'] * valores['dados_estrutura']['quantidade_modulos'], 
+        valores['dados_dimensoes']['repeticoes_cobertura'] * quantidade_de_modulos, 
         dist_parafusos, 
         perfil_uniao_igual_ao_arremate
     )
@@ -878,7 +884,7 @@ def orc_poli_curvo(prefEap, **valores):
                 valores['flechaPoli'],
                 distApoios, 
                 valores['dados_dimensoes']['repeticoes_cobertura'], 
-                valores['dados_estrutura']['quantidade_modulos'], 
+                quantidade_de_modulos, 
                 valores['dados_dimensoes']['quantidade_maos_francesas']
             )
             linha_ant += 1
@@ -896,7 +902,7 @@ def orc_poli_curvo(prefEap, **valores):
                 valores['flechaPoli'], 
                 distApoios, 
                 valores['dados_dimensoes']['repeticoes_cobertura'], 
-                valores['dados_estrutura']['quantidade_modulos'], 
+                quantidade_de_modulos, 
                 valores['dados_dimensoes']['quantidade_maos_francesas'], 
                 True
             )
@@ -916,7 +922,7 @@ def orc_poli_curvo(prefEap, **valores):
                 valores['flechaPoli'], 
                 distApoios, 
                 valores['dados_dimensoes']['repeticoes_cobertura'], 
-                valores['dados_estrutura']['quantidade_modulos'], 
+                quantidade_de_modulos, 
                 valores['dados_dimensoes']['quantidade_maos_francesas'], 
                 True
             )
@@ -976,7 +982,7 @@ def orc_poli_curvo(prefEap, **valores):
     if valores['dados_estrutura']['aproveitar_estrutura'] == False:
         quantidade_de_apoios_calandra = Decimal(arrend_cima(round(largura_orcamento / distApoios, 5), 0) + 1)
         quantCalandra = Decimal(arrend_cima(quantidade_de_apoios_calandra * (
-                        comprimento_orcamento + Decimal(0.20)) * valores['dados_dimensoes']['repeticoes_cobertura'] * valores['dados_estrutura']['quantidade_modulos'], 0))
+                        comprimento_orcamento + Decimal(0.20)) * valores['dados_dimensoes']['repeticoes_cobertura'] * quantidade_de_modulos, 0))
         objCalandra = a11Insumos.objetos.get(codigo=valores['codCalandra'])
         linha_eap = escrever_linha_eap(f'{prefEap}01.02.04.', f"{quantCalandra} m de {objCalandra.descricao}",
                                 -1, quantCalandra, 'm', 2, 21, valores['codCalandra'])
@@ -998,22 +1004,22 @@ def orc_poli_curvo(prefEap, **valores):
     ######################### Motores ###########################
     if estrutura_retratil:
         linha_eap = escrever_linha_eap(
-            '', '', -1, valores['quantMotor'], '', 0, 0, valores['codMotor'])
+            '', '', -1, valores['dados_retratil']['quantidade_motor'], '', 0, 0, valores['dados_retratil']['cod_motor'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += valores['quantMotor'] * a11Insumos.objetos.get(codigo=valores['codMotor']).custo01
+        custo_total += valores['dados_retratil']['quantidade_motor'] * a11Insumos.objetos.get(codigo=valores['dados_retratil']['cod_motor']).custo01
 
         ######################### Suporte Motor #####################
-        linha_eap = escrever_linha_eap('', '', -1, valores['quantMotor'], '', 0, 0, 14225)
+        linha_eap = escrever_linha_eap('', '', -1, valores['dados_retratil']['quantidade_motor'], '', 0, 0, 14225)
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += valores['quantMotor'] * a11Insumos.objetos.get(codigo=14225).custo01
+        custo_total += valores['dados_retratil']['quantidade_motor'] * a11Insumos.objetos.get(codigo=14225).custo01
 
         ######################### Cantoneiras #######################
         quantCantoneiras = 0
-        larguraModulos = arrend_cima(valores['dados_dimensoes']['largura_cobertura']/valores['dados_estrutura']['quantidade_modulos'], 0)
-        if valores['dados_estrutura']['quantidade_modulos'] == 1 and estrutura_retratil_direcao_comprimento:
-            if valores['dados_estrutura']['quantidade_modulos'] == valores['quantModMoveis']:
+        larguraModulos = arrend_cima(valores['dados_dimensoes']['largura_cobertura']/quantidade_de_modulos, 0)
+        if quantidade_de_modulos == 1 and estrutura_retratil_direcao_comprimento:
+            if quantidade_de_modulos == valores['dados_retratil']['quantidade_modulos_moveis']:
                 if valores['dados_dimensoes']['largura_cobertura'] >= 5:
                     # tem que ser sempre par esta divisão para a estrutura não ficar com um lado fazendo mais esforço
                     if (valores['dados_dimensoes']['largura_cobertura']/3)%2:
@@ -1021,55 +1027,55 @@ def orc_poli_curvo(prefEap, **valores):
                     quantCantoneiras = (valores['dados_dimensoes']['largura_cobertura']/3)*2*comprimento_orcamento*2
                 else:
                     quantCantoneiras = 2*valores['comprimento']
-        elif valores['dados_estrutura']['quantidade_modulos'] == 1 and estrutura_retratil_direcao_largura:
-            if valores['dados_estrutura']['quantidade_modulos'] == valores['quantModMoveis']:
+        elif quantidade_de_modulos == 1 and estrutura_retratil_direcao_largura:
+            if quantidade_de_modulos == valores['dados_retratil']['quantidade_modulos_moveis']:
                 quantCantoneiras = valores['dados_dimensoes']['largura_cobertura']*2
         else:
-            if valores['dados_estrutura']['quantidade_modulos'] > 1 and estrutura_retratil_direcao_largura:
-                if valores['dados_estrutura']['quantidade_modulos'] == valores['quantModMoveis']:
-                    for i in arange(1, valores['dados_estrutura']['quantidade_modulos'], 1):
-                        if i == valores['dados_estrutura']['quantidade_modulos'] - 1:
+            if quantidade_de_modulos > 1 and estrutura_retratil_direcao_largura:
+                if quantidade_de_modulos == valores['dados_retratil']['quantidade_modulos_moveis']:
+                    for i in arange(1, quantidade_de_modulos, 1):
+                        if i == quantidade_de_modulos - 1:
                             if i == 1:
                                 quantCantoneiras += 2 * (larguraModulos * i + larguraModulos)
                             else:
                                 quantCantoneiras += larguraModulos * i + larguraModulos
                         else:
                             quantCantoneiras += (larguraModulos*i + larguraModulos) * 2
-                elif valores['dados_estrutura']['quantidade_modulos'] > valores['quantModMoveis']:
-                    for i in arange(valores['dados_estrutura']['quantidade_modulos'] - valores['quantModMoveis'], valores['dados_estrutura']['quantidade_modulos'], 1):
-                        if i == (valores['dados_estrutura']['quantidade_modulos']) - 1:
+                elif quantidade_de_modulos > valores['dados_retratil']['quantidade_modulos_moveis']:
+                    for i in arange(quantidade_de_modulos - valores['dados_retratil']['quantidade_modulos_moveis'], quantidade_de_modulos, 1):
+                        if i == (quantidade_de_modulos) - 1:
                             if i == 1:
                                 quantCantoneiras += 2 * (larguraModulos * i + larguraModulos)
                             else:
                                 quantCantoneiras += larguraModulos * i + larguraModulos
                         else:
                             quantCantoneiras += 2 * (larguraModulos * i + larguraModulos)
-            elif valores['dados_estrutura']['quantidade_modulos'] > 1 and estrutura_retratil_direcao_comprimento:
-                quantCantoneiras = ((valores['dados_estrutura']['quantidade_modulos']*2)-1)*comprimento_orcamento*2
+            elif quantidade_de_modulos > 1 and estrutura_retratil_direcao_comprimento:
+                quantCantoneiras = ((quantidade_de_modulos*2)-1)*comprimento_orcamento*2
         quantCantoneiras = Decimal(tot_peca_juncao(quantCantoneiras, 6))
         # Se for roldana para 75mm não precisa de cantoneira
-        if not valores['codRoldanas'] == 14219 and not valores['codRoldanas'] == 14297:
+        if not valores['dados_retratil']['cod_roldana'] == 14219 and not valores['dados_retratil']['cod_roldana'] == 14297:
             linha_eap = escrever_linha_eap(
-                '', '', -1, quantCantoneiras, '', 0, 0, valores['codCantoneira'])
+                '', '', -1, quantCantoneiras, '', 0, 0, valores['dados_retratil']['cod_cantoneira'])
             linha_ant += 1
             eap_result.append(linha_eap)
-            custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['codCantoneira']).custo01
+            custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['dados_retratil']['cod_cantoneira']).custo01
 
         ####################### Perfis Cantoneiras ####################
         linha_eap = escrever_linha_eap(
-            '', '', -1, quantCantoneiras, '', 0, 0, valores['codPerfCant'])
+            '', '', -1, quantCantoneiras, '', 0, 0, valores['dados_retratil']['cod_perfil_cantoneira'])
         linha_ant += 1
         eap_result.append(linha_eap)
-        custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['codPerfCant']).custo01
+        custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['dados_retratil']['cod_perfil_cantoneira']).custo01
 
         ####################### Roldanas ##############################
-        roldana = Roldana(valores['codRoldanas'])
+        roldana = Roldana(valores['dados_retratil']['cod_roldana'])
         roldana.calcular_quantidade(
             comprimento_orcamento, 
             largura_orcamento, 
-            valores['direcMovimento'], 
+            valores['dados_retratil']['direcao_movimento'], 
             valores['dados_dimensoes']['repeticoes_cobertura'], 
-            valores['quantModMoveis']
+            valores['dados_retratil']['quantidade_modulos_moveis']
         )
         linha_ant += 1
         eap_result.append(
@@ -1093,7 +1099,7 @@ def orc_poli_curvo(prefEap, **valores):
 
         #################### Parafuso Para Suporte do Motor ##########
         # Adicionar 4 parafusos por suporte do motor quando a estrutura for retrátil
-        quant_parafuso_suporte = valores['quantMotor'] * 4
+        quant_parafuso_suporte = valores['dados_retratil']['quantidade_motor'] * 4
         linha_eap = escrever_linha_eap(
             '', '', -1, quant_parafuso_suporte, '', 0, 0, 6327)
         linha_ant += 1
