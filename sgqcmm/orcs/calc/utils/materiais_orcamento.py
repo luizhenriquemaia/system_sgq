@@ -394,10 +394,9 @@ class PerfisEstruturaisIguais():
         self.descricao = objeto_bd.descricao
         self.custo = objeto_bd.custo01
     
-    def calcular_quantidade(self, largura, corda, comprimento, altura, dist_apoios, repeticoes, quant_modulos, dist_maos_franc):
+    def calcular_quantidade(self, largura, corda, comprimento, altura, dist_apoios, repeticoes, quant_modulos, quantidade_mfs):
         perimetro = 2 * (comprimento + largura)
-        if dist_maos_franc != 0:
-            quantidade_mfs = Decimal(arrend_cima(round(largura / dist_maos_franc, 5), 0) + 1)
+        if quantidade_mfs != 0:
             quantidade_mfs_m = quantidade_mfs * (corda + altura)
             quantidade_metalons_internos = Decimal(arrend_cima(round(largura / dist_apoios, 5), 0) - 1)
             quant_metalon = tot_peca_juncao((quantidade_mfs_m + perimetro + (quantidade_metalons_internos * comprimento)) * quant_modulos * repeticoes, 6)
@@ -420,12 +419,11 @@ class PerfisEstruturaisDiferentes():
         self.descricao = objeto_bd.descricao
         self.custo = objeto_bd.custo01
 
-    def calcular_quantidade(self, largura, corda, comprimento, altura, dist_apoios, repeticoes, quant_modulos, dist_maos_franc, estrutura_em_arco):
+    def calcular_quantidade(self, largura, corda, comprimento, altura, dist_apoios, repeticoes, quant_modulos, quantidade_mfs, estrutura_em_arco):
         perimetro = 2 * (comprimento + largura)
         if self.tipo == "externo":
-            if dist_maos_franc != 0:
-                quantidade_de_mfs = Decimal(arrend_cima(round(largura / dist_maos_franc, 5), 0) + 1)
-                maos_franc = round(quantidade_de_mfs * (corda + altura), 5)
+            if quantidade_mfs != 0:
+                maos_franc = round(quantidade_mfs * (corda + altura), 5)
                 quant_metalon_ext = tot_peca_juncao(
                     ((largura * 2) + maos_franc) *quant_modulos * repeticoes, 6)
             else:
