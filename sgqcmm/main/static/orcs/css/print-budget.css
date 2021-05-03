@@ -169,6 +169,7 @@ h2{
 	text-align: justify;
 }
 
+/* table content */
 .table-content {
 	border: 1px solid black;
 	border-collapse: collapse;
@@ -185,6 +186,7 @@ h2{
 }
 
 .table-content td{
+	text-align: left;
 	padding: 15px 10px 10px;
 	border-color: black;
 	border-style: solid;
@@ -193,6 +195,11 @@ h2{
 
 .table-content td:first-letter{
 	text-transform: uppercase;
+}
+
+.table-content tfoot {
+	border-top: solid 1px black;
+	font-weight: bold;
 }
 
 .lista-insumos {

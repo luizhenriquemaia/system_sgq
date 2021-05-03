@@ -1221,48 +1221,19 @@ def imp_proposta(request, codorcam):
             "email_vendedor": email_vendedor
         }
     # Obter EAP do Orcamento
-    eap_orc = g03EapOrc.objetos.filter(orcamento_id=codorcam, tipo=3).order_by('-codeap')
+    eap_orc = g03EapOrc.objetos.filter(orcamento_id=codorcam, tipo=3).only('codeap', 'descitem', 'qtdorc', 'vlrunit').order_by('codeap')
     list_eap_prop = []
     valor_restante_orc = 0
+    total_proposta = 0
     #Somar os valores de diferentes eaps
-    itensEap = [0.00, 0.00, 0.00, 0.00, 0.00]
+    #itensEap = [0.00, 0.00, 0.00, 0.00, 0.00]
     for item_eap in eap_orc:
         item_eap.qtdorc = round(item_eap.qtdorc, 2)
         item_eap.vlrunit = round(item_eap.vlrunit, 2)
         item_eap.vlrtot = round(float(item_eap.vlrunit) * float(item_eap.qtdorc), 2)
-        # Haverá só 2 itens na carta proposta, policarbonato e estrutura
-        if len(item_eap.codeap) == 5:
-            if item_eap.codeap[-2:] != "1." and item_eap.codeap[-2:] != "2.":
-                valor_restante_orc =+ item_eap.vlrtot
-            else:
-                if item_eap.codeap[-2:] == "1.":
-                    itensEap[0] = item_eap.descitem
-                    itensEap[1] =+ item_eap.vlrtot
-                elif item_eap.codeap[-2:] == "2.":
-                    # alteração no texto da estrutura
-                    # itensEap[3] = item_eap.descitem
-                    itensEap[3] = "Fabricação e Instalação da Cobertura"
-                    itensEap[2] =+ item_eap.vlrtot
-        else:
-            pass
-    # O valor da mão de obra, riscos e lucro serão somados na estrutura somente
-    itensEap[1] = round(itensEap[1], 2)
-    itensEap[2] = round(itensEap[2] + valor_restante_orc, 2)
-    totalProposta = formatar_custos_para_template(itensEap[1] + itensEap[2])
-    itensEap[1] = formatar_custos_para_template(itensEap[1])
-    itensEap[2] = formatar_custos_para_template(itensEap[2])
-    # escrever valor com 2 casas decimais
-    itensEap[1] = formatar_com_duas_casas_string(itensEap[1])
-    itensEap[2] = formatar_com_duas_casas_string(itensEap[2])
-    totalProposta = formatar_com_duas_casas_string(totalProposta)
-    list_eap_prop = [{
-        'descricao': itensEap[0],
-        'valor': itensEap[1]
-    }]
-    list_eap_prop.append({
-        'descricao': itensEap[3],
-        'valor': itensEap[2]
-    })
+        item_eap.vlrtot_formated = formatar_com_duas_casas_string(formatar_custos_para_template(item_eap.vlrtot))
+        total_proposta += item_eap.vlrtot
+    total_proposta = formatar_com_duas_casas_string(formatar_custos_para_template(total_proposta))
     list_dic_insumos = []
     raw_query_insumo =  """
                         SELECT main_g05InsEAP.id, main_g05InsEAP.eap_id,
@@ -1293,8 +1264,8 @@ def imp_proposta(request, codorcam):
     bd_orc.fase_id = 3
     bd_orc.save()
     return render(request, "orcs/imp-proposta.html",
-                {"dadosProposta": dados_proposta, "eapProp": list_eap_prop,
-                 "insumos": list_dic_insumos_order, "totalProposta": totalProposta, "today": today,
+                {"dadosProposta": dados_proposta, "eapProp": eap_orc,
+                 "insumos": list_dic_insumos_order, "totalProposta": total_proposta, "today": today,
                 "listDescricoesOrc": list_desc_orc})
 
 

@@ -77,23 +77,27 @@
               <div class="texto-subtitulo">
                 <table class="table-content">
                   <tr>
-                    <th style="width:80%;">Descrição</th>
+                    <th style="width:15%;">Código</th>
+                    <th style="width:65%;">Descrição</th>
                     <th style="width:20%;">Valor</th>
                   </tr>
                   {% for eap in eapProp %}
                   <tr>
                     <td>
-                      {{ eap.descricao }}
+                      {{ eap.codeap }}
                     </td>
-                    <td style="text-align:left;">
-                      R$ {{ eap.valor }}
+                    <td>
+                      {{ eap.descitem }}
+                    </td>
+                    <td>
+                      R$ {{ eap.vlrtot_formated }}
                     </td>
                   </tr>
                   {% endfor %}
-                  <tr>
-                    <td style="font-weight:bold;">À vista em dinheiro e/ou transferencia bancária</td>
-                    <td style="text-align:left; font-weight:bold;">R$ {{ totalProposta }}</td>
-                  </tr>
+                  <tfoot>
+                    <td colspan="2">À vista em dinheiro e/ou transferencia bancária</td>
+                    <td>R$ {{ totalProposta }}</td>
+                  </tfoot>
                 </table>
               </div>
               <div class="subtitulo">
