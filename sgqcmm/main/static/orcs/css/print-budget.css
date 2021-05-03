@@ -114,6 +114,10 @@ h2{
 	padding: 0 15mm;
 }
 
+.unbreakable {
+	break-inside: avoid;
+}
+
 .data-a-esquerda{
 	text-align: right;
 }
@@ -200,6 +204,10 @@ h2{
 .table-content tfoot {
 	border-top: solid 1px black;
 	font-weight: bold;
+}
+
+.table-content tfoot td {
+	padding-top: 20px;
 }
 
 .lista-insumos {
