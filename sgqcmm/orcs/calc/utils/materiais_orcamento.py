@@ -380,7 +380,7 @@ class Selante():
         ).descricao
     
     def calcular_quantidade(self, largura, comprimento, repeticoes, estrutura_retratil):
-        dimensoes = 2 * (largura + comprimento) * repeticoes
+        dimensoes = Decimal(2 * (largura + comprimento) * repeticoes)
         if estrutura_retratil:
             self.quantidade = arrend_cima(Decimal(1.5) * dimensoes / 40, 0) * 2
         else:

@@ -74,30 +74,35 @@ def somar_custos_eap_editar_orcamento(eap_atividade, eap_entrega, eap_totalizado
             codigo_atual_entrega = item_entrega.codeap[0]
             if codigo_atual_entrega == codigo_atual_totalizador:
                 valor_entrega = 0
-                for item_atividade in eap_atividade:
-                    codigo_atual_atividade = item_atividade.codeap[0]
-                    if codigo_atual_atividade == codigo_atual_entrega:
-                        try:
-                            atividade_g04 = g04AtvEap.objetos.get(eap_id=item_atividade.id)
-                            desconto = (item_atividade.vlrunit * atividade_g04.desconto / 100)
-                        except ObjectDoesNotExist:
-                            desconto = 0
-                        item_atividade.qtdorc = round(item_atividade.qtdorc, 2)
-                        item_atividade.vlrunit = round(item_atividade.vlrunit - desconto, 2)
-                        valor_entrega += round(item_atividade.qtdorc * item_atividade.vlrunit, 2)
-                        item_atividade.vlrtot = formatar_custos_para_template(item_atividade.vlrunit * item_atividade.qtdorc)
-                        item_atividade.vlrunit_formatado = formatar_custos_para_template(item_atividade.vlrunit)
-                        # Adicionar em uma lista temporária para organizar pro template
-                        lista_eaps_atividade.append(item_atividade)
+                if eap_atividade != []:
+                    for item_atividade in eap_atividade:
+                        codigo_atual_atividade = item_atividade.codeap[0]
+                        if codigo_atual_atividade == codigo_atual_entrega:
+                            try:
+                                atividade_g04 = g04AtvEap.objetos.get(eap_id=item_atividade.id)
+                                desconto = (item_atividade.vlrunit * atividade_g04.desconto / 100)
+                            except ObjectDoesNotExist:
+                                desconto = 0
+                            item_atividade.qtdorc = round(item_atividade.qtdorc, 2)
+                            item_atividade.vlrunit = round(item_atividade.vlrunit - desconto, 2)
+                            valor_entrega += round(item_atividade.qtdorc * item_atividade.vlrunit, 2)
+                            item_atividade.vlrtot = formatar_custos_para_template(item_atividade.vlrunit * item_atividade.qtdorc)
+                            item_atividade.vlrunit_formatado = formatar_custos_para_template(item_atividade.vlrunit)
+                            # Adicionar em uma lista temporária para organizar pro template
+                            lista_eaps_atividade.append(item_atividade)
+                else:
+                    valor_entrega = item_entrega.vlrunit
                 item_entrega.qtdorc = round(item_entrega.qtdorc, 2)
                 item_entrega.vlrunit = round(valor_entrega / item_entrega.qtdorc, 2)
                 valor_totalizador += round(item_entrega.qtdorc * item_entrega.vlrunit, 2)
+                item_entrega.qtd_formatado = formatar_custos_para_template(item_entrega.qtdorc)
                 item_entrega.vlrtot = formatar_custos_para_template(item_entrega.qtdorc * item_entrega.vlrunit)
-                item_entrega.vlrunit_formatado = formatar_custos_para_template(item_entrega.vlrunit)                       
+                item_entrega.vlrunit_formatado = formatar_custos_para_template(item_entrega.vlrunit)
                 # Adicionar em uma lista temporária para organizar pro template
                 lista_eaps_entrega.append(item_entrega)
         item_totalizador.qtdorc = round(item_totalizador.qtdorc, 2)
         item_totalizador.vlrunit = round(valor_totalizador / item_totalizador.qtdorc, 2)
+        item_totalizador.qtd_formatado = formatar_custos_para_template(item_totalizador.qtdorc)
         item_totalizador.vlrtot = formatar_custos_para_template(item_totalizador.vlrunit * item_totalizador.qtdorc)
         item_totalizador.vlrunit_formatado = formatar_custos_para_template(item_totalizador.vlrunit)
         lista_eaps_totalizador.append(item_totalizador)
@@ -1088,8 +1093,13 @@ def editar_eap(request, codorcam, id):
                 messages.error(request, "Erro ao alterar eap")
             strCodOrc = int(codOrcAtual)
             return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
-    form = formEditarTextoEAP()
-    return render(request, "orcs/editar-eap.html", {"eap": eap})
+    elif request.method == "GET":
+        eap.vlrunit = formatar_custos_para_template(eap.vlrunit)
+        eap.qtdorc = formatar_custos_para_template(eap.qtdorc)
+        form = formEditarTextoEAP()
+        return render(request, "orcs/editar-eap.html", {"eap": eap})
+    else:
+        return HttpResponse(status=405)
 
 
 def editar_proposta(request, codorcam):
