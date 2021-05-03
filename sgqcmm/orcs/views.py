@@ -1221,7 +1221,7 @@ def imp_proposta(request, codorcam):
             "email_vendedor": email_vendedor
         }
     # Obter EAP do Orcamento
-    eap_orc = g03EapOrc.objetos.filter(orcamento_id=codorcam, tipo=1).order_by('-codeap')
+    eap_orc = g03EapOrc.objetos.filter(orcamento_id=codorcam, tipo=3).order_by('-codeap')
     list_eap_prop = []
     valor_restante_orc = 0
     #Somar os valores de diferentes eaps
@@ -1263,22 +1263,28 @@ def imp_proposta(request, codorcam):
         'descricao': itensEap[3],
         'valor': itensEap[2]
     })
-    list_insumos = [g05InsEAP.objetos.filter(eap_id=eap.id) for eap in eap_orc]
     list_dic_insumos = []
+    raw_query_insumo =  """
+                        SELECT main_g05InsEAP.id, main_g05InsEAP.eap_id,
+                                main_a11Insumos.descricao AS descricao, main_a11Insumos.codigo AS codigo
+                        FROM main_g05InsEAP 
+                        INNER JOIN main_a11Insumos ON main_a11Insumos.id = main_g05InsEAP.insumo_id
+                        WHERE main_g05InsEAP.eap_id = %s
+                        ORDER BY main_g05InsEAP.eap_id
+                        """
+    list_insumos = [g05InsEAP.objetos.raw(raw_query_insumo, [eap.id]) for eap in eap_orc]
     # Não listar valor em dinheiro, gasolina, serralheiro e etc.
     insumos_nao_mostrar = [1, 405, 1152, 1163, 400, 6164, 6201, 6300, 6302, 6306, 6307, 6308, 6309,
                            6325, 6326, 6327, 6328, 6329, 14217]
     for query_insumo in list_insumos:
         for insumo in query_insumo:
-            bd_insumo = a11Insumos.objetos.get(id=insumo.insumo_id)
-            if not bd_insumo.codigo in insumos_nao_mostrar:
-                dic_insumo =  {
-                    'codigo': bd_insumo.codigo, 
-                    'descricao': str(bd_insumo.descricao).lower(),
-                }
+            if not insumo.codigo in insumos_nao_mostrar:
                 # Não mostrar insumos repetidos
-                insumos_nao_mostrar.append(bd_insumo.codigo)
-                list_dic_insumos.append(dic_insumo)
+                insumos_nao_mostrar.append(insumo.codigo)
+                list_dic_insumos.append(
+                    {
+                        'codigo': insumo.codigo,
+                        'descricao': insumo.descricao})
     list_dic_insumos_order = sorted(list_dic_insumos, key=lambda k: k['descricao'])
     meses = [0, "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
     mesHoje = meses[int(datetime.date.today().strftime("%m"))]
