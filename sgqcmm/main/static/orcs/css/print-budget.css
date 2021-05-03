@@ -118,59 +118,76 @@ h2{
 	break-inside: avoid;
 }
 
-.data-a-esquerda{
+.date-on-the-left{
 	text-align: right;
 }
 
-.area_assinatura{
+.signature{
 	text-align: center;
 	font-size: 14px;
 	margin-top: 60px;
 	margin-bottom: 60px;
 }
 
-.area_assinatura p{
+.signature p{
 	line-height: 1.5;
 	text-align: center;
 	margin: 0px;
 }
 
-.area_aprovacao_proposta{
-	box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.5);
-	height: 200px;
+.budget-approval{
+	box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.3);
+	height: 230px;
 	width: 500px;
-	padding-top: 10px;
 	background-color: #ffffff;
 	margin-left: 90px;
+	text-align: center;
+	padding: 12pt 16pt 6pt;
 }
 
-.area_aprovacao_proposta hr{
-	margin: 50px 20px 10px;
+.budget-approval hr{
+	margin: 60pt 6pt 6pt;
 }
 
-.area_saudacoes{
+.budget-approval h4 {
+	font-size: 12pt;
+	font-weight: bold;
+	margin: 12pt 0 24pt;
+}
+
+
+.greetings{
 	margin: 30mm 0px 12mm;	
 }
 
-.texto-comum > * {
+.services-section > * {
 	margin: 0 0 6mm;
 }
 
-.subtitulo{
+.subtitle{
 	font-size: 16pt;
 	font-weight: bold;
-	margin: 15mm 0 0;
+	margin: 12mm 0 0;
 	border-style: solid;
 	border-width: 0px 0px 1px;
 }
 
-.subtitulo p{
+.subtitle p{
 	margin: 0px;
 }
 
-.texto-subtitulo{
-	margin: 15px 20px 0px 40px;
+.subtitle-text{
+	margin: 6mm 0 0 6mm;
 	text-align: justify;
+}
+
+.general-information {
+	margin-bottom: 12mm;
+	border-bottom: solid 1px black;
+}
+
+.goodbyes {
+	margin-bottom: 12mm;
 }
 
 /* table content */

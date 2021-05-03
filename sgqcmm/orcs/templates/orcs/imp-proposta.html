@@ -19,8 +19,8 @@
           <td>
             <section class="content">
               <h1>Proposta Comercial</h1>
-              <p class="data-a-esquerda">Goiânia - GO, {{ today }}.</p>
-              <div class="area_saudacoes">
+              <p class="date-on-the-left">Goiânia - GO, {{ today }}.</p>
+              <div class="greetings">
                 {% if dadosProposta.empresa %}
                 {% if dadosProposta.genero_empresa == 0 %}
                 <p>À</p>
@@ -40,7 +40,7 @@
                 <p>End. Obra: {{ dadosProposta.enderecoObra }}</p>
                 {% endif %}
               </div>
-              <div class="texto-comum unbreakable">
+              <div class="services-section unbreakable">
                 <p>
                   Conforme a solicitação viemos por meio desta apresentar a proposta de
                   preços para fornecimento de material e mão de obra especializada para
@@ -62,10 +62,10 @@
                 </table>
               </div>
               <section class="unbreakable">
-                <div class="subtitulo">
+                <div class="subtitle">
                   Sistema Construtivo
                 </div>
-                <div class="texto-subtitulo">
+                <div class="subtitle-text">
                   <ul style="padding-top:0;padding-bottom:0;margin-bottom:0;">
                     {% for insumo in insumos %}
                     <li class="lista-insumos">{{ insumo.descricao }}</li>
@@ -74,10 +74,10 @@
                 </div>
               </section>
               <section class="unbreakable">
-                <div class="subtitulo">
+                <div class="subtitle">
                   Valores Propostos
                 </div>
-                <div class="texto-subtitulo">
+                <div class="subtitle-text">
                   <table class="table-content">
                     <tr>
                       <th style="width:15%;">Código</th>
@@ -105,34 +105,34 @@
                 </div>
               </section>
               <section class="unbreakable">
-                <div class="subtitulo">
+                <div class="subtitle">
                   Condições de Pagamento
                 </div>
-                <div class="texto-subtitulo">
+                <div class="subtitle-text">
                   50% de entrada e o restante na finalização da obra. Outras formas de pagamento sob consulta.
                 </div>
               </section>
               <section class="unbreakable">
-                <div class="subtitulo" style="margin-top:25mm;">
+                <div class="subtitle">
                   Prazo de Execução da Obra
                 </div>
-                <div class="texto-subtitulo">
+                <div class="subtitle-text">
                   Até {{ dadosProposta.prazoObra }} dias úteis sem chuva, após a assinatura do contrato e o recebimento da entrada.
                 </div>
               </section>
               <section class="unbreakable">
-                <div class="subtitulo">
+                <div class="subtitle">
                   Prazo de Validade da Proposta
                 </div>
-                <div class="texto-subtitulo">
+                <div class="subtitle-text">
                   Proposta válida até {{ dadosProposta.prazoValidade }}.
                 </div>
               </section>
-              <section class="unbreakable">
-                <div class="subtitulo">
+              <section class="general-information unbreakable">
+                <div class="subtitle">
                   <p>Informações Gerais</p>
                 </div>
-                <div class="texto-subtitulo">
+                <div class="subtitle-text">
                   <ul>
                     <li>Para calhas e rufos zincados foram considerados apenas pintura da face externa dos mesmos;</li>
                     <li>Todos os impostos já inclusos no preço;</li>
@@ -144,27 +144,28 @@
                   </ul>
                 </div>
               </section>
-              <br>
               <section class="unbreakable">
-                <div class="area_saudacoes">
+                <div class="goodbyes">
                   <p>
                     Agradecemos pela atenção dispensada, despedimo-nos com estima e consideração.
                   </p>
                 </div>
-                <div class="area_assinatura">
+                <div class="signature">
                   <p>{{ dadosProposta.vendedor }}</p>
-                  <p>CAMAMAR COMÉRCIO LTDA.</p>
-                  <p>(62) 3274-1030 / {{ dadosProposta.telefoneVendedor }}</p>
+                  <p>XXXXXX COMÉRCIO LTDA.</p>
+                  <p>(00) 0000-0000 / {{ dadosProposta.telefoneVendedor }}</p>
                   <p style="font-size:12px;">{{ dadosProposta.email_vendedor }}</p>
                 </div>
-                <div class="area_aprovacao_proposta">
-                  <p style="font-weight:bold;text-align:center;">Aprovação da Proposta</p>
+                <div class="budget-approval">
+                  <h4 class="title-approval">
+                    Aprovação da Proposta
+                  </h4>
                   <p>
                     Confirmo a aprovação da proposta, transformando-a em pedido comercial
                     aprovado, de acordo com suas especificações descritas.
                   </p>
                   <hr>
-                  <p style="text-align:center; font-size: 12px;">Carimbo e assinatura por extenso</p>
+                  <p style="text-align: center;">Carimbo e assinatura por extenso</p>
                 </div>
               </section>
             </section>
