@@ -97,6 +97,10 @@ h2{
 	z-index: 2;
 }
 
+.table-page {
+	margin: 0 auto;
+}
+
 .table-page td {
 	padding: 0;
 }
@@ -138,9 +142,9 @@ h2{
 .budget-approval{
 	box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.3);
 	height: 230px;
-	width: 500px;
+	width: 130mm;
 	background-color: #ffffff;
-	margin-left: 90px;
+	margin-left: 19mm;
 	text-align: center;
 	padding: 12pt 16pt 6pt;
 }

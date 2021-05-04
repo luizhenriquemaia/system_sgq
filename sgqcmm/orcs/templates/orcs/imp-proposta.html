@@ -98,7 +98,7 @@
                     </tr>
                     {% endfor %}
                     <tfoot>
-                      <td colspan="2">À vista em dinheiro e/ou transferencia bancária</td>
+                      <td colspan="2" style="text-align: right;">Valor total da proposta: </td>
                       <td>R$ {{ totalProposta }}</td>
                     </tfoot>
                   </table>
@@ -109,7 +109,7 @@
                   Condições de Pagamento
                 </div>
                 <div class="subtitle-text">
-                  50% de entrada e o restante na finalização da obra. Outras formas de pagamento sob consulta.
+                  {{ dadosProposta.condPgto }}. Outras formas de pagamento sob consulta.
                 </div>
               </section>
               <section class="unbreakable">

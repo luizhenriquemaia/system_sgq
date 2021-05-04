@@ -1173,16 +1173,6 @@ def editar_proposta(request, codorcam):
 def imp_proposta(request, codorcam):
     orcamento = obter_dados_gerais_orc(codorcam)
     bd_orc = g01Orcamento.objetos.get(id=codorcam)
-    desc_orc = g03EapOrc.objetos.filter(orcamento_id=bd_orc.id).order_by('codeap')
-    # Títulos e subtítulos da eap do orcamento
-    list_desc_orc = []
-    for descricao in desc_orc:
-        if len(descricao.codeap) <= 3:
-            dic_eap_orc = {
-                "codEap": descricao.codeap,
-                "descricao": str(descricao.descitem).lower()
-            }
-            list_desc_orc.append(dic_eap_orc)
     cliente = e01Cadastros.objetos.get(id=orcamento['codcliente'])
     vendedor = c01Usuarios.objetos.get(id=bd_orc.vended_id)
     usuario_vendedor = User.objects.get(username=vendedor.nomeusr)
@@ -1196,7 +1186,7 @@ def imp_proposta(request, codorcam):
             "cliente": cliente.descrcad,
             "genero": cliente.genero,
             "enderecoObra": orcamento['endereco'],
-            "condPgto": a19PlsPgtos.objetos.get(id=bd_orc.plpgto_id).descricao,
+            "condPgto": a19PlsPgtos.objetos.get(id=bd_orc.plpgto_id).descricaoexterna,
             "prazoObra": bd_orc.prazo,
             "prazoValidade": bd_orc.dtval,
             "vendedor": nome_vendedor,
@@ -1221,20 +1211,27 @@ def imp_proposta(request, codorcam):
             "email_vendedor": email_vendedor
         }
     # Obter EAP do Orcamento
-    eap_orc = g03EapOrc.objetos.filter(orcamento_id=codorcam, tipo=3).only('codeap', 'descitem', 'qtdorc', 'vlrunit').order_by('codeap')
-    list_eap_prop = []
-    valor_restante_orc = 0
-    total_proposta = 0
-    #Somar os valores de diferentes eaps
-    #itensEap = [0.00, 0.00, 0.00, 0.00, 0.00]
-    for item_eap in eap_orc:
-        item_eap.qtdorc = round(item_eap.qtdorc, 2)
-        item_eap.vlrunit = round(item_eap.vlrunit, 2)
-        item_eap.vlrtot = round(float(item_eap.vlrunit) * float(item_eap.qtdorc), 2)
-        item_eap.vlrtot_formated = formatar_com_duas_casas_string(formatar_custos_para_template(item_eap.vlrtot))
-        total_proposta += item_eap.vlrtot
-    total_proposta = formatar_com_duas_casas_string(formatar_custos_para_template(total_proposta))
-    list_dic_insumos = []
+    eaps_budget = g03EapOrc.objetos.filter(orcamento_id=bd_orc.id).only('codeap', 'descitem', 'qtdorc', 'vlrunit').order_by('codeap')
+    budget_deliveries = []
+    budget_services = []
+    total_budget_amount = 0
+    for eap in eaps_budget:
+        if eap.tipo == 5:
+            budget_deliveries.append(
+                {
+                    "codEap": eap.codeap,
+                    "descricao": str(eap.descitem).lower()
+                }
+            )
+        elif eap.tipo == 3:
+            eap.qtdorc = round(eap.qtdorc, 2)
+            eap.vlrunit = round(eap.vlrunit, 2)
+            eap.vlrtot = round(float(eap.vlrunit) * float(eap.qtdorc), 2)
+            eap.vlrtot_formated = formatar_com_duas_casas_string(formatar_custos_para_template(eap.vlrtot))
+            budget_services.append(eap)
+            total_budget_amount += eap.vlrtot
+    total_budget_amount = formatar_com_duas_casas_string(formatar_custos_para_template(total_budget_amount))
+    budget_inputs_list = []
     raw_query_insumo =  """
                         SELECT main_g05InsEAP.id, main_g05InsEAP.eap_id,
                                 main_a11Insumos.descricao AS descricao, main_a11Insumos.codigo AS codigo
@@ -1243,20 +1240,20 @@ def imp_proposta(request, codorcam):
                         WHERE main_g05InsEAP.eap_id = %s
                         ORDER BY main_g05InsEAP.eap_id
                         """
-    list_insumos = [g05InsEAP.objetos.raw(raw_query_insumo, [eap.id]) for eap in eap_orc]
+    budget_inputs = [g05InsEAP.objetos.raw(raw_query_insumo, [eap.id]) for eap in budget_services]
     # Não listar valor em dinheiro, gasolina, serralheiro e etc.
     insumos_nao_mostrar = [1, 405, 1152, 1163, 400, 6164, 6201, 6300, 6302, 6306, 6307, 6308, 6309,
                            6325, 6326, 6327, 6328, 6329, 14217]
-    for query_insumo in list_insumos:
-        for insumo in query_insumo:
+    for query_inputs in budget_inputs:
+        for insumo in query_inputs:
             if not insumo.codigo in insumos_nao_mostrar:
                 # Não mostrar insumos repetidos
                 insumos_nao_mostrar.append(insumo.codigo)
-                list_dic_insumos.append(
+                budget_inputs_list.append(
                     {
                         'codigo': insumo.codigo,
                         'descricao': insumo.descricao})
-    list_dic_insumos_order = sorted(list_dic_insumos, key=lambda k: k['descricao'])
+    budget_inputs_list_ordered = sorted(budget_inputs_list, key=lambda k: k['descricao'])
     meses = [0, "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
     mesHoje = meses[int(datetime.date.today().strftime("%m"))]
     today = datetime.date.today().strftime(f"%d de {mesHoje} de %Y")
@@ -1264,9 +1261,9 @@ def imp_proposta(request, codorcam):
     bd_orc.fase_id = 3
     bd_orc.save()
     return render(request, "orcs/imp-proposta.html",
-                {"dadosProposta": dados_proposta, "eapProp": eap_orc,
-                 "insumos": list_dic_insumos_order, "totalProposta": total_proposta, "today": today,
-                "listDescricoesOrc": list_desc_orc})
+                {"dadosProposta": dados_proposta, "eapProp": budget_services,
+                 "insumos": budget_inputs_list_ordered, "totalProposta": total_budget_amount, "today": today,
+                "listDescricoesOrc": budget_deliveries})
 
 
 def imp_proposta_so_material(request, codorcam):
