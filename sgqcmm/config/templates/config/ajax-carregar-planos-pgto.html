@@ -1,0 +1,19 @@
+{% for plano in planosCadastrados %}
+<tr>
+    <td data-lable="Numero">
+        <a href="./{{plano.id}}/">{{plano.id}}</a>
+    </td>
+    <td>
+        {{plano.tipo}}
+    </td>
+    <td>
+        {{plano.formapgto}}
+    </td>
+    <td>
+        {{plano.descricao}}
+    </td>
+    <td>
+        {{plano.descricaoexterna}}
+    </td>
+</tr>
+{% endfor %}

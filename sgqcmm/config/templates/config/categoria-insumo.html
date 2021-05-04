@@ -1,7 +1,7 @@
 {% extends "config/base-page-config.html" %}
 {% block content_config %}
 <h5 class="title-table">Categorias de Insumo Cadastradas</h5>
-<table>
+<table class="config-table">
     <thead>
         <th>ID</th>
         <th>Hierarquia</th>
@@ -37,11 +37,11 @@
         <a href="../" style="text-align: left;"><i class="medium material-icons">reply_all</i></a>
     </div>
     <div class="col s1 offset-s8" style="padding:0px;">
-        <button class="submit-hover" name="btnAddEmpresa" style="padding: 15px 20px 15px 20px;" onclick=showModal()>
+        <button class="submit-hover" name="btnAddCat" style="padding: 15px 20px 15px 20px;" onclick=showModal()>
             <i class="material-icons">add</i></button>
     </div>
 </div>
-<div class="modal" id="modalNovoEndereco">
+<div class="modal" id="modalNovaCategoria">
     <div class="modal-content">
         <span class="close-modal" onclick=showModal()>
             <i class="material-icons small">close</i>
@@ -74,7 +74,7 @@
 </div>
 <script>
     function showModal() {
-        document.getElementById("modalNovoEndereco").classList.toggle("modal-show")
+        document.getElementById("modalNovaCategoria").classList.toggle("modal-show")
     }
 
     function submitFormCadastro(e) {

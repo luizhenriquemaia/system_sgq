@@ -25,4 +25,7 @@ urlpatterns = [
     path('orcamento/categoria-insumo/', views.categoria_insumo, name='categoria_insumo'),
     path('orcamento/categoria-insumo/<int:cod_categoria>/', views.editar_categoria_insumo, name='editar_categoria_insumo'),
     path('orcamento/categoria-insumo/ajax/carregar-categorias-insumos/', views.carregar_categorias_insumo, name='carregar_categorias_insumo'),
+    path('orcamento/plano-pagamento/', views.planos_pagamento, name='planos_pagamento'),
+    path('orcamento/plano-pagamento/<int:id_plano>/', views.editar_plano_pagamento, name='editar_plano_pagamento'),
+    path('orcamento/plano-pagamento/ajax/carregar-planos/', views.ajax_carregar_planos_pgto, name='ajax_carregar_planos_pgto'),
 ]

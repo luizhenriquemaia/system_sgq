@@ -378,6 +378,7 @@ class a19PlsPgtos(models.Model):
     tipo = models.PositiveSmallIntegerField()
     formapgto = models.CharField(max_length=255)
     descricao = models.CharField(max_length=255)
+    descricaoexterna = models.CharField(max_length=300, null=True)
     objetos = models.Manager()
 
     def __str__(self):
