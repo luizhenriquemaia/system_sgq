@@ -82,6 +82,20 @@ class formEditarCategoriaInsumo(forms.Form):
     ordenador = forms.IntegerField(min_value=1, required=False)
     descricao = forms.CharField(max_length=50, required=False)
 
+class formPlanoPagamento(forms.Form):
+    choices_tipo = [('', '-------'), (1, 'Planos de Compra'), (2, 'Planos de Venda')]
+    tipo = forms.ChoiceField(choices=choices_tipo)
+    forma_pgto = forms.CharField(max_length=255)
+    descricao = forms.CharField(max_length=255)
+    descricao_externa = forms.CharField(max_length=300)
+
+class formEditarPlanoPagamento(forms.Form):
+    choices_tipo = [('', '-------'), (1, 'Planos de Compra'), (2, 'Planos de Venda')]
+    tipo = forms.ChoiceField(choices=choices_tipo, required=False)
+    forma_pgto = forms.CharField(max_length=255, required=False)
+    descricao = forms.CharField(max_length=255, required=False)
+    descricao_externa = forms.CharField(max_length=300, required=False)
+
 class formCadastroInsumo(forms.Form):
     categoria = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.all().order_by('ordenador'))
     descricao = forms.CharField(max_length=200)

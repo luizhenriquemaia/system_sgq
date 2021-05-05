@@ -242,6 +242,10 @@ table th{
   font-weight: 300;
 }
 
+.config-table td, .config-table th {
+  text-align: left;
+}
+
 .title-page{
   font-family: 'Butler-Regular';
   margin-bottom: 68px;

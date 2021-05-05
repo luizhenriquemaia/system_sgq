@@ -1,0 +1,248 @@
+@charset "UFT-8";
+
+@page {
+  margin: 0;
+}
+
+
+
+
+/* variables */
+:root{
+  --primary: #8b1014;
+  --background: #FCF7EF;
+}
+
+/* fonts */
+@font-face{
+  font-family: 'Butler-Regular';
+  src: url('../../main/css/fonts/Butler_Regular.otf')
+}
+
+
+/* Formatação dos Componentes Genericos */
+
+body{
+	font-family: 'Arial', sans-serif;
+	font-size: 12pt;
+	margin: 0 auto;
+}
+
+p {
+	margin: 0;
+	text-align: justify;
+}
+
+ul{
+	padding: 15px;
+	padding-top: 0px;
+}
+
+li{
+	padding: 2px 0px 2px;
+}
+
+h1{
+	font-family: 'Butler-Regular';
+	font-size: 20pt;
+	color: red;
+	text-align: center;
+	border-style: solid;
+	border-width: 2px 0px 2px;
+	margin: 0 0 6mm;
+	padding: 5px 0px 5px 0px;
+}
+
+h2{
+	font-size: 14px;
+	font-weight: bold;
+}
+
+/* page margins */
+.header, .header-space {
+	height: 45mm;
+}
+
+.header {
+	position: fixed;
+	top: 0;
+}
+
+.header-space {
+	background: url("../media/Untitled-3-1.jpg") no-repeat center center;
+	background-size: 54mm 13mm;
+	z-index: 1;
+}
+
+.footer, .footer-space {
+	height: 25mm;
+}
+
+.footer-space {
+	margin-top: -114mm;
+	padding-top: 114mm;
+	content: "";
+	background: url("../media/Untitled-3-2.jpg") no-repeat center center;
+	background-size: 210mm 138mm;
+	z-index: 1;
+}
+
+.footer {
+	position: fixed;
+	bottom: 0;
+	margin-top: -114mm;
+	padding-top: 114mm;
+	background: url("../media/Untitled-3-2.jpg") no-repeat left bottom;
+	background-size: 210mm 138mm;
+	z-index: 2;
+}
+
+.table-page {
+	margin: 0 auto;
+}
+
+.table-page td {
+	padding: 0;
+}
+
+.blank-section {
+	height: 297mm;	
+}
+
+
+/* content */
+.content{
+	position: relative;
+	width: 181mm;
+	min-height: 270mm;
+	padding: 0 15mm;
+}
+
+.unbreakable {
+	break-inside: avoid;
+}
+
+.date-on-the-left{
+	text-align: right;
+}
+
+.signature{
+	text-align: center;
+	font-size: 14px;
+	margin-top: 60px;
+	margin-bottom: 60px;
+}
+
+.signature p{
+	line-height: 1.5;
+	text-align: center;
+	margin: 0px;
+}
+
+.budget-approval{
+	box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.3);
+	height: 230px;
+	width: 130mm;
+	background-color: #ffffff;
+	margin-left: 19mm;
+	text-align: center;
+	padding: 12pt 16pt 6pt;
+}
+
+.budget-approval hr{
+	margin: 60pt 6pt 6pt;
+}
+
+.budget-approval h4 {
+	font-size: 12pt;
+	font-weight: bold;
+	margin: 12pt 0 24pt;
+}
+
+
+.greetings{
+	margin: 30mm 0px 12mm;	
+}
+
+.services-section > * {
+	margin: 0 0 6mm;
+}
+
+.subtitle{
+	font-size: 16pt;
+	font-weight: bold;
+	margin: 12mm 0 0;
+	border-style: solid;
+	border-width: 0px 0px 1px;
+}
+
+.subtitle p{
+	margin: 0px;
+}
+
+.subtitle-text{
+	margin: 6mm 0 0 6mm;
+	text-align: justify;
+}
+
+.general-information {
+	margin-bottom: 12mm;
+	border-bottom: solid 1px black;
+}
+
+.goodbyes {
+	margin-bottom: 12mm;
+}
+
+/* table content */
+.table-content {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+.table-content th{
+	padding: 10px 0px 10px;
+	text-align: center;
+	font-weight: 500;
+	letter-spacing: 0.8px; 
+	background-color: var(--primary);
+	color: white;
+	border: black solid 1px;
+}
+
+.table-content td{
+	text-align: left;
+	padding: 15px 10px 10px;
+	border-color: black;
+	border-style: solid;
+	border-width: 0px 1px 0px;
+}
+
+.table-content td:first-letter{
+	text-transform: uppercase;
+}
+
+.table-content tfoot {
+	border-top: solid 1px black;
+	font-weight: bold;
+}
+
+.table-content tfoot td {
+	padding-top: 20px;
+}
+
+.lista-insumos {
+	text-transform: lowercase;
+}
+
+.lista-insumos:first-letter{
+	text-transform: uppercase;
+}
+
+
+
+@media print {
+	body {
+		size: A4;
+	}
+}

@@ -14,7 +14,8 @@ from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
                          a31FaseOrc, b01Empresas, b04CCustos)
 
 from config.forms import (formCadastrarCentroDeCusto, formCadastrarEmpresa,
-                          formCategoriaInsumo, formEditarCategoriaInsumo, formCadastroInsumo)
+                          formCategoriaInsumo, formEditarCategoriaInsumo, formCadastroInsumo,
+                          formEditarPlanoPagamento, formPlanoPagamento)
 
 
 # funções genéricas views
@@ -301,6 +302,80 @@ def carregar_insumos(request):
         insumos_cadastrados = a11Insumos.objetos.all().only('id', 'codigo', 'descricao', 'catins')
         return render(request, 'config/carregar-insumos.html',
             {"insumosCadastrados": insumos_cadastrados})
+
+
+def planos_pagamento(request):
+    if not request.user.is_staff:
+        messages.error(request, "Negado, o usuário deve ser administrador para acessar esta seção")
+        return redirect("main:inicio")
+    else:
+        if request.method == "POST":
+            form = formPlanoPagamento(request.POST)
+            if form.is_valid():
+                tipo = form.cleaned_data['tipo']
+                forma_pgto = form.cleaned_data['forma_pgto']
+                descricao = form.cleaned_data['descricao']
+                descricao_externa = form.cleaned_data['descricao_externa']
+                if a19PlsPgtos.objetos.filter(Q(formapgto=forma_pgto)|Q(descricao=descricao)|Q(descricaoexterna=descricao_externa)).exists():
+                    return HttpResponse(status=400)
+                else:
+                    try:
+                        ultimo_id_categoria = a19PlsPgtos.objetos.latest('id').id
+                    except:
+                        ultimo_id_categoria = -1
+                    novo_plano_pgto = a19PlsPgtos(
+                        id=ultimo_id_categoria + 1,
+                        tipo=tipo,
+                        formapgto=forma_pgto,
+                        descricao=descricao,
+                        descricaoexterna=descricao_externa
+                    )
+                    novo_plano_pgto.save()
+                    messages.success(request, "Plano de pagamento cadastrado")
+                    return HttpResponse(status=201)
+            else:
+                print("\nERROR FORM\n")
+                print(form.errors.as_data())
+                return HttpResponse(status=400)
+        elif request.method == "GET":
+            planos_pgto_cadastrados = a19PlsPgtos.objetos.all()
+            form = formPlanoPagamento()
+            return render(request, "config/plano-pagamento.html", 
+                {'planosCadastrados': planos_pgto_cadastrados, "formCadastroPlanoPgto": form})
+        else:
+            return HttpResponse(status=405)
+
+def editar_plano_pagamento(request, id_plano):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        plano_pagamento = a19PlsPgtos.objetos.get(id=id_plano)
+        if request.method == "POST":
+            form = formEditarPlanoPagamento(request.POST)
+            if form.is_valid():
+                plano_pagamento.tipo = request.POST['tipo'] if request.POST['tipo'] != '' else  plano_pagamento.tipo
+                plano_pagamento.formapgto = form.cleaned_data['forma_pgto'] if form.cleaned_data['forma_pgto'] else plano_pagamento.formapgto
+                plano_pagamento.descricao = form.cleaned_data['descricao'] if form.cleaned_data['descricao'] else plano_pagamento.descricao
+                plano_pagamento.descricaoexterna = form.cleaned_data['descricao_externa'] if form.cleaned_data['descricao_externa'] else plano_pagamento.descricaoexterna
+                plano_pagamento.save()
+                messages.success(request, "Plano de pagamento alterado com sucesso")
+                return redirect("config:planos_pagamento")
+            else:
+                messages.error(request, "Dados inválidos")
+                return render(request, 'config/editar-plano-pagamento.html',
+                    {'form': form, "plano": plano_pagamento})
+        elif request.method == "GET":
+            form = formEditarPlanoPagamento()
+            return render(request, 'config/editar-plano-pagamento.html',
+                {'form': form, "plano": plano_pagamento})
+
+def ajax_carregar_planos_pgto(request):
+    if not request.user.is_staff:
+        return HttpResponse(status=403)
+    else:
+        planos_pgto_cadastrados = a19PlsPgtos.objetos.all()
+        return render(request, 'config/ajax-carregar-planos-pgto.html',
+            {'planosCadastrados': planos_pgto_cadastrados})
 
 
 def adicionar_seeds(request):

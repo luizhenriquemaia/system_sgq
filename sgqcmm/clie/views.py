@@ -299,7 +299,7 @@ def dados_cliente(request):
 def cadastrar_novo_endereco(request):
     codigo_cliente = request.session['codcliente']
     nome_cliente = e01Cadastros.objetos.get(id=codigo_cliente).descrcad
-    if not a03Estados.objetos.filter(id=1).exists():
+    if not a03Estados.objetos.filter(uf="GO").exists():
         messages.error(request, "Sem estados cadastrados, vá para config/add-seeds")
         return HttpResponseRedirect(reverse('main:inicio'))
     if not a04Municipios.objetos.filter(id=1).exists():

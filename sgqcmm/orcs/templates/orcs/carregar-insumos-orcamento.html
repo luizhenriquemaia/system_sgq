@@ -1,0 +1,29 @@
+{% if insumos %}
+<br>
+<h5 style="text-align:center;">Lista de Insumos</h5>
+<br>
+<table>
+    <tr>
+        <th style="text-align: center">Código</th>
+        <th style="text-align: center">Descrição</th>
+        <th style="text-align: center">Unid.</th>
+        <th style="text-align: center">Quant. Prod.</th>
+        <th style="text-align: center">Cst. Prod.</th>
+        <th style="text-align: center">Vlr. Total</th>
+    </tr>
+    {% for insumo in insumos %}
+    <tr style="text-align: right">
+        <td style="text-align: center">{{insumo.codigo}}</td>
+        <td style="text-align: left">
+            <a href="../../atualizar-dados-insumo/{{insumo.codigo}}">
+                <strong>{{insumo.descricao}}</strong>
+            </a>
+        </td>
+        <td style="text-align: center">{{insumo.undBas}}</td>
+        <td>{{insumo.qtdProd}}</td>
+        <td>{{insumo.cstUnPr}}</td>
+        <td>{{insumo.vlrTotal}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}

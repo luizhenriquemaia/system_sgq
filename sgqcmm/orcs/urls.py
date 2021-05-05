@@ -42,6 +42,10 @@ urlpatterns = [
         views.excluir_orcamento,
         name='excluir_orcamento'),
     path(
+        'preorcamento/<int:codorcam>/ajax/carregar-insumo-orcamento/',
+        views.ajax_carregar_insumo_orcamento,
+        name='ajax_carregar_insumo_orcamento'),
+    path(
         'preorcamento/<int:codorcam>/ajax/excluir-serv/<str:codeap>',
         views.ajax_excluir_servico, 
         name='ajax_excluir_servico'),
@@ -54,17 +58,21 @@ urlpatterns = [
         views.ajax_carregar_servico, 
         name='ajax_carregar_servico'),
     path(
-        'preorcamento/<int:codorcam>/detalhar-serv/<int:idEap>/excluir-insumo-atividade/<int:idInsumo>',
-        views.excluir_insumo_atividade, 
-        name='excluir_insumo_atividade'),
+        'preorcamento/<int:codorcam>/detalhar-serv/<int:codeap>/ajax/carregar-insumo-servico/',
+        views.ajax_carregar_insumo_servico, 
+        name='ajax_carregar_insumo_servico'),
     path(
-        'preorcamento/<int:codorcam>/detalhar-serv/<int:id_entrega>',
+        'preorcamento/<int:codorcam>/detalhar-serv/<int:codeap>/ajax/inserir-insumo-servico/',
+        views.ajax_inserir_insumo_servico, 
+        name='ajax_inserir_insumo_servico'),
+    path(
+        'preorcamento/<int:codorcam>/detalhar-serv/ajax/excluir-insumo-servico/<int:idInsumo>',
+        views.ajax_excluir_insumo_servico, 
+        name='ajax_excluir_insumo_servico'),
+    path(
+        'preorcamento/<int:codorcam>/detalhar-serv/<int:codeap>',
         views.detalhar_servico, 
         name='detalhar_servico'),
-    path(
-        'preorcamento/<int:codorcam>/detalhar-serv-antigo/<int:id_entrega>',
-        views.detalhar_servico_antigo, 
-        name='detalhar_servico_antigo'),
     path(
         'preorcamento/<int:codorcam>/detalhar-serv/<int:idEap>/alterar-insumo-atividade/<int:idInsumo>',
         views.alterar_insumo_atividade, 

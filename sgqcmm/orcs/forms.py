@@ -182,21 +182,21 @@ class formOrcamentoMultiClickPlanoFixo(forms.Form):
     tipo_pintura = forms.ModelChoiceField(
         queryset=a11Insumos.objetos.filter(catins_id=52).order_by("descricao"),
         to_field_name="codigo")
-    quantidade_pintura = forms.CharField(max_length=5, required=False)
-    comprimento = forms.CharField(max_length=20, required=True)
-    largura = forms.CharField(max_length=20, required=True)
-    declividade = forms.CharField(max_length=20, required=True)
-    repeticoes = forms.CharField(max_length=20, required=True)
-    distancia_entre_apoios = forms.CharField(max_length=20, required=True)
-    distancia_entre_maos_f = forms.CharField(max_length=20, required=False)
+    quantidade_pintura = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    comprimento = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    largura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    declividade = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    repeticoes = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0)
+    distancia_entre_apoios = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    distancia_entre_maos_f = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
     montante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
     jusante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
     lateral_esquerda = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
     lateral_direita = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    dias_serralheiro = forms.CharField(max_length=20, required=False)
-    quantidade_serralheiro = forms.CharField(max_length=20, required=False)
-    dias_auxiliar = forms.CharField(max_length=20, required=False)
-    quantidade_auxiliar = forms.CharField(max_length=20, required=False)
+    dias_serralheiro = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    quantidade_serralheiro = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    dias_auxiliar = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    quantidade_auxiliar = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
     dificuldade = forms.ChoiceField(choices=[('1', 'fácil'), ('2', 'médio'), ('3', 'difícil')], required=False)
     aproveitar_estrutura = forms.BooleanField(required=False)
 
@@ -232,248 +232,104 @@ class formOrcamentoTelhaTrapezoidalFixo(forms.Form):
     tipo_pintura = forms.ModelChoiceField(
         queryset=a11Insumos.objetos.filter(catins_id=52).order_by("descricao"),
         to_field_name="codigo")
-    quantidade_pintura = forms.CharField(max_length=5, required=False)
-    comprimento = forms.CharField(max_length=20, required=True)
-    largura = forms.CharField(max_length=20, required=True)
-    declividade = forms.CharField(max_length=20, required=True)
-    repeticoes = forms.CharField(max_length=20, required=True)
-    distancia_entre_apoios = forms.CharField(max_length=20, required=True)
-    distancia_entre_maos_f = forms.CharField(max_length=20, required=False)
+    quantidade_pintura = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    comprimento = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    largura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    declividade = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    repeticoes = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0)
+    distancia_entre_apoios = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    distancia_entre_maos_f = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
     montante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
     jusante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
     lateral_esquerda = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
     lateral_direita = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    dias_serralheiro = forms.CharField(max_length=20, required=False)
-    quantidade_serralheiro = forms.CharField(max_length=20, required=False)
-    dias_auxiliar = forms.CharField(max_length=20, required=False)
-    quantidade_auxiliar = forms.CharField(max_length=20, required=False)
-    dificuldade = forms.ChoiceField(choices=[('1', 'fácil'), ('2', 'médio'), ('3', 'difícil')], required=False)
+    dias_serralheiro = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    quantidade_serralheiro = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    dias_auxiliar = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    quantidade_auxiliar = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    dificuldade = forms.ChoiceField(choices=[(1, 'fácil'), (2, 'médio'), (3, 'difícil')], required=False)
     aproveitar_estrutura = forms.BooleanField(required=False)
 
 
-class formPoliPlanFix(forms.Form):
-    combPolicarbonato = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=41) | Q(catins_id=49) | Q(catins_id=55)).order_by("descricao"),
+class FormChapasPolicarbonato(forms.Form):
+    tipo_policarbonato = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=41) | Q(catins_id=49) | Q(catins_id=55)).order_by("descricao"),
                                                to_field_name="codigo")
-    combPerfUn = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=42).order_by("descricao"),
+    tipo_perfil_uniao = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=42).order_by("descricao"),
                                         to_field_name="codigo")
-    combPerfAr = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=43) | Q(catins_id=42)).order_by("descricao"),
+    tipo_perfil_arremate = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=43) | Q(catins_id=42)).order_by("descricao"),
                                         to_field_name="codigo")
-    combPerfU = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=44).order_by("descricao"),
+    tipo_perfil_u = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=44).order_by("descricao"),
                                        to_field_name="codigo")
-    comb_selante = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=38).order_by("descricao"),
+    tipo_guarnicao = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
                                           to_field_name="codigo")
-    combPerfEsExterno = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfEsInterno = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
-                                               to_field_name="codigo")
-    combRufo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
-                                      to_field_name="codigo")
-    combCalha = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
-                                       to_field_name="codigo")
-    combPerfGuar = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
-                                          to_field_name="codigo")
-    combPerfGax = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
+    tipo_gaxeta = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
                                          to_field_name="codigo")
-    combFitaVent = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=46).order_by("descricao"),
+    tipo_fita_vent = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=46).order_by("descricao"),
                                           to_field_name="codigo")
-    combFitaAlum = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=46).order_by("descricao"),
+    tipo_fita_aluminio = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=46).order_by("descricao"),
                                           to_field_name="codigo")
-    combPintura = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=52).order_by("descricao"),
-                                         to_field_name="codigo")
-    quantPintura = forms.CharField(
-        label='Quantidade Pintura', max_length=5, required=False)
-    compPoli = forms.CharField(
-        label='Comprimento', max_length=20, required=True)
-    largPoli = forms.CharField(label='Largura', max_length=20, required=True)
-    declPoli = forms.CharField(
-        label='Declividade', max_length=20, required=True)
-    repetPoli = forms.CharField(
-        label='Repetições', max_length=20, required=True)
-    distApoios = forms.CharField(
-        label='Distância Entre Apoios', max_length=20, required=True)
-    distMaosF = forms.CharField(
-        label='Distância Entre Mãos Francesas', max_length=20, required=False)
-    montante = forms.ChoiceField(choices=[(
-        '0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    jusante = forms.ChoiceField(choices=[(
-        '0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    latEsq = forms.ChoiceField(choices=[(
-        '0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    latDir = forms.ChoiceField(choices=[(
-        '0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    diasSerralheiro = forms.CharField(max_length=20, required=False)
-    quantSerralheiros = forms.CharField(max_length=20, required=False)
-    diasAuxiliar = forms.CharField(max_length=20, required=False)
-    quantAuxiliares = forms.CharField(max_length=20, required=False)
+    tipo_selante = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=38).order_by("descricao"),
+                                          to_field_name="codigo")
+
+
+class FormEstruturaCobertura(forms.Form):
+    tipo_perfil_externo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
+                                               to_field_name="codigo")
+    tipo_perfil_interno = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
+                                               to_field_name="codigo")
+    tipo_pintura = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=52).order_by("descricao").order_by("descricao"),
+                                              to_field_name="codigo")
+    quantidade_pintura = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0, required=False)
+    chapa_rufo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
+                                              to_field_name="codigo")
+    chapa_calha = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
+                                               to_field_name="codigo")
+    montante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
+    jusante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
+    lateral_esquerda = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
+    lateral_direita = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
+    dias_serralheiro = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    quantidade_serralheiro = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    dias_auxiliar = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    quantidade_auxiliar = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
     dificuldade = forms.ChoiceField(
-        choices=[('1', 'fácil'), ('2', 'médio'), ('3', 'difícil')], required=False)
-    apEstr = forms.BooleanField(required=False)
+        choices=[(1, 'fácil'), (2, 'médio'), (3, 'difícil')], required=False)
+    aproveitar_estrutura = forms.BooleanField(required=False)
 
 
-class formPoliPlanRet(forms.Form):
-    combPolicarbonato = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=41)|Q(catins_id=49)| Q(catins_id=55)).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfUn = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=42).order_by("descricao"),
-                                        to_field_name="codigo")
-    combPerfAr = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=43)|Q(catins_id=42)).order_by("descricao"),
+class FormEstruturaCoberturaCurva(forms.Form):
+    tipo_calandra = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=51).order_by("descricao"),
                                               to_field_name="codigo")
-    combPerfU = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=44).order_by("descricao"),
-                                        to_field_name="codigo")
-    comb_selante = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=38).order_by("descricao"),
-                                          to_field_name="codigo")
-    combPerfEsExterno = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfEsInterno = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
-                                               to_field_name="codigo")
-    combRufo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
-                                        to_field_name="codigo")
-    combCalha = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
-                                        to_field_name="codigo")
-    combPerfGuar = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
-                                            to_field_name="codigo")
-    combPerfGax = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
-                                            to_field_name="codigo")
-    combFitaVent = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=46).order_by("descricao"),
-                                            to_field_name="codigo")
-    combFitaAlum = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=46).order_by("descricao"),
-                                            to_field_name="codigo")
-    combMotores = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=53).order_by("descricao"),
-                                              to_field_name="codigo")
-    quantMotores = forms.CharField(label='Quantidade de Motores', max_length=3, required=True)
-    quantModulos = forms.CharField(label='Quantidade de Total Módulos', max_length=3, required=True)
-    quantModMoveis = forms.CharField(label='Quantidade de Módulos Móveis', max_length=3, required=True)
-    direcMovimento = forms.ChoiceField(choices=[('0', 'comprimento'), ('1', 'largura')], required=True)
-    combCantoneira = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
-                                            to_field_name="codigo")
-    combPerfCant = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
-                                            to_field_name="codigo")
-    combRoldanas = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=54).order_by("descricao"),
-                                            to_field_name="codigo")
-    combPintura = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=52).order_by("descricao"),
-                                              to_field_name="codigo")
-    quantPintura = forms.CharField(label='Quantidade Pintura', max_length=5, required=False)
-    compPoli = forms.CharField(label='Comprimento', max_length=20, required=True)
-    largPoli = forms.CharField(label='Largura', max_length=20, required=True)
-    declPoli = forms.CharField(label='Declividade', max_length=20, required=True)
-    repetPoli = forms.CharField(label='Repetições', max_length=20, required=True)
-    distApoios = forms.CharField(
-        label='Distância Entre Apoios', max_length=20, required=False)
-    montante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    jusante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    latEsq = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    latDir = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    diasSerralheiro = forms.CharField(max_length=20, required=False)
-    quantSerralheiros = forms.CharField(max_length=20, required=False)
-    diasAuxiliar = forms.CharField(max_length=20, required=False)
-    quantAuxiliares = forms.CharField(max_length=20, required=False)
-    dificuldade = forms.ChoiceField(choices=[('1', 'facil'), ('2', 'medio'), ('3', 'dificil')], required=False)
-    apEstr = forms.BooleanField(required=False)
 
 
-class formPoliCurvoFix(forms.Form):
-    combPolicarbonato = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=41)|Q(catins_id=49)| Q(catins_id=55)).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfUn = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=42).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfAr = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=43)|Q(catins_id=42)).order_by("descricao"),
-                                              to_field_name="codigo")
-    combPerfU = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=44).order_by("descricao"),
-                                               to_field_name="codigo")
-    comb_selante = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=38).order_by("descricao"),
-                                            to_field_name="codigo")
-    combPerfEsExterno = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfEsInterno = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
-                                               to_field_name="codigo")
-    combCalandra = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=51).order_by("descricao"),
-                                              to_field_name="codigo")
-    combRufo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
-                                              to_field_name="codigo")
-    combCalha = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfGuar = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
-                                              to_field_name="codigo")
-    combPerfGax = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
-                                               to_field_name="codigo")
-    combFitaVent = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=46).order_by("descricao"),
-                                              to_field_name="codigo")
-    combPintura = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=52).order_by("descricao"),
-                                              to_field_name="codigo")
-    quantPintura = forms.CharField(
-        label='Quantidade Pintura', max_length=5, required=False)
-    cordaPoli = forms.CharField(label='Corda', max_length=20, required=True)
-    flechaPoli = forms.CharField(label='Flecha', max_length=20, required=True)
-    largPoli = forms.CharField(label='Largura', max_length=20, required=True)
-    repetPoli = forms.CharField(label='Repetições', max_length=20, required=True)
-    distApoios = forms.CharField(label='Distância Entre Apoios', max_length=20, required=True)
-    distMaosF = forms.CharField(
-        label='Distância Entre Mãos Francesas', max_length=20, required=False)
-    montante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    jusante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    latEsq = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    latDir = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    diasSerralheiro = forms.CharField(max_length=20, required=False)
-    quantSerralheiros = forms.CharField(max_length=20, required=False)
-    diasAuxiliar = forms.CharField(max_length=20, required=False)
-    quantAuxiliares = forms.CharField(max_length=20, required=False)
-    dificuldade = forms.ChoiceField(choices=[('0', 'facil'), ('1', 'medio'), ('2', 'dificil')], required=False)
-    apEstr = forms.BooleanField(required=False)
+class FormMedidasCoberturaPlana(forms.Form):
+    comprimento_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    largura_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    declividade_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    repeticoes_cobertura = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0)
+    distancia_apoios_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    quantidade_maos_francesas = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
 
 
-class formPoliCurvoRet(forms.Form):
-    combPolicarbonato = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=41) | Q(catins_id=49) | Q(catins_id=55)).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfUn = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=42).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfAr = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=43)|Q(catins_id=42)).order_by("descricao"),
+class FormMedidasCoberturaCurva(forms.Form):
+    corda_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    flecha_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    largura_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    repeticoes_cobertura = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0)
+    distancia_apoios_cobertura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0)
+    quantidade_maos_francesas = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+
+
+class FormCoberturaRetratil(forms.Form):
+    tipo_motor = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=53).order_by("descricao"),
                                               to_field_name="codigo")
-    combPerfU = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=44).order_by("descricao"),
-                                               to_field_name="codigo")
-    comb_selante = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=38).order_by("descricao"),
+    quantidade_motor = forms.DecimalField(max_digits=12, decimal_places=0, min_value=0)
+    quantidade_modulos = forms.DecimalField(max_digits=12, decimal_places=0, min_value=0)
+    quantidade_modulos_moveis = forms.DecimalField(max_digits=12, decimal_places=0, min_value=0)
+    direcao_movimento = forms.ChoiceField(choices=[('0', 'comprimento'), ('1', 'largura')], required=True)
+    tipo_cantoneira = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
                                             to_field_name="codigo")
-    combPerfEsExterno = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfEsInterno = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
-                                               to_field_name="codigo")
-    combCalandra = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=51).order_by("descricao"),
-                                              to_field_name="codigo")
-    combRufo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
-                                              to_field_name="codigo")
-    combCalha = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
-                                               to_field_name="codigo")
-    combPerfGuar = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
-                                              to_field_name="codigo")
-    combPerfGax = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=47).order_by("descricao"),
-                                               to_field_name="codigo")
-    combFitaVent = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=46).order_by("descricao"),
-                                              to_field_name="codigo")
-    combMotores = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=53).order_by("descricao"),
-                                              to_field_name="codigo")
-    quantMotores = forms.CharField(label='Quantidade de Motores', max_length=3, required=True)
-    quantModulos = forms.CharField(label='Quantidade de Total Módulos', max_length=3, required=True)
-    quantModMoveis = forms.CharField(label='Quantidade de Módulos Móveis', max_length=3, required=True)
-    direcMovimento = forms.ChoiceField(choices=[('0', 'comprimento'), ('1', 'largura')], required=True)
-    combCantoneira = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao").order_by("descricao"),
+    tipo_perfil_cantoneira = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao"),
                                             to_field_name="codigo")
-    combPerfCant = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=15).order_by("descricao").order_by("descricao"),
+    tipo_roldana = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=54).order_by("descricao"),
                                             to_field_name="codigo")
-    combRoldanas = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=54).order_by("descricao").order_by("descricao"),
-                                            to_field_name="codigo")
-    combPintura = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=52).order_by("descricao").order_by("descricao"),
-                                              to_field_name="codigo")
-    quantPintura = forms.CharField(label='Quantidade Pintura', max_length=5, required=False)
-    cordaPoli = forms.CharField(label='Corda', max_length=20, required=True)
-    flechaPoli = forms.CharField(label='Flecha', max_length=20, required=True)
-    largPoli = forms.CharField(label='Largura', max_length=20, required=True)
-    repetPoli = forms.CharField(label='Repetições', max_length=20, required=True)
-    distApoios = forms.CharField(label='Distância Entre Apoios', max_length=20, required=True)
-    montante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    jusante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    latEsq = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    latDir = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
-    diasSerralheiro = forms.CharField(max_length=20, required=False)
-    quantSerralheiros = forms.CharField(max_length=20, required=False)
-    diasAuxiliar = forms.CharField(max_length=20, required=False)
-    quantAuxiliares = forms.CharField(max_length=20, required=False)
-    dificuldade = forms.ChoiceField(choices=[('1', 'facil'), ('2', 'medio'), ('3', 'dificil')], required=False)
-    apEstr = forms.BooleanField(required=False)
