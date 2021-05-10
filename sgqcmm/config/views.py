@@ -1,4 +1,5 @@
 from csv import reader
+from decimal import Decimal
 from io import StringIO
 from pathlib import Path
 
@@ -69,8 +70,12 @@ def empresas(request):
                 estado = request.POST['estado']
                 cidade = request.POST['cidade']
                 if form_cad_empresa.cleaned_data['novo_bairro']:
+                    try:
+                        ultimo_id_bairro = a05Bairros.objetos.latest('id').id
+                    except:
+                        ultimo_id_bairro = -1
                     bairro = a05Bairros(
-                        id=a05Bairros.objetos.latest('id').id + 1,
+                        id=ultimo_id_bairro + 1,
                         bairro=form_cad_empresa.cleaned_data['novo_bairro'],
                         cepini=0,
                         cepfin=0,
@@ -82,8 +87,12 @@ def empresas(request):
                     if request.POST['bairro'] != "":
                         bairro = a05Bairros.objetos.get(id=request.POST['bairro'])
                 if form_cad_empresa.cleaned_data['novo_logradouro']:
+                    try:
+                        ultimo_id_logradouro = a06Lograds.objetos.latest('id').id
+                    except:
+                        ultimo_id_logradouro = -1
                     logradouro = a06Lograds(
-                        id=a06Lograds.objetos.latest('id').id + 1,
+                        id=ultimo_id_logradouro + 1,
                         logradouro=form_cad_empresa.cleaned_data['novo_logradouro'],
                         ceplogr="",
                         distfab=0,
