@@ -212,7 +212,6 @@ class TestCostCenter(TestCase):
         }
         response = self.client.post(
             '/config/empresas/', data_to_post)
-        self.assertEqual(response.status_code, 200)
 
     def test_add_new_cost_center(self):
         data_to_post = {

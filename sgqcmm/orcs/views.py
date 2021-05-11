@@ -200,6 +200,7 @@ def atualizar_custos_orc(codorcam):
                 itemSup.save()
     return eapAt
 
+
 def atualizar_lista_insumos(codOrcam):
     # Limpar lista atual de itens
     orcamento = g01Orcamento.objetos.get(pk=codOrcam)
@@ -222,6 +223,7 @@ def atualizar_lista_insumos(codOrcam):
         # de atributo pois não tem mais atividade
         except AttributeError:
             pass
+
 
 def atualizar_dados_insumo(request, codInsumo):
     codorcam = request.session['codorcamento']
@@ -276,13 +278,13 @@ def atualizar_dados_insumo(request, codInsumo):
             request, "orcs/atualizar-dados-insumo.html", {
                 "form": form, "insumo": dicInsumo})
 
+
 def view_para_atualizar_custos_orc(request, codorcam):
     strcodorc = str(codorcam)
     atualizar_custos_orc(codorcam)
     return HttpResponseRedirect(
             reverse(
                 'orcs:editar_orcamento', args=(strcodorc,)))
-
 
 
 def alterar_insumo_atividade(request, codorcam, idEap, idInsumo):
