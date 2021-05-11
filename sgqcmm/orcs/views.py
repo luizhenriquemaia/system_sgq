@@ -200,6 +200,7 @@ def atualizar_custos_orc(codorcam):
                 itemSup.save()
     return eapAt
 
+
 def atualizar_lista_insumos(codOrcam):
     # Limpar lista atual de itens
     orcamento = g01Orcamento.objetos.get(pk=codOrcam)
@@ -222,6 +223,7 @@ def atualizar_lista_insumos(codOrcam):
         # de atributo pois não tem mais atividade
         except AttributeError:
             pass
+
 
 def atualizar_dados_insumo(request, codInsumo):
     codorcam = request.session['codorcamento']
@@ -276,13 +278,13 @@ def atualizar_dados_insumo(request, codInsumo):
             request, "orcs/atualizar-dados-insumo.html", {
                 "form": form, "insumo": dicInsumo})
 
+
 def view_para_atualizar_custos_orc(request, codorcam):
     strcodorc = str(codorcam)
     atualizar_custos_orc(codorcam)
     return HttpResponseRedirect(
             reverse(
                 'orcs:editar_orcamento', args=(strcodorc,)))
-
 
 
 def alterar_insumo_atividade(request, codorcam, idEap, idInsumo):
@@ -404,7 +406,7 @@ def editar_orcamento(request, codorcam):
                     lista_insumos.append(dados_insumo)
         return render(request, "orcs/editar-orcamento.html", {
             "orcamento": orcamento, "eaporcam": lista_eaps,
-            "insumos": lista_insumos, "form": formInserirServico
+            "form": formInserirServico
             })
     else:
         return HttpResponse(status=405)
@@ -559,6 +561,37 @@ def editar_orcamento_antigo(request, codorcam):
         "insumos": lista_insumos, "form": formInserirServico
         }
     )
+
+
+def lista_de_insumo(request, codorcam):
+    if request.method == "GET": 
+        if request.user:
+            orcamento = obter_dados_gerais_orc(codorcam)
+            lista_insumos = []
+            for eap in g03EapOrc.objetos.filter(orcamento_id=codorcam, tipo=3):
+                for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
+                    insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
+                    index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo_objeto_a11.descricao), None)
+                    if index_existent_insumo != None:
+                        lista_insumos[index_existent_insumo]['qtdProd'] += insumo.qtdprod
+                    else:
+                        dados_insumo =  {
+                            'id': insumo_objeto_a11.id,
+                            'codigo':insumo_objeto_a11.codigo,
+                            'descricao':insumo_objeto_a11.descricao,
+                            'undBas':insumo_objeto_a11.undbas,
+                            'qtdProd': round(insumo.qtdprod, 2),
+                            'cstUnPr': round(insumo.cstunpr, 2),
+                            'vlrTotal':  formatar_custos_para_template(round(insumo.qtdprod * insumo.cstunpr, 2))
+                        }
+                        lista_insumos.append(dados_insumo)
+            budget_inputs_list_ordered = sorted(lista_insumos, key=lambda k: k['descricao'])
+            return render(request, "orcs/lista-de-insumos.html", {
+                    "orcamento": orcamento, "insumos": budget_inputs_list_ordered})
+        else:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=405)
 
 
 def excluir_orcamento(request, codorcam):
@@ -796,35 +829,6 @@ def ajax_carregar_servico(request, codorcam):
             eap_orc_1 = [eap for eap in eaps_do_orcamento if eap.tipo == 1]
             lista_eaps = somar_custos_eap_editar_orcamento(eap_orc_1, eap_orc_3, eap_orc_5)
             return render(request, 'orcs/carregar-servicos.html', {"eaporcam": lista_eaps})
-        else:
-            return HttpResponse(status=403)
-    else:
-        return HttpResponse(status=405)
-
-
-def ajax_carregar_insumo_orcamento(request, codorcam):
-    if request.method == "GET":
-        if request.user:
-            lista_insumos = []
-            for eap in g03EapOrc.objetos.filter(orcamento_id=codorcam, tipo=3):
-                for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
-                    insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
-                    index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo_objeto_a11.descricao), None)
-                    if index_existent_insumo != None:
-                        lista_insumos[index_existent_insumo]['qtdProd'] += insumo.qtdprod
-                    else:
-                        dados_insumo =  {
-                            'id': insumo_objeto_a11.id,
-                            'codigo':insumo_objeto_a11.codigo,
-                            'descricao':insumo_objeto_a11.descricao,
-                            'undBas':insumo_objeto_a11.undbas,
-                            'qtdProd': round(insumo.qtdprod, 2),
-                            'cstUnPr': round(insumo.cstunpr, 2),
-                            'vlrTotal':  formatar_custos_para_template(round(insumo.qtdprod * insumo.cstunpr, 2))
-                        }
-                        lista_insumos.append(dados_insumo)
-            return render(request, "orcs/carregar-insumos-orcamento.html", {
-                    "insumos": lista_insumos})
         else:
             return HttpResponse(status=403)
     else:
@@ -1162,12 +1166,11 @@ def editar_proposta(request, codorcam):
     else:
         orcamento_template = {
             "prazoObra": orcamento.prazo,
-            "prazoValidade": abs(datetime.date.today() - orcamento.dtval).days
-        }
+            "prazoValidade": abs(datetime.date.today() - orcamento.dtval).days}
         return render(request,"orcs/editar-proposta.html", {
             "orcamento": detalhes_orcamento, "dadosOrcamento": orcamento_template, 
-            "form": form, "codorcam": codorcam
-        })
+            "form": form, "codorcam": codorcam})
+
 
 
 def imp_proposta(request, codorcam):
@@ -1487,7 +1490,6 @@ def imp_proposta_outros_servicos(request, codorcam):
         "totalProposta": totalProposta,
         "today": today,
         "listDescricoesOrc": list_desc_orc})
-
 
 
 def editar_contrato(request, codorcam):

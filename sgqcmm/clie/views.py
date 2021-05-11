@@ -6,7 +6,7 @@ from pathlib import Path
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
-                              redirect, render, reverse)
+                              redirect, render, reverse, HttpResponse)
 from main.forms import formNovoEndereco
 from main.funcoes import format_list_telefone, nomesequencia, numpurotelefone
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
@@ -289,6 +289,10 @@ def dados_cliente(request):
                 request.session['regiao'] = a03Estados.objetos.get(
                     pk=siglaUf).regiao
                 return HttpResponseRedirect(reverse('orcs:novo_orcamento'))
+        else:
+            print("\n\n\n")
+            print(form.errors)
+            return HttpResponse(status=400)
     else:
         form = formDadosCliente()
         form_selecionar_empresa = formSelecionarEmpresa()

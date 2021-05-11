@@ -26,6 +26,10 @@ urlpatterns = [
         views.editar_orcamento,
         name='editar_orcamento'),
     path(
+        '<int:codorcam>/lista-de-insumos/', 
+        views.lista_de_insumo,
+        name='lista_de_insumo'),
+    path(
         'preorcamento-antigo/<int:codorcam>/', 
         views.editar_orcamento_antigo,
         name='editar_orcamento_antigo'),
@@ -41,10 +45,6 @@ urlpatterns = [
         'excluir-orcamento/<int:codorcam>/',
         views.excluir_orcamento,
         name='excluir_orcamento'),
-    path(
-        'preorcamento/<int:codorcam>/ajax/carregar-insumo-orcamento/',
-        views.ajax_carregar_insumo_orcamento,
-        name='ajax_carregar_insumo_orcamento'),
     path(
         'preorcamento/<int:codorcam>/ajax/excluir-serv/<str:codeap>',
         views.ajax_excluir_servico, 

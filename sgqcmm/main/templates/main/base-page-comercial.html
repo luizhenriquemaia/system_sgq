@@ -1,0 +1,63 @@
+{% extends "main/baseHeader.html" %}
+	{% block body %}
+		{% load static %}
+		<link href="{% static 'main/css/basePage.css' %}" rel="stylesheet"/>
+		<header>
+			<nav>
+				{% load static %}
+				<a href="/apps-disponiveis/" class="brand-logo">
+				&nbsp<img class="logo_nav" src="{% static 'main/media/GC_Logo.png' %}">
+				</a>
+                <a href="/inicio/">SGQ COMERCIAL</a>
+				{% if user.is_authenticated %}
+				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+				<ul  class="right hide-on-med-and-down">
+					<li class="tooltipped" data-position="bottom" data-tooltip="Novo Orçamento"><a href="/clientes/"><i class="material-icons">create_new_folder</i></a></li>
+					<li class="tooltipped" data-position="bottom" data-tooltip="Visitas Pendentes"><a href="/orcs/cronog-visitas/"><i class="material-icons">directions_car</i></a></li>
+					{% if user.is_staff %}
+						<li class="tooltipped" data-position="bottom" data-tooltip="Contratos Pendentes"><a href="/orcs/contratos-pendentes/"><i class="material-icons">content_paste</i></a></li>
+						<li class="tooltipped" data-position="bottom" data-tooltip="Obras Pendentes"><a href="/orcs/info-obras/"><i class="material-icons">build</i></a></li>
+					{% endif %}
+					<li class="tooltipped" data-position="bottom" data-tooltip="Usuário"><a href="/edit-profile/"><i class="material-icons">account_box</i></a></li>
+					<li><a href="/logout"><i class="material-icons">exit_to_app</i></a></li>
+				</ul>
+			</nav>
+			<ul class="sidenav" id="mobile-demo">
+				<li><a href="/clientes/">
+					<i class="material-icons medium">create_new_folder</i>
+					<span>Novo Orçamento</span>
+				</a></li>
+				<li><a href="/orcs/cronog-visitas/">
+					<i class="material-icons medium">directions_car</i>
+					<span>Visitas Pendentes</span>
+				</a></li>
+				{% if user.is_staff %}
+				<li><a href="/orcs/contratos-pendentes/">
+					<i class="material-icons medium">content_paste</i>
+					<span>Contratos Pendentes</span>
+				</a></li>
+				<li><a href="/orcs/info-obras/">
+					<i class="material-icons medium">build</i>
+					<span>Obras Pendentes</span>
+				</a></li>
+				{% endif %}
+				<li ><a href="/edit-profile/">
+					<i class="material-icons medium">account_box</i>
+					<span>Usuário</span>
+				</a></li>
+				<li><a href="/logout">
+					<i class="material-icons medium">exit_to_app</i>
+					<span>Sair</span>
+				</a></li>
+			</ul>
+			{% endif %}
+		</header>
+		{% if user.is_authenticated %}
+			{% block content %}
+			{% endblock content %}
+			{% block footer %}
+			{% endblock footer %}
+		{% endif %}
+		{% load static %}
+		<script src="{% static 'main/js/base.js' %}" type="text/javascript"></script>
+	{% endblock body %}

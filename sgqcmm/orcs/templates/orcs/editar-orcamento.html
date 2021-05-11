@@ -1,127 +1,103 @@
-{% extends "main/basePage.html" %}
+{% extends "main/base-page-comercial.html" %}
 {% block content %}
 <div id="content-for-hidden">
 	<div class="content">
-		<div class="title-page">
-			<h4>Orçamento para {{orcamento.desccliente}}</h4>
+		<div class="title-page title-left title-orcs">
+			<h4>Orçamento para <span>{{orcamento.desccliente}}</span></h4>
 		</div>
 		<div class="endereco-orcamento">
 			{{ orcamento.endereco }}
-			<div class="divider"></div>
 		</div>
+		<div class="divider"></div>
 		{% if eaporcam %}
-			<h5 style="text-align:center;">Serviços</h5>
-			<br>
-			<div class="row" style="text-align: center; font-weight:bold;">
-				<div class="col s1" style="text-align: left;">Cód.</div>
-				<div class="col s1"></div>
-				<div class="col s2" style="text-align: left;">Descrição</div>
-				<div class="col s1">Qtd.</div>
-				<div class="col s1">Unid.</div>
-				<div class="col s2">Vlr. Unit.</div>
-				<div class="col s2">
-					<a href="./atualizar-custos">
-						Vlr. Total
-					</a>
-				</div>
-				<div class="col s1"></div>
-				<div class="col s1"></div>
-			</div>
-			<div class="divider"></div>
-			<br>
-			<div id="services_id">
+		<div class="title-table">
+			<h5 class="title-table-orcs">SERVIÇOS</h5>
+		</div>
+		<table class="table-servicos">
+			<thead>
+				<th>Cód.</th>
+				<th></th>
+				<th>Descrição</th>
+				<th>Qtd.</th>
+				<th>Unid.</th>
+				<th>Vlr. Unit.</th>
+				<th>
+					<a href="./atualizar-custos">Vlr. Total</a>
+				</th>
+				<th></th>
+				<th></th>
+			</thead>
+			<tbody id="services_id">
 				{% for itemeap in eaporcam %}
-				<div class="row" style="text-align: center;">
-					<div class="col s1" style="text-align: left;">
-						{{itemeap.codeap}}
-					</div>
-					<div class="col s1" style="font-weight:bold; text-align: right;">
+				<tr>
+					<td>{{itemeap.codeap}}</td>
+					<td>
 						{% if itemeap.tipo == 3 %}
-							<a href="./detalhar-serv/{{itemeap.id}}"><i class="material-icons">unfold_more</i></a>
+						<a href="./detalhar-serv/{{itemeap.id}}"><i class="material-icons">unfold_more</i></a>
 						{% endif %}
-					</div>
-					<div class="col s2" style="text-align: left;">
+					</td>
+					<td>
 						<a href="./editar-eap/{{ itemeap.id }}">{{itemeap.descitem}}</a>
-					</div>
-					<div class="col s1">{{itemeap.qtd_formatado}}</div>
-					<div class="col s1">{{itemeap.unidade}}</div>
-					<div class="col s2">{{itemeap.vlrunit_formatado}}</div>
-					<div class="col s2">{{itemeap.vlrtot}}</div>
-					<div class="col s1">
+					</td>
+					<td>{{itemeap.qtd_formatado}}</td>
+					<td>{{itemeap.unidade}}</td>
+					<td>{{itemeap.vlrunit_formatado}}</td>
+					<td>{{itemeap.vlrtot}}</td>
+					<td>
 						{% if itemeap.tipo == 3 %}
 						<a href="./adicionar-desconto/{{itemeap.id}}">
 							<i class="material-icons">money_off</i>
 						</a>
 						{% endif %}
-					</div>
-					<div class="col s1" style="font-weight:bold;">
+					</td>
+					<td>
 						<button class="generic-action-icon-button" value="{{itemeap.codeap}}" onclick=deleteService(this.value)>
 							<i class="material-icons">delete</i>
 						</button>
-					</div>
-				</div>
+					</td>
+				</tr>
 				{% endfor %}
-			</div>
+			</tbody>
+			<tfoot>
+				<form method="POST" onsubmit=addService(event)>
+					{% csrf_token %}
+					<td colspan="2">
+						<label>Codigo Eap</label>
+						{{ form.codigo_eap }}
+					</td>
+					<td>
+						<label>Descrição</label>
+						{{ form.descricao }}
+					</td>
+					<td>
+						<label>Qtd.</label>
+						{{ form.quantidade }}
+					</td>
+					<td>
+						<label>Unid.</label>
+						{{ form.unidade }}
+					</td>
+					<td>
+						<label>Vlr. Unit.</label>
+						{{ form.valor_unitario }}
+					</td>
+					<td colspan="2">
+						<label>Tipo</label>
+						{{ form.tipo }}
+					</td>
+					<td>
+						<button class="generic-action-icon-button" type="submit">
+							<i class="material-icons">add</i>
+						</button>
+					</td>
+				</form>
+			</tfoot>
+		</table>
 		{% endif %}
-		<form method="POST" class="form-add-to-table" onsubmit=addService(event)>
-			{% csrf_token %}
-			<div class="row">
-				<div class="col s2">
-					<label>Codigo Eap</label>
-					{{ form.codigo_eap }}
-				</div>
-				<div class="col s6">
-					<label>Descrição</label>
-					{{ form.descricao }}
-				</div>
-				<div class="col s3">
-					<label>Tipo de Eap</label>
-					{{ form.tipo }}
-				</div>
-				<div class="col s1">
-					<button class="generic-action-icon-button" type="submit">
-						<i class="material-icons medium">add</i>
-					</button>
-				</div>
-			</div>
-		</form>
-		<br>
 		<div class="divider"></div>
-		<br>
-		<div id="id_listaInsumos">
-			{% if insumos %}
-				<br>
-				<h5 style="text-align:center;">Lista de Insumos</h5>
-				<br>
-				<table>
-					<tr>
-						<th style="text-align: center">Código</th>
-						<th style="text-align: center">Descrição</th>
-						<th style="text-align: center">Unid.</th>
-						<th style="text-align: center">Quant. Prod.</th>
-						<th style="text-align: center">Cst. Prod.</th>
-						<th style="text-align: center">Vlr. Total</th>
-					</tr>
-					{% for insumo in insumos %}
-						<tr style="text-align: right">
-							<td style="text-align: center">{{insumo.codigo}}</td>
-							<td style="text-align: left">
-								<a href="../../atualizar-dados-insumo/{{insumo.codigo}}">
-									<strong>{{insumo.descricao}}</strong>
-								</a>
-							</td>
-							<td style="text-align: center">{{insumo.undBas}}</td>
-							<td>{{insumo.qtdProd}}</td>
-							<td>{{insumo.cstUnPr}}</td>
-							<td>{{insumo.vlrTotal}}</td>
-						</tr>
-					{% endfor %}
-				</table>
-			{% endif %}
+		<div class="title-table">
+			<h5 class="title-table-orcs">NOVO SERVIÇO</h5>
 		</div>
-		<br>
-		<br>
-		<h5 style="text-align:center;">Incluir Serviço</h5>
 		<div class="row">
 			<div class="col s3 m3">
 				<div class="card">
@@ -252,6 +228,9 @@
 	<p>
 		<a href="../../editar-contrato/{{orcamento.codorcamento}}">Editar Contrato</a>
 	</p>
+	<p>
+		<a href="../../{{orcamento.codorcamento}}/lista-de-insumos/">Lista de Insumos do Orçamento</a>
+	</p>
 	{% if user.is_staff %}
 		<div id="popup-delete" onclick="confirmacaoDeletar(this)">
 			<span>Deletar Orçamento</span>
@@ -289,16 +268,6 @@
 					xhttpServicos.onreadystatechange = function (data) {
 						if (this.readyState === 4 && this.status === 200) {
 							document.getElementById("services_id").innerHTML = this.response
-							let xhttpInsumos = new XMLHttpRequest()
-							xhttpInsumos.onreadystatechange = function(data) {
-								if (this.readyState === 4 && this.status === 200) {
-									document.getElementById("id_listaInsumos").innerHTML = this.response
-								} else if (this.readyState === 4 && this.status !== 200) {
-									M.toast({ html: "Erro ao atualizar a lista de insumos", classes: 'red rounded', displayLength: 3000 })
-								}
-							}
-							xhttpInsumos.open("GET", "./ajax/carregar-insumo-orcamento/", true)
-							xhttpInsumos.send()
 						}
 					}
 					xhttpServicos.open("GET", "./ajax/carregar-servico/", true)

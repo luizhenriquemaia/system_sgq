@@ -1,8 +1,9 @@
 /* variables */
 :root{
-  --primary: #8b1014;
-  --secondary: #138C11;
-  --background: #FCF7EF;
+  --primary: #ED3237;
+  --secondary: #36CF1C;
+  --background: #FFFFFF;
+  --background2: #E7E7E7
 }
 
 /* fonts */
@@ -48,7 +49,6 @@ label{
 
 .divider{
   height: 3px;
-  background-color: rgb(172, 172, 172);
 }
 
 table td, table th{
@@ -111,20 +111,24 @@ table td, table th{
 
 /* large tablets & laptops styles */
 @media screen and (min-width: 1200px){
-  body{
+  body {
     font-size: 1em;
   }
 
-  nav{
-    height: 64px;
+  nav {
+    height: 80px;
     line-height: 64px;
   }
 
-  h4{
+  nav a, nav ul a {
+    color: #000;
+  }
+
+  h4 {
     font-size: 2.5em;
   }
 
-  h5{
+  h5 {
     font-size: 1.6em;
   }
 
@@ -132,18 +136,79 @@ table td, table th{
   font-size: 1em;
   }
 
+  .title-page {
+    margin-top: 120px;
+  }
+
+  .title-left h4 {
+    text-align: left;
+  }
+
+  .title-left h4 span {
+    color: var(--primary);
+  }
+
+  .title-section {
+    margin-top: 80px;
+  }
+
+  .title-section h5 {
+    color: #ED3237;
+  }
+
+  .subtitle-section {
+    margin-top: 30px;
+  }
+
+  .subtitle-section span {
+    color: var(--secondary);
+    font-weight: bold;
+  }
+
   .content{
-    width: 70%;
-    margin: 30px auto 30px;
+    width: auto;
+    margin: 30px 100px 30px;
+  }
+
+  .pesq_cliente button {
+    background-color: var(--background);
+    color: #fff;
+  }
+
+  .pesq-client-button {
+    margin: 1em 0 0;
+    color: var(--secondary);
+    background-color: var(--background);
+    cursor: pointer;
   }
 
   .divider{
     height: 1px;
-    background-color: #E0E0E0;
+  }
+
+  .form-edit-proposta {
+    margin-top: 50px;
   }
 
   table td, table th{
     border-bottom: 1px solid #dddddd;
+  }
+
+  .table-pendencias thead, .table-servicos thead, .table-insumos thead {
+    background-color: var(--background2);
+    color: #000;
+  }
+
+  .table-pendencias, .table-servicos, .table-insumos {
+    margin-bottom: 120px;
+  }
+
+  .table-servicos td, .table-servicos th, .table-insumos td, .table-insumos th {
+    text-align: left;
+  }
+
+  .table-insumos {
+    margin-top: 50px;
   }
 
   .submit-hover{
@@ -154,7 +219,6 @@ table td, table th{
   .submit-ok{
     height: 3.5em;  
     padding: 15px;
-    left: 100%;
   }
 
   .sandwich-line1, .sandwich-line2, .sandwich-line3{
@@ -200,10 +264,17 @@ footer{
 }
 
 nav{
-  line-height: 64px;
-  background-color: var(--primary);
-  box-sizing: inherit;
-  color: #FFFFFF;
+  background-color: var(--background);
+  color: #000;
+  margin: 0 100px 0 100px;
+  padding: 10px 10px 10px;
+  width: auto;
+  border-bottom: var(--background2) 3px solid;
+  box-shadow: none;
+}
+
+nav li {
+  padding: 10px 0 10px;
 }
 
 h1, h2, h3, h4, h5, h6{
@@ -222,7 +293,7 @@ button{
 }
 
 table{
-  width: 90%;
+  width: 100%;
   margin: auto;
   padding-bottom: 1em;
   margin-top: 1em;
@@ -233,13 +304,17 @@ table td, table th{
   text-align: center;
 }
 
-table tr{
+table tr {
   height: 69px;
+  border-bottom: none;
 }
 
-table th{
-  color: var(--primary);
-  font-weight: 300;
+table thead{
+  color: #000;
+}
+
+tfoot td {
+  border-bottom: none;
 }
 
 .config-table td, .config-table th {
@@ -251,10 +326,20 @@ table th{
   margin-bottom: 68px;
 }
 
+.title-orcs {
+  margin-bottom: 0px;
+}
+
 .title-table {
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1.2em;
   margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.title-table .title-table-orcs {
+  text-align: left;
+  margin-top: 2.5em;
 }
 
 .title-form-after-table {
@@ -266,8 +351,9 @@ table th{
 
 .endereco-orcamento{
   font-family: 'Butler-Regular';
-  font-size: 1.1em;
-  margin-bottom: 102px;
+  font-size: 1.4em;
+  color: var(--primary);
+  margin-bottom: 50px;
 }
 
 img.logo_nav{
@@ -275,16 +361,12 @@ img.logo_nav{
   width: 230px;
 }
 
-.content{
-  background: #FFFFFF;
-  box-shadow: 1.5px 4px rgba(0, 0, 0, .24), 0 1.5px 6px rgba(0, 0, 0, .12);
-  padding: 20px;
-}
-
 .divider{
   overflow: hidden;
   box-sizing: inherit;
   font-size: 15px;
+  background-color: black;
+
 }
 
 div.container-content{
@@ -319,17 +401,16 @@ span.checkbox-grid {
 }
 
 .submit-hover{
-  background: #8B1014;
-  color: #FFFFFF;
+  background: var(--primary);
+  color: var(--background);
 	cursor: pointer;
 	transition:.8s ease all;
-  outline:none;
 	box-shadow: 0 1.5px 4px rgba(0, 0, 0, .24), 0 1.5px 6px rgba(0, 0, 0, .12);
 }
 
 .submit-hover:hover{
-  background:#FFFFFF;
-  color:#8B1014;
+  background:var(--background);
+  color:var(--primary);
 }
 
 .submit-hover:before, .submit-hover:after{
@@ -339,7 +420,7 @@ span.checkbox-grid {
   right:0;
   height:2px;
   width:0;
-  background: #8B1014;
+  background: var(--primary);
   transition:.4s ease all;
 }
 
@@ -358,16 +439,16 @@ span.checkbox-grid {
 .generic-action-icon-button {
   background: #FFFFFF;
   cursor: pointer;
-  color: #138C11;
+  color: var(--secondary);
   transition: .5s ease all;
 }
 
 .generic-action-icon-button:hover {
-  color: #8b1014;
+  color: var(--primary);
 }
 
 a{
-	color: #138C11;
+	color: var(--secondary);
 }
 
 /* Corpo do botão */
@@ -399,7 +480,7 @@ p.add-text{
   display: block;
   width: 2px;
   height: 20px;
-  background: #138C11;
+  background: var(--secondary);
   margin: 0px 10px 0px;
   position: absolute;
 }
@@ -409,7 +490,7 @@ p.add-text{
   display: block;
   width: 20px;
   height: 2px;
-  background: #138C11;
+  background: var(--secondary);
   margin: 10px 0px 0px;
   position: absolute;
 }
@@ -421,7 +502,7 @@ a.link-button:hover {
   height: 43px;
   width: 100px;
   position: absolute;
-	background-color: #138C11;
+	background-color: var(--secondary);
   font-family: "Roboto";
 	color: #000;
   letter-spacing: 0.5px;
@@ -472,7 +553,7 @@ a.link-button:hover p.add-text {
 #content-menu {
   vertical-align: middle;
   text-align: center;
-  background-color: #138C11;
+  background-color: var(--secondary);
   color: white;
   width: 0px;
   height: 0px;
@@ -508,7 +589,7 @@ a.link-button:hover p.add-text {
 }
 
 .responsible-button{
-  background-color: #138C11;
+  background-color: var(--secondary);
   cursor: pointer;
   position: fixed;
   border-radius: 50%;
@@ -524,7 +605,7 @@ a.link-button:hover p.add-text {
 }
 
 .responsible-button:focus{
-	background-color: #138C11;
+	background-color: var(--secondary);
 }
 
 
@@ -602,7 +683,7 @@ a.link-button:hover p.add-text {
   right: 0;
   margin-right: 20px;
   margin-bottom: 20px;
-  color: #8b1014;
+  color: var(--primary);
   text-decoration: none;
   cursor: pointer;
 }
@@ -632,18 +713,17 @@ a.link-button:hover p.add-text {
   height: 60px;
   width: 60px;
   padding: 15px;
-  background-color: #138C11;
+  background-color: var(--secondary);
   color: white;
   cursor: pointer;
   text-decoration: none;
   transition:.8s ease all;
-  outline:none;
   box-shadow: 0 1.5px 4px rgba(0, 0, 0, .24), 0 1.5px 6px rgba(0, 0, 0, .12);
 }
 
 .ok-modal:hover{
   background:#FFFFFF;
-  color:#138C11;
+  color:var(--secondary);
 }
 
 .ok-modal:before, .ok-modal:after{
@@ -653,7 +733,7 @@ a.link-button:hover p.add-text {
   right:0;
   height:2px;
   width:0;
-  background: #138C11;
+  background: var(--secondary);
   transition:.4s ease all;
 }
 

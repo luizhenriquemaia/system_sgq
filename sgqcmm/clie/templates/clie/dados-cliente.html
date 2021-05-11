@@ -1,8 +1,8 @@
-{% extends "main/basePage.html" %}
+{% extends "main/base-page-comercial.html" %}
 {% block content %}
 	<div class="content">
-		<div class="title-page">
-			<h4>Solicitante</h4>
+		<div class="title-page title-left">
+			<h4>Informações do Solicitante</h4>
 		</div>
 		<form method="POST" onsubmit=showModal(event) id="formClient">
 			{% csrf_token %}

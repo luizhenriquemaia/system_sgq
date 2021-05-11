@@ -1,31 +1,29 @@
 {% for itemeap in eaporcam %}
-<div class="row" style="text-align: center;">
-    <div class="col s1" style="text-align: left;">
-        {{itemeap.codeap}}
-    </div>
-    <div class="col s1" style="font-weight:bold; text-align: right;">
+<tr>
+    <td>{{itemeap.codeap}}</td>
+    <td>
         {% if itemeap.tipo == 3 %}
         <a href="./detalhar-serv/{{itemeap.id}}"><i class="material-icons">unfold_more</i></a>
         {% endif %}
-    </div>
-    <div class="col s2" style="text-align: left;">
+    </td>
+    <td>
         <a href="./editar-eap/{{ itemeap.id }}">{{itemeap.descitem}}</a>
-    </div>
-    <div class="col s1">{{itemeap.qtdorc}}</div>
-    <div class="col s1">{{itemeap.unidade}}</div>
-    <div class="col s2">{{itemeap.vlrunit_formatado}}</div>
-    <div class="col s2">{{itemeap.vlrtot}}</div>
-    <div class="col s1">
+    </td>
+    <td>{{itemeap.qtd_formatado}}</td>
+    <td>{{itemeap.unidade}}</td>
+    <td>{{itemeap.vlrunit_formatado}}</td>
+    <td>{{itemeap.vlrtot}}</td>
+    <td>
         {% if itemeap.tipo == 3 %}
         <a href="./adicionar-desconto/{{itemeap.id}}">
             <i class="material-icons">money_off</i>
         </a>
         {% endif %}
-    </div>
-    <div class="col s1" style="font-weight:bold;">
+    </td>
+    <td>
         <button class="generic-action-icon-button" value="{{itemeap.codeap}}" onclick=deleteService(this.value)>
             <i class="material-icons">delete</i>
         </button>
-    </div>
-</div>
+    </td>
+</tr>
 {% endfor %}
