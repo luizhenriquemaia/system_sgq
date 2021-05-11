@@ -49,7 +49,6 @@ label{
 
 .divider{
   height: 3px;
-  background-color: rgb(172, 172, 172);
 }
 
 table td, table th{
@@ -185,20 +184,23 @@ table td, table th{
 
   .divider{
     height: 1px;
-    background-color: #E0E0E0;
   }
 
   table td, table th{
     border-bottom: 1px solid #dddddd;
   }
 
-  .table-pendencias thead {
+  .table-pendencias thead, .table-servicos thead {
     background-color: var(--background2);
     color: #000;
   }
 
-  .table-pendencias {
+  .table-pendencias, .table-servicos {
     margin-bottom: 120px;
+  }
+
+  .table-servicos td, .table-servicos th {
+    text-align: left;
   }
 
   .submit-hover{
@@ -294,12 +296,17 @@ table td, table th{
   text-align: center;
 }
 
-table tr{
+table tr {
   height: 69px;
+  border-bottom: none;
 }
 
 table thead{
   color: #000;
+}
+
+tfoot td {
+  border-bottom: none;
 }
 
 .config-table td, .config-table th {
@@ -311,10 +318,20 @@ table thead{
   margin-bottom: 68px;
 }
 
+.title-orcs {
+  margin-bottom: 0px;
+}
+
 .title-table {
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1.2em;
   margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.title-table .title-table-orcs {
+  text-align: left;
+  margin-top: 2.5em;
 }
 
 .title-form-after-table {
@@ -326,8 +343,9 @@ table thead{
 
 .endereco-orcamento{
   font-family: 'Butler-Regular';
-  font-size: 1.1em;
-  margin-bottom: 102px;
+  font-size: 1.4em;
+  color: var(--primary);
+  margin-bottom: 50px;
 }
 
 img.logo_nav{
@@ -339,6 +357,8 @@ img.logo_nav{
   overflow: hidden;
   box-sizing: inherit;
   font-size: 15px;
+  background-color: black;
+
 }
 
 div.container-content{
