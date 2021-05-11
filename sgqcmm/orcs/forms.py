@@ -88,8 +88,6 @@ class formEditarProposta(forms.Form):
     nomeCliente = forms.CharField(
         label='nomeCliente', max_length=300, required=True)
     empresa = forms.ChoiceField()
-    enderecoObra = forms.CharField(
-        label='enderecoObra', max_length=500, required=False)
     condPgto = forms.ModelChoiceField(
         queryset=a19PlsPgtos.objetos.all(), to_field_name="id", required=False)
     prazoObra = forms.CharField(

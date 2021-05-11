@@ -1164,12 +1164,10 @@ def editar_proposta(request, codorcam):
     else:
         orcamento_template = {
             "prazoObra": orcamento.prazo,
-            "prazoValidade": abs(datetime.date.today() - orcamento.dtval).days
-        }
+            "prazoValidade": abs(datetime.date.today() - orcamento.dtval).days}
         return render(request,"orcs/editar-proposta.html", {
             "orcamento": detalhes_orcamento, "dadosOrcamento": orcamento_template, 
-            "form": form, "codorcam": codorcam
-        })
+            "form": form, "codorcam": codorcam})
 
 
 def imp_proposta(request, codorcam):
