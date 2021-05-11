@@ -60,6 +60,7 @@
 			</tbody>
 			<tfoot>
 				<form method="POST" onsubmit=addService(event)>
+					{% csrf_token %}
 					<td colspan="2">
 						<label>Codigo Eap</label>
 						{{ form.codigo_eap }}
@@ -94,39 +95,6 @@
 		</table>
 		{% endif %}
 		<div class="divider"></div>
-		<div id="id_listaInsumos">
-			{% if insumos %}
-				<br>
-				<h5 style="text-align:center;">Lista de Insumos</h5>
-				<br>
-				<table>
-					<tr>
-						<th style="text-align: center">Código</th>
-						<th style="text-align: center">Descrição</th>
-						<th style="text-align: center">Unid.</th>
-						<th style="text-align: center">Quant. Prod.</th>
-						<th style="text-align: center">Cst. Prod.</th>
-						<th style="text-align: center">Vlr. Total</th>
-					</tr>
-					{% for insumo in insumos %}
-						<tr style="text-align: right">
-							<td style="text-align: center">{{insumo.codigo}}</td>
-							<td style="text-align: left">
-								<a href="../../atualizar-dados-insumo/{{insumo.codigo}}">
-									<strong>{{insumo.descricao}}</strong>
-								</a>
-							</td>
-							<td style="text-align: center">{{insumo.undBas}}</td>
-							<td>{{insumo.qtdProd}}</td>
-							<td>{{insumo.cstUnPr}}</td>
-							<td>{{insumo.vlrTotal}}</td>
-						</tr>
-					{% endfor %}
-				</table>
-			{% endif %}
-		</div>
-		<br>
-		<br>
 		<div class="title-table">
 			<h5 class="title-table-orcs">NOVO SERVIÇO</h5>
 		</div>
@@ -260,6 +228,9 @@
 	<p>
 		<a href="../../editar-contrato/{{orcamento.codorcamento}}">Editar Contrato</a>
 	</p>
+	<p>
+		<a href="../../{{orcamento.codorcamento}}/lista-de-insumos/">Lista de Insumos do Orçamento</a>
+	</p>
 	{% if user.is_staff %}
 		<div id="popup-delete" onclick="confirmacaoDeletar(this)">
 			<span>Deletar Orçamento</span>
@@ -297,16 +268,6 @@
 					xhttpServicos.onreadystatechange = function (data) {
 						if (this.readyState === 4 && this.status === 200) {
 							document.getElementById("services_id").innerHTML = this.response
-							let xhttpInsumos = new XMLHttpRequest()
-							xhttpInsumos.onreadystatechange = function(data) {
-								if (this.readyState === 4 && this.status === 200) {
-									document.getElementById("id_listaInsumos").innerHTML = this.response
-								} else if (this.readyState === 4 && this.status !== 200) {
-									M.toast({ html: "Erro ao atualizar a lista de insumos", classes: 'red rounded', displayLength: 3000 })
-								}
-							}
-							xhttpInsumos.open("GET", "./ajax/carregar-insumo-orcamento/", true)
-							xhttpInsumos.send()
 						}
 					}
 					xhttpServicos.open("GET", "./ajax/carregar-servico/", true)

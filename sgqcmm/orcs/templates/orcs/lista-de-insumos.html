@@ -1,0 +1,41 @@
+{% extends "main/base-page-comercial.html" %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="content">
+    <div class="title-page title-left title-orcs">
+        <h4>Insumos para <span>{{orcamento.desccliente}}</span></h4>
+    </div>
+    <div class="endereco-orcamento">
+        {{ orcamento.endereco }}
+    </div>
+    <div class="divider"></div>
+    <table class="table-insumos">
+        <thead>
+            <th>Código</th>
+            <th>Descrição</th>
+            <th>Unid.</th>
+            <th>Quant. Prod.</th>
+            <th>Cst. Prod.</th>
+            <th>Vlr. Total</th>
+        </thead>
+        <tbody>
+            {% for insumo in insumos %}
+            <tr>
+                <td>{{insumo.codigo}}</td>
+                <td>
+                    <a href="../../atualizar-dados-insumo/{{insumo.codigo}}">
+                        <strong>{{insumo.descricao}}</strong>
+                    </a>
+                </td>
+                <td>{{insumo.undBas}}</td>
+                <td>{{insumo.qtdProd}}</td>
+                <td>{{insumo.cstUnPr}}</td>
+                <td>{{insumo.vlrTotal}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="../../preorcamento/{{orcamento.codorcamento}}" style="text-align: left;"><i class="medium material-icons">reply_all</i></a>
+</div>
+{% endif %}
+{% endblock content %}
