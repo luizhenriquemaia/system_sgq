@@ -186,6 +186,10 @@ table td, table th{
     height: 1px;
   }
 
+  .form-edit-proposta {
+    margin-top: 50px;
+  }
+
   table td, table th{
     border-bottom: 1px solid #dddddd;
   }

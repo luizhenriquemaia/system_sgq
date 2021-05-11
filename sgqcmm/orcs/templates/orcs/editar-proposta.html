@@ -9,52 +9,54 @@
 		{{ orcamento.endereco }}
 	</div>
 	<div class="divider"></div>
-	<form method="post">
-		{% csrf_token %}
-		<div class="row">
-			<div class="col s2 input-field">
-				<input type="text" name="tratamento" maxlength="20" value="{{ orcamento.tratamento }}" required>
-				<label>Tratamento</label>
+	<div class="form-edit-proposta">
+		<form method="post">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col s2 input-field">
+					<input type="text" name="tratamento" maxlength="20" value="{{ orcamento.tratamento }}" required>
+					<label>Tratamento</label>
+				</div>
+				<div class="col s5 input-field">
+					<input type="text" name="nomeCliente" maxlength="300" value="{{ orcamento.nomecliente }}" required>
+					<label>Nome do Cliente</label>
+				</div>
+				<div class="col s5">
+					<label>Empresa</label>
+					{{ form.empresa }}
+				</div>
 			</div>
-			<div class="col s5 input-field">
-				<input type="text" name="nomeCliente" maxlength="300" value="{{ orcamento.nomecliente }}" required>
-				<label>Nome do Cliente</label>
+			<div class="row">
+				<div class="col s6">
+					<label>Condição de Pagamento</label>
+					{{ form.condPgto }}
+				</div>
+				<div class="col s6">
+					<label>Vendedor(a)</label>
+					{{ form.vendedor }}
+				</div>
 			</div>
-			<div class="col s5">
-				<label>Empresa</label>
-				{{ form.empresa }}
+			<div class="row">
+				<div class="col s6 input-field">
+					<input type="text" name="prazoObra" maxlength="5" value="{{ dadosOrcamento.prazoObra }}" required>
+					<label>Prazo de Execução</label>
+				</div>
+				<div class="col s6 input-field">
+					<input type="text" name="prazoValidade" maxlength="10" value="{{ dadosOrcamento.prazoValidade }}" required>
+					<label>Prazo de Validade</label>
+				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col s6">
-				<label>Condição de Pagamento</label>
-				{{ form.condPgto }}
+			<div class="row">
+				<div class="col s12">
+					<label for="tipo_proposta_id">Tipo de Proposta</label>
+					{{ form.tipo_proposta }}
+				</div>
 			</div>
-			<div class="col s6">
-				<label>Vendedor(a)</label>
-				{{ form.vendedor }}
-			</div>
-		</div>
-		<div class="row">
-			<div class="col s6 input-field">
-				<input type="text" name="prazoObra" maxlength="5" value="{{ dadosOrcamento.prazoObra }}" required>
-				<label>Prazo de Execução</label>
-			</div>
-			<div class="col s6 input-field">
-				<input type="text" name="prazoValidade" maxlength="10" value="{{ dadosOrcamento.prazoValidade }}" required>
-				<label>Prazo de Validade</label>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col s12">
-				<label for="tipo_proposta_id">Tipo de Proposta</label>
-				{{ form.tipo_proposta }}
-			</div>
-		</div>
-		<button class="submit-ok submit-hover" name="btnProximo" type="submit" value="btnProximo">
-			<i class="material-icons">navigate_next</i>
-		</button>
-	</form>
+			<button class="submit-ok submit-hover" name="btnProximo" type="submit" value="btnProximo">
+				<i class="material-icons">navigate_next</i>
+			</button>
+		</form>
+	</div>
 </div>
 {% endif %}
 {% endblock content %}
