@@ -1,280 +1,247 @@
-{% extends "main/basePage.html" %}
-	{% block content %}
-		{% if user.is_authenticated %}
-		<div class="content">
-			<div class="title-page">
-				<h4>Sistema de Gestão da Qualidade</h4>
+{% extends "main/base-page-comercial.html" %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="content">
+	<div class="title-page">
+		<h4>PENDÊNCIAS</h4>
+	</div>
+	<div class="title-section">
+		<h5>Orçamentos</h5>
+	</div>
+	<div class="subtitle-section">
+		<div class="row">
+			<div class="col s6">
+				<p>
+					Você possui <span>34</span> orçamentos pendentes.
+				</p>
 			</div>
-			<p>
-				{% if preOrcPend or orcamento or contrAssis or obraPend or obraAFinal or obraFinalizada %}
-					Clique no menu acima para criar o documento desejado, clique <a class="black-text" href="/sgqcmm/procs/comercial/"><strong>aqui para acessar as últimas versões dos procedimentos e instruções do departamento comercial</strong></a> ou clique nas pendências abaixo para atualizá-las.
-				{% else %}
-					Clique no menu acima para criar o documento desejado ou clique <a class="black-text" href="/sgqcmm/procs/comercial/"><strong>aqui para acessar as últimas versões dos procedimentos e instruções do departamento comercial</strong></a>.
-				{% endif %}
-			</p>
-			<div class="divider"></div>
-			<br>
-			<div class="row">
+			<div class="col s3 offset-s2" style="text-align:right">
 				<div class="pesq_cliente scale-transition scale-out" id="pesqClientesForm">
 					<form method="POST">
 						{% csrf_token %}
-						<div class="col s4 offset-s6">					
-							<label for="">Pesquisar por cliente</label>
-							{{form.nome_cliente}}
-						</div>
-						<div class="col s1">
-							<button class="submit-ok submit-hover" name="btnConfirmaPesq" type="submit" value="btnConfirmaPesq" onclick="showPesqCliente()">
-								<i class="small material-icons">done</i>
-							</button>
-						</div>
+						{{form.nome_cliente}}
+						<button type="submit" class="invisible-button">ok</button>
 					</form>
 				</div>
-				<div class="col s1">
-					<button class="submit-ok submit-hover" name="btnMostrarFormPesqCliente" type="button" value="btnMostrarFormPesqCliente"
-						onclick="showPesqCliente()">
-						<i class="small material-icons">search</i>
-					</button>
+			</div>
+			<div class="col s1" style="text-align:right">
+				<button type="button" class="pesq-client-button" onclick="showPesqCliente()">
+					<i class="small material-icons">search</i>
+				</button>
+			</div>
+		</div>
+	</div>
+	{% if preOrcPend %}
+	<table class="table-pendencias">
+		<thead>
+			<th>Número</th>
+			<th>Data</th>
+			<th>Cliente</th>
+			<th>Pagamento</th>
+			<th>Status</th>
+		</thead>
+		{% for pendencia in preOrcPend %}
+			<tbody>
+				<tr>
+					<td data-lable="Numero">
+						<a href="/orcs/preorcamento/{{pendencia.numero}}">{{pendencia.numero}}</a>
+					</td>
+					<td data-lable="Data">
+						{{pendencia.data}}
+					</td>
+					<td data-lable="Cliente">
+						{{pendencia.cliente}}
+					</td>
+					<td data-label="Pagamento">
+						{{pendencia.pagamento}}
+					</td>
+					<td data-label="Status">
+						{{pendencia.status}}
+					</td>
+				</tr>
+			</tbody>
+		{% endfor %}
+	</table>
+	{% endif %}
+	{% if visitasPend %}
+	<div class="title-section">
+		<h5>Visitas marcadas</h5>
+	</div>
+	<div class="subtitle-section">
+		<div class="row">
+			<div class="col s6">
+				<p>
+					Você possui <span>34</span> visitas pendentes.
+				</p>
+			</div>
+			<div class="col s3 offset-s2" style="text-align:right">
+				<div class="pesq_cliente scale-transition scale-out" id="pesqClientesForm">
+					<form method="POST">
+						{% csrf_token %}
+						{{form.nome_cliente}}
+						<button type="submit" class="invisible-button">ok</button>
+					</form>
 				</div>
 			</div>
-			<div class="divider"></div>
-			{% if preOrcPend %}
-				<h5>Pré-orçamentos pendentes</h5>
-				<br>
-				<table class="pendencias">
-					<thead>
-						<th>Número</th>
-						<th>Data</th>
-						<th>Cliente</th>
-						<th>Pagamento</th>
-						<th>Status</th>
-					</thead>
-					{% for pendencia in preOrcPend %}
-						<tbody>
-							<tr>
-								<td data-lable="Numero">
-									<a href="/orcs/preorcamento/{{pendencia.numero}}">{{pendencia.numero}}</a>
-								</td>
-								<td data-lable="Data">
-									{{pendencia.data}}
-								</td>
-								<td data-lable="Cliente">
-									{{pendencia.cliente}}
-								</td>
-								<td data-label="Pagamento">
-									{{pendencia.pagamento}}
-								</td>
-								<td data-label="Status">
-									{{pendencia.status}}
-								</td>
-							</tr>
-						</tbody>
-					{% endfor %}
-				</table>
-				<br>
-				<br>
-			{% endif %}
-			{% if visitasPend %}
-				<br>
-				<br>
-				<h5>Visitas marcadas</h5>
-				<br>
-				<table class="pendencias">
-					<thead>
-						<th>Número</th>
-						<th>Data</th>
-						<th>Cliente</th>
-						<th>Pagamento</th>
-						<th>Status</th>
-					</thead>
-					{% for pendencia in visitasPend %}
-					<tbody>
-						<tr>
-							<td data-lable="Numero">
-								<a href="/orcs/preorcamento/{{pendencia.numero}}">{{pendencia.numero}}</a>
-							</td>
-							<td data-lable="Data">
-								{{pendencia.data}}
-							</td>
-							<td data-lable="Cliente">
-								{{pendencia.cliente}}
-							</td>
-							<td data-label="Pagamento">
-								{{pendencia.pagamento}}
-							</td>
-							<td data-label="Status">
-								{{pendencia.status}}
-							</td>
-						</tr>
-					</tbody>
-					{% endfor %}
-				</table>
-				<br>
-				<br>
-			{% endif %}
-			{% if orcamPend %}
-				<br>
-				<br>
-				<h5>Propostas comerciais em aberto</h5>
-				<br>
-				<table class="pendencias">
-					<thead>
-						<th>Número</th>
-						<th>Data</th>
-						<th>Cliente</th>
-						<th>Pagamento</th>
-						<th>Status</th>
-					</thead>
-					{% for pendencia in orcamPend %}
-					<tbody>
-						<tr>
-							<td data-lable="Numero">
-								<a href="/orcs/preorcamento/{{pendencia.numero}}">{{pendencia.numero}}</a>
-							</td>
-							<td data-lable="Data">
-								{{pendencia.data}}
-							</td>
-							<td data-lable="Cliente">
-								{{pendencia.cliente}}
-							</td>
-							<td data-label="Pagamento">
-								{{pendencia.pagamento}}
-							</td>
-							<td data-label="Status">
-								{{pendencia.status}}
-							</td>
-						</tr>
-					</tbody>
-					{% endfor %}
-				</table>
-				<br>
-				<br>
-			{% endif %}
-			{% if contrPend %}
-				<br>
-				<br>
-				<h5>Contratos pendentes</h5>
-				<br>
-				<table class="pendencias">
-					<thead>
-						<th>Número</th>
-						<th>Data</th>
-						<th>Cliente</th>
-						<th>Pagamento</th>
-						<th>Status</th>
-					</thead>
-					{% for pendencia in contrPend %}
-					<tbody>
-						<tr>
-							<td data-lable="Numero">
-								<a href="/orcs/preorcamento/{{pendencia.numero}}">{{pendencia.numero}}</a>
-							</td>
-							<td data-lable="Data">
-								{{pendencia.data}}
-							</td>
-							<td data-lable="Cliente">
-								{{pendencia.cliente}}
-							</td>
-							<td data-label="Pagamento">
-								{{pendencia.pagamento}}
-							</td>
-							<td data-label="Status">
-								{{pendencia.status}}
-							</td>
-						</tr>
-					</tbody>
-					{% endfor %}
-				</table>
-				<br>
-				<br>
-			{% endif %}
-			{% if obraPend %}
-				<br>
-				<br>
-				<h5>Obras a executar</h5>
-				<br>
-				<table class="pendencias">
-					<thead>
-						<th>Número</th>
-						<th>Data</th>
-						<th>Cliente</th>
-						<th>Pagamento</th>
-						<th>Status</th>
-					</thead>
-					{% for pendencia in obraPend %}
-					<tbody>
-						<tr>
-							<td data-lable="Numero">
-								<a href="/orcs/preorcamento/{{pendencia.numero}}">{{pendencia.numero}}</a>
-							</td>
-							<td data-lable="Data">
-								{{pendencia.data}}
-							</td>
-							<td data-lable="Cliente">
-								{{pendencia.cliente}}
-							</td>
-							<td data-label="Pagamento">
-								{{pendencia.pagamento}}
-							</td>
-							<td data-label="Status">
-								{{pendencia.status}}
-							</td>
-						</tr>
-					</tbody>
-					{% endfor %}
-				</table>
-				<br>
-				<br>
-			{% endif %}
-			{% if obraAFinal %}
-				<br>
-				<br>
-				<h5>Obras em execução</h5>
-				<br>
-				<table class="pendencias">
-					<thead>
-						<th>Número</th>
-						<th>Data</th>
-						<th>Cliente</th>
-						<th>Pagamento</th>
-						<th>Status</th>
-					</thead>
-					{% for pendencia in obraAFinal %}
-					<tbody>
-						<tr>
-							<td data-lable="Numero">
-								<a href="/orcs/preorcamento/{{pendencia.numero}}">{{pendencia.numero}}</a>
-							</td>
-							<td data-lable="Data">
-								{{pendencia.data}}
-							</td>
-							<td data-lable="Cliente">
-								{{pendencia.cliente}}
-							</td>
-							<td data-label="Pagamento">
-								{{pendencia.pagamento}}
-							</td>
-							<td data-label="Status">
-								{{pendencia.status}}
-							</td>
-						</tr>
-					</tbody>
-					{% endfor %}
-				</table>
-				<br>
-				<br>
-			{% endif %}
+			<div class="col s1" style="text-align:right">
+				<button type="button" class="pesq-client-button" onclick="showPesqCliente()">
+					<i class="small material-icons">search</i>
+				</button>
 			</div>
-		{% endif %}
-		<script>
-			function showPesqCliente() {
-				document.getElementById("pesqClientesForm").classList.toggle("scale-in")
-			}
-		</script>
-	{% endblock content %}
-	{% block footer %}
-		<footer>
-			<ul style="list-style-type:none;">
-				<li><a href="/procs/comercial/">Exibir todos os procedimentos do departamento comercial</a></li>
-			</ul>
-		</footer>
-	{% endblock footer %}
+		</div>
+	</div>
+	<table class="table-pendencias">
+		<thead>
+			<th>Número</th>
+			<th>Data</th>
+			<th>Cliente</th>
+			<th>Pagamento</th>
+			<th>Status</th>
+		</thead>
+		{% for pendencia in visitasPend %}
+		<tbody>
+			<tr>
+				<td data-lable="Numero">
+					<a href="/orcs/preorcamento/{{pendencia.numero}}">{{pendencia.numero}}</a>
+				</td>
+				<td data-lable="Data">
+					{{pendencia.data}}
+				</td>
+				<td data-lable="Cliente">
+					{{pendencia.cliente}}
+				</td>
+				<td data-label="Pagamento">
+					{{pendencia.pagamento}}
+				</td>
+				<td data-label="Status">
+					{{pendencia.status}}
+				</td>
+			</tr>
+		</tbody>
+		{% endfor %}
+	</table>
+	{% endif %}
+	{% if orcamPend %}
+	<div class="title-section">
+		<h5>Propostas</h5>
+	</div>
+	<div class="subtitle-section">
+		<div class="row">
+			<div class="col s6">
+				<p>
+					Você possui <span>34</span> propostas pendentes.
+				</p>
+			</div>
+			<div class="col s3 offset-s2" style="text-align:right">
+				<div class="pesq_cliente scale-transition scale-out" id="pesqClientesForm">
+					<form method="POST">
+						{% csrf_token %}
+						{{form.nome_cliente}}
+						<button type="submit" class="invisible-button">ok</button>
+					</form>
+				</div>
+			</div>
+			<div class="col s1" style="text-align:right">
+				<button type="button" class="pesq-client-button" onclick="showPesqCliente()">
+					<i class="small material-icons">search</i>
+				</button>
+			</div>
+		</div>
+	</div>
+	<table class="table-pendencias">
+		<thead>
+			<th>Número</th>
+			<th>Data</th>
+			<th>Cliente</th>
+			<th>Pagamento</th>
+			<th>Status</th>
+		</thead>
+		{% for pendencia in orcamPend %}
+		<tbody>
+			<tr>
+				<td data-lable="Numero">
+					<a href="/orcs/preorcamento/{{pendencia.numero}}">{{pendencia.numero}}</a>
+				</td>
+				<td data-lable="Data">
+					{{pendencia.data}}
+				</td>
+				<td data-lable="Cliente">
+					{{pendencia.cliente}}
+				</td>
+				<td data-label="Pagamento">
+					{{pendencia.pagamento}}
+				</td>
+				<td data-label="Status">
+					{{pendencia.status}}
+				</td>
+			</tr>
+		</tbody>
+		{% endfor %}
+	</table>
+	{% endif %}
+	{% if contrPend %}
+	<div class="title-section">
+		<h5>Contratos</h5>
+	</div>
+	<div class="subtitle-section">
+		<div class="row">
+			<div class="col s6">
+				<p>
+					Você possui <span>34</span> contratos pendentes.
+				</p>
+			</div>
+			<div class="col s3 offset-s2" style="text-align:right">
+				<div class="pesq_cliente scale-transition scale-out" id="pesqClientesForm">
+					<form method="POST">
+						{% csrf_token %}
+						{{form.nome_cliente}}
+						<button type="submit" class="invisible-button">ok</button>
+					</form>
+				</div>
+			</div>
+			<div class="col s1" style="text-align:right">
+				<button type="button" class="pesq-client-button" onclick="showPesqCliente()">
+					<i class="small material-icons">search</i>
+				</button>
+			</div>
+		</div>
+	</div>
+	<table class="table-pendencias">
+		<thead>
+			<th>Número</th>
+			<th>Data</th>
+			<th>Cliente</th>
+			<th>Pagamento</th>
+			<th>Status</th>
+		</thead>
+		{% for pendencia in contrPend %}
+		<tbody>
+			<tr>
+				<td data-lable="Numero">
+					<a href="/orcs/preorcamento/{{pendencia.numero}}">{{pendencia.numero}}</a>
+				</td>
+				<td data-lable="Data">
+					{{pendencia.data}}
+				</td>
+				<td data-lable="Cliente">
+					{{pendencia.cliente}}
+				</td>
+				<td data-label="Pagamento">
+					{{pendencia.pagamento}}
+				</td>
+				<td data-label="Status">
+					{{pendencia.status}}
+				</td>
+			</tr>
+		</tbody>
+		{% endfor %}
+	</table>
+	{% endif %}
+</div>
+{% endif %}
+<script>
+	function showPesqCliente() {
+		document.getElementById("pesqClientesForm").classList.toggle("scale-in")
+	}
+</script>
+{% endblock content %}
