@@ -379,7 +379,7 @@ def editar_orcamento(request, codorcam):
                             ORDER BY codeap
                             """
             eaps_do_orcamento = g03EapOrc.objetos.raw(raw_query_eaps, [orcamento_escolhido])
-        except DoesNotExist:
+        except ObjectDoesNotExist:
             eaps_do_orcamento = []
         eap_orc_5 = [eap for eap in eaps_do_orcamento if eap.tipo == 5]
         eap_orc_3 = [eap for eap in eaps_do_orcamento if eap.tipo == 3]
@@ -822,7 +822,7 @@ def ajax_carregar_servico(request, codorcam):
                                 ORDER BY codeap
                                 """
                 eaps_do_orcamento = g03EapOrc.objetos.raw(raw_query_eaps, [orcamento_escolhido])
-            except DoesNotExist:
+            except ObjectDoesNotExist:
                 eaps_do_orcamento = []
             eap_orc_5 = [eap for eap in eaps_do_orcamento if eap.tipo == 5]
             eap_orc_3 = [eap for eap in eaps_do_orcamento if eap.tipo == 3]
@@ -1101,7 +1101,7 @@ def editar_eap(request, codorcam, id):
         eap.vlrunit = formatar_custos_para_template(eap.vlrunit)
         eap.qtdorc = formatar_custos_para_template(eap.qtdorc)
         form = formEditarTextoEAP()
-        return render(request, "orcs/editar-eap.html", {"eap": eap})
+        return render(request, "orcs/editar-eap.html", {"eap": eap, "orcamento": orcamento})
     else:
         return HttpResponse(status=405)
 

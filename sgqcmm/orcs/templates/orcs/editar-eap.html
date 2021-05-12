@@ -2,9 +2,17 @@
 {% block content %}
   {% if user.is_authenticated %}
   <div class="content">
-    <div class="title-page">
-      <h4>Editar EAP</h4>
+    <div class="title-page title-left title-orcs">
+      <h4>Orçamento para <span>{{orcamento.desccliente}}</span></h4>
     </div>
+    <div class="endereco-orcamento">
+      {{ orcamento.endereco }}
+    </div>
+    <div class="divider"></div>
+    <div class="title-table">
+			<h5 class="title-table-orcs">EDITAR EAP</h5>
+		</div>
+    <br>
     <form method="POST">
       {% csrf_token %}
       <div class="row">
