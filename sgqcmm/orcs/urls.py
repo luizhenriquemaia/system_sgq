@@ -58,6 +58,10 @@ urlpatterns = [
         views.ajax_carregar_servico, 
         name='ajax_carregar_servico'),
     path(
+        'preorcamento/<int:codorcam>/ajax/edit-servico/<str:codeap>/',
+        views.ajax_editar_servico, 
+        name='ajax_editar_servico'),
+    path(
         'preorcamento/<int:codorcam>/detalhar-serv/<int:codeap>/ajax/carregar-insumo-servico/',
         views.ajax_carregar_insumo_servico, 
         name='ajax_carregar_insumo_servico'),
@@ -77,10 +81,6 @@ urlpatterns = [
         'preorcamento/<int:codorcam>/detalhar-serv/<int:idEap>/alterar-insumo-atividade/<int:idInsumo>',
         views.alterar_insumo_atividade, 
         name='alterar_insumo_atividade'),
-    path(
-        'preorcamento/<int:codorcam>/editar-eap/<int:id>',
-        views.editar_eap,
-        name='editar_eap'),
     path(
         'marcar-visita/<int:codorcam>/', 
         views.marcar_visita, 

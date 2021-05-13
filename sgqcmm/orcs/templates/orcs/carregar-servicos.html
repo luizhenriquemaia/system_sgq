@@ -1,18 +1,21 @@
 {% for itemeap in eaporcam %}
-<tr>
+<tr id="services_id{{itemeap.codeap}}">
     <td>{{itemeap.codeap}}</td>
     <td>
         {% if itemeap.tipo == 3 %}
         <a href="./detalhar-serv/{{itemeap.id}}"><i class="material-icons">unfold_more</i></a>
         {% endif %}
     </td>
-    <td>
-        <a href="./editar-eap/{{ itemeap.id }}">{{itemeap.descitem}}</a>
-    </td>
+    <td>{{itemeap.descitem}}</td>
     <td>{{itemeap.qtd_formatado}}</td>
     <td>{{itemeap.unidade}}</td>
     <td>{{itemeap.vlrunit_formatado}}</td>
     <td>{{itemeap.vlrtot}}</td>
+    <td>
+        <button class="generic-action-icon-button" value="{{itemeap.codeap}}" onclick=editService(this.value)>
+            <i class="material-icons">edit</i>
+        </button>
+    </td>
     <td>
         {% if itemeap.tipo == 3 %}
         <a href="./adicionar-desconto/{{itemeap.id}}">

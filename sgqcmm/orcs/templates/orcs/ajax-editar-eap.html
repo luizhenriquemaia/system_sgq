@@ -1,0 +1,35 @@
+<form method="POST">
+{% csrf_token %}
+    <td>
+        <input type="text" name="codigo_eap" id="edit_codigo_eap_id" maxlength="10" value="{{eaporcam.codeap}}" />
+    </td>
+    <td>
+        {% if itemeap.tipo == 3 %}
+        <a href="./detalhar-serv/{{itemeap.id}}"><i class="material-icons">unfold_more</i></a>
+        {% endif %}
+    </td>
+    <td>
+        <input type="text" name="descricao" id="edit_descricao_id" maxlength="400" value="{{eaporcam.descitem}}" />
+    </td>
+    <td>
+        <input type="text" name="quantidade" id="edit_quantidade_id" maxlength="20" value="{{ eaporcam.qtdorc }}" />
+    </td>
+    <td>
+        <input type="text" name="unidade" id="edit_unidade_id" maxlength="20" value="{{ eaporcam.unidade }}" />
+    </td>
+    <td>
+        <input type="text" name="valor_unitario" id="edit_valor_unitario_id" maxlength="20" value="{{eaporcam.vlrunit}}" />
+    </td>
+    <td></td>
+    <td>
+        <button class="generic-action-icon-button" value="{{eaporcam.codeap}}" type="submit" onclick="changeService(event, this.value)">
+            <i class="material-icons">check</i>
+        </button>
+    </td>
+    <td></td>
+    <td>
+        <button class="generic-action-icon-button" value="{{itemeap.codeap}}" onclick=deleteService(this.value)>
+            <i class="material-icons">delete</i>
+        </button>
+    </td>
+</form>

@@ -21,7 +21,7 @@ from .calc.calculos_telha_trap import orc_telha_trapezoidal
 from .calc.calculos_veneziana import orc_venezianas
 from .forms import (formAdicionarDesconto, formAlterarInsumoOrc,
                     formAlterarStatus, formAtualizarDadosInsumo, formCadInsumo,
-                    formEditarContrato, formEditarProposta, formEditarTextoEAP,
+                    formEditarContrato, formEditarProposta, formEditarEap,
                     formInserirDeslocamento, formInserirInsumo,
                     formInserirInsumoNaAtividade, formInserirServico,
                     formMarcarVisita, formMedidasVenezianas,
@@ -91,7 +91,7 @@ def somar_custos_eap_editar_orcamento(eap_atividade, eap_entrega, eap_totalizado
                             # Adicionar em uma lista temporária para organizar pro template
                             lista_eaps_atividade.append(item_atividade)
                 else:
-                    valor_entrega = item_entrega.vlrunit
+                    valor_entrega = item_entrega.vlrunit * item_entrega.qtdorc
                 item_entrega.qtdorc = round(item_entrega.qtdorc, 2)
                 item_entrega.vlrunit = round(valor_entrega / item_entrega.qtdorc, 2)
                 valor_totalizador += round(item_entrega.qtdorc * item_entrega.vlrunit, 2)
@@ -758,6 +758,35 @@ def detalhar_servico(request, codorcam, codeap):
         HttpResponse(status=405)
 
 
+def ajax_editar_servico(request, codorcam, codeap):
+    if request.user:
+        if request.method == "GET":
+            servico_eap = g03EapOrc.objetos.filter(orcamento__id=codorcam, codeap=codeap)[0]
+            servico_eap.vlrunit = formatar_custos_para_template(servico_eap.vlrunit)
+            servico_eap.qtdorc = formatar_custos_para_template(servico_eap.qtdorc)
+            return render(request, 'orcs/ajax-editar-eap.html', {"eaporcam": servico_eap})
+        elif request.method == "POST":
+            form = formEditarEap(request.POST)
+            if form.is_valid():
+                try:
+                    servico_eap = g03EapOrc.objetos.filter(orcamento__id=codorcam, codeap=codeap)[0]
+                    servico_eap.codeap = form.cleaned_data['codigo_eap'] if form.cleaned_data['codigo_eap'] else servico_eap.codeap
+                    servico_eap.descitem = form.cleaned_data['descricao'] if form.cleaned_data['descricao'] else servico_eap.descitem
+                    servico_eap.qtdorc = formatar_custos_para_bd(form.cleaned_data['quantidade']) if form.cleaned_data['quantidade'] else servico_eap.qtdorc
+                    servico_eap.unidade = form.cleaned_data['unidade'] if form.cleaned_data['unidade'] else servico_eap.unidade
+                    servico_eap.vlrunit = formatar_custos_para_bd(form.cleaned_data['valor_unitario']) if form.cleaned_data['valor_unitario'] else servico_eap.vlrunit
+                    servico_eap.save()
+                    return HttpResponse(status=201)
+                except:
+                    return HttpResponse(status=500)
+            else:
+                return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=405)
+    else:
+        return HttpResponse(status=403)
+
+
 def ajax_excluir_servico(request, codorcam, codeap):
     if request.method == "DELETE":
         if request.user:
@@ -1076,34 +1105,6 @@ def adicionar_desconto(request, codorcam, codeap):
     else:
         form = formAdicionarDesconto()
         return render(request, "orcs/adicionar-desconto.html", {"form": form, "orcamento": orcamento, "desconto_ant": atividade})
-
-
-def editar_eap(request, codorcam, id):
-    orcamento = obter_dados_gerais_orc(codorcam)
-    codOrcAtual = request.session['codorcamento']
-    eap = g03EapOrc.objetos.get(id=id)
-    if request.method == "POST":
-        form = formEditarTextoEAP(request.POST)
-        if form.is_valid():
-            try:
-                eap.descitem = form.cleaned_data['texto_novo'] if form.cleaned_data['texto_novo'] else eap.descitem
-                eap.codeap = form.cleaned_data['codigo_eap_novo'] if form.cleaned_data['codigo_eap_novo'] else eap.codeap
-                eap.coditem = eap.codeap
-                eap.vlrunit = formatar_custos_para_bd(form.cleaned_data['valor_unitario_novo']) if form.cleaned_data['valor_unitario_novo'] else eap.vlrunit
-                eap.qtdorc = formatar_custos_para_bd(form.cleaned_data['quantidade_nova']) if form.cleaned_data['quantidade_nova'] else eap.qtdorc
-                eap.save()
-                messages.info(request, "EAP alterada com sucesso")
-            except:
-                messages.error(request, "Erro ao alterar eap")
-            strCodOrc = int(codOrcAtual)
-            return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
-    elif request.method == "GET":
-        eap.vlrunit = formatar_custos_para_template(eap.vlrunit)
-        eap.qtdorc = formatar_custos_para_template(eap.qtdorc)
-        form = formEditarTextoEAP()
-        return render(request, "orcs/editar-eap.html", {"eap": eap, "orcamento": orcamento})
-    else:
-        return HttpResponse(status=405)
 
 
 def editar_proposta(request, codorcam):

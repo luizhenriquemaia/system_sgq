@@ -25,11 +25,23 @@ class formInserirInsumoNaAtividade(forms.Form):
     quant_insumo = forms.CharField(max_length=10)
     valor_insumo = forms.CharField(max_length=10, required=False)
 
+
 class formInserirServico(forms.Form):
     descricao = forms.CharField(max_length=255)
     codigo_eap = forms.CharField(max_length=30)
     tipo = forms.ChoiceField(choices=[
         ('3', 'Entrega Externa'), ('5', 'Totalizador de Entrega Externa')])
+    quantidade = forms.CharField(max_length=20, required=False)
+    unidade = forms.CharField(max_length=20, required=False)
+    valor_unitario = forms.CharField(max_length=20, required=False)
+
+
+class formEditarEap(forms.Form):
+    codigo_eap = forms.CharField(max_length=10, required=False)
+    descricao = forms.CharField(max_length=400, required=False)
+    quantidade = forms.CharField(max_length=20, required=False)
+    unidade = forms.CharField(max_length=20, required=False)
+    valor_unitario = forms.CharField(max_length=20, required=False)
     
 
 class formCadInsumo(forms.Form):
@@ -42,13 +54,6 @@ class formCadInsumo(forms.Form):
     espessura = forms.CharField(max_length=10, required=False)
     comprimento = forms.CharField(max_length=10, required=False)
     largura = forms.CharField(max_length=10, required=False)
-
-
-class formEditarTextoEAP(forms.Form):
-    texto_novo = forms.CharField(max_length=400, required=False)
-    codigo_eap_novo = forms.CharField(max_length=10, required=False)
-    valor_unitario_novo = forms.CharField(max_length=20, required=False)
-    quantidade_nova = forms.CharField(max_length=100, required=False)
 
 
 class formAtualizarDadosInsumo(forms.Form):
