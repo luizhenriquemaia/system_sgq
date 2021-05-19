@@ -1,67 +1,104 @@
-{% extends "main/basePage.html" %}
+{% extends "main/base-page-comercial.html" %}
 {% block content %}
   <div class="content">
-    <div class="title-page">
-      <h4>Orçamento para {{orcamento.nomecliente}}</h4>
-    </div>
-    <div class="endereco-orcamento">
-      {{orcamento.endereco}}
-      <div class="divider"></div>
-    </div>
+    <div class="title-page title-left title-page-without-address">
+      <h4>Multi-telha para <span>{{orcamento.desccliente}}</span></h4>
+    </div>    
+    <div class="divider"></div>
     <form method="POST">
       {% csrf_token %}
-      <div class="form-field">
+      <h5 class="title-forms-fields">Dimensões</h5>
+      <div class="form-group-of-fields">
         <div class="row">
-          <div class="col s12">
-            <p class="title-forms-fields">Especificação de Materiais</p>
+          <div class="col s4 input-field">
+            {{ form.comprimento }}
+            <label for="id_comprimento">Comprimento</label>
+          </div>
+          <div class="col s4 input-field">
+            {{ form.largura }}
+            <label for="id_largura">Largura</label>
+          </div>
+          <div class="col s4 input-field">
+            {{ form.declividade }}
+            <label for="id_declividade">Declividade(%)</label>
           </div>
         </div>
         <div class="row">
-          <div class="col s6">
+          <div class="col s4 input-field">
+            {{ form.repeticoes }}
+            <label for="id_repeticoes">Repeticoes</label>
+          </div>
+          <div class="col s4 input-field">
+            {{ form.distancia_entre_apoios }}
+            <label for="id_distancia_entre_apoios">Distância Apoios</label>
+          </div>
+          <div class="col s4 input-field">
+            {{ form.distancia_entre_maos_f }}
+            <label for="id_distancia_entre_maos_f">Dist. Maos Franc.</label>
+          </div>
+        </div>
+      </div>
+      <h5 class="title-forms-fields">Policarbonato</h5>
+      <div class="form-group-of-fields">
+        <div class="row">
+          <div class="col s12">
             <label>Chapa</label>
             {{ form.chapa }}
           </div>
-          <div class="col s6">
+        </div>
+        <div class="row">
+          <div class="col s12">
             <label>Perfil Arremate</label>
             {{ form.perfil_arremate }}
           </div>
         </div>
         <div class="row">
-          <div class="col s6">
+          <div class="col s12">
             <label>Tampa</label>
             {{ form.tampa }}
           </div>
-          <div class="col s6">
+        </div>
+        <div class="row">
+          <div class="col s12">
             <label>Garra</label>
             {{ form.garra }}
           </div>
         </div>
         <div class="row">
-          <div class="col s6">
+          <div class="col s12">
             <label>Parafuso para Arremate</label>
             {{ form.parafuso_arremate }}
           </div>
-          <div class="col s6">
+        </div>
+        <div class="row">
+          <div class="col s12">
             <label>Parafuso para Terças</label>
             {{ form.parafuso_terca }}
           </div>
         </div>
         <div class="row">
-          <div class="col s6">
+          <div class="col s12">
             <label>Fita</label>
             {{ form.fita }}
           </div>
-          <div class="col s6">
+        </div>
+        <div class="row">
+          <div class="col s12">
             <label>Selante</label>
             {{ form.selante }}
           </div>
         </div>
+      </div>
+      <h5 class="title-forms-fields">Estrutura</h5>
+      <div class="form-group-of-fields">
         <div class="row">
-          <div class="col s6">
+          <div class="col s12">
             <label>Perfil Estrutural Externo</label>
             {{ form.perfil_estrutural_externo }}
           </div>
-          <div class="col s6">
+        </div>
+        <div class="row">
+          <div class="col s12">
             <label>Perfil Estrutural Interno</label>
             {{ form.perfil_estrutural_interno }}
           </div>
@@ -76,6 +113,9 @@
             <label for="id_quantPintura">Quantidade Pintura (m²)</label>
           </div>
         </div>
+      </div>
+      <h5 class="title-forms-fields">Drenagem</h5>
+      <div class="form-group-of-fields">
         <div class="row">
           <div class="col s6">
             <label>Rufo</label>
@@ -84,44 +124,6 @@
           <div class="col s6">
             <label>Calha</label>
             {{ form.calha }}
-          </div>
-        </div>
-        <br>
-        <div class="row">
-          <div class="col s12">
-            <p class="title-forms-fields">Medidas</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s2 input-field">
-            {{ form.comprimento }}
-            <label for="id_comprimento">Comprimento</label>
-          </div>
-          <div class="col s2 input-field">
-            {{ form.largura }}
-            <label for="id_largura">Largura</label>
-          </div>
-          <div class="col s2 input-field">
-            {{ form.declividade }}
-            <label for="id_declividade">Declividade</label>
-          </div>
-          <div class="col s2 input-field">
-            {{ form.repeticoes }}
-            <label for="id_repeticoes">Repeticoes</label>
-          </div>
-          <div class="col s2 input-field">
-            {{ form.distancia_entre_apoios }}
-            <label for="id_distancia_entre_apoios">Distância Apoios</label>
-          </div>
-          <div class="col s2 input-field">
-            {{ form.distancia_entre_maos_f }}
-            <label for="id_distancia_entre_maos_f">Dist. Maos Franc.</label>
-          </div>
-        </div>
-        <br>
-        <div class="row">
-          <div class="col s12">
-            <p class="title-forms-fields">Parâmetros de Drenagem</p>
           </div>
         </div>
         <div class="row">
@@ -142,54 +144,49 @@
             {{ form.lateral_direita }}
           </div>
         </div>
-        <br>
+      </div>
+      <h5 class="title-forms-fields">Funcionários</h5>
+      <div class="form-group-of-fields">
         <div class="row">
-          <div class="col s12">
-            <p class="title-forms-fields">Funcionários</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s3 input-field">
+          <div class="col s6 input-field">
             {{ form.dias_serralheiro }}
             <label for="id_dias_serralheiro">Quantidade de Dias Serralheiro</label>
           </div>
-          <div class="col s3 input-field">
+          <div class="col s6 input-field">
             {{ form.quantidade_serralheiro }}
             <label for="id_quantidade_serralheiro">Quantidade de Serralheiros</label>
           </div>
-          <div class="col s3 input-field">
+        </div>
+        <div class="row">
+          <div class="col s6 input-field">
             {{ form.dias_auxiliar }}
             <label for="id_dias_auxiliar">Quantidade de Dias Auxiliar</label>
           </div>
-          <div class="col s3 input-field">
+          <div class="col s6 input-field">
             {{ form.quantidade_auxiliar }}
             <label for="id_quantidade_auxiliar">Quantidade de Auxiliares</label>
           </div>
         </div>
+      </div>
+      <h5 class="title-forms-fields">Outros</h5>
+      <div class="form-group-of-fields">
         <div class="row">
-          <div class="col s12">
-            <p class="title-forms-fields">Outros Parâmetros</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s3">
+          <div class="col s6">
             <label>Dificuldade da Obra</label>
             {{ form.dificuldade }}
           </div>
-          <div class="col s3">
+          <div class="col s6">
             <label>
               {{ form.aproveitar_estrutura }}
               <span class="checkbox-grid" style="font-size:12px;">Considerar aproveitamento de estrutura</span>
             </label>
           </div>
         </div>
-        <br>
-        <br>
-      <div class="row">
-				<div class="col s1 offset-s12" style="padding:0px;">
-					<button class="submit-hover" name="btnProximo" type="submit" style="padding: 15px 20px 15px 20px;"><i class="material-icons">navigate_next</i></button>
-				</div>
-			</div>
+      </div>
+      <button class="submit-hover submit-end-page" name="btnProximo" type="submit" >
+        <span>Ok </span>
+        <i class="material-icons">navigate_next</i>        
+      </button>
     </form>
   </div>
 {% endblock content %}

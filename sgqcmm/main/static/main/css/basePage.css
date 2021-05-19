@@ -5,6 +5,7 @@
   --background: #FFFFFF;
   --background2: #E7E7E7;
   --card-color: #F3FFF1;
+  --secondary-dark: #2dad17;
 }
 
 /* fonts */
@@ -138,7 +139,11 @@ table td, table th{
   }
 
   .title-page {
-    margin-top: 120px;
+    margin: 5em 0 3em;
+  }
+
+  .title-page-without-address {
+    margin-bottom: 2em;
   }
 
   .title-left h4 {
@@ -154,7 +159,7 @@ table td, table th{
   }
 
   .title-section h5 {
-    color: #ED3237;
+    color: var(--primary);
   }
 
   .subtitle-section {
@@ -336,9 +341,8 @@ tfoot td {
   text-align: left;
 }
 
-.title-page{
+.title-page {
   font-family: 'Butler-Regular';
-  margin-bottom: 68px;
 }
 
 .title-orcs {
@@ -369,6 +373,13 @@ tfoot td {
   text-align: left;
   margin-top: 6em;
   margin-bottom: 1.2em;
+}
+
+.form-group-of-fields {
+  margin-left: 200px;
+  border-radius: 15px;
+  border: var(--secondary-dark) solid 2px;
+  padding: 10px;
 }
 
 .endereco-orcamento{
@@ -502,10 +513,11 @@ footer a{
 	color: #FFFFFF;
 }
 
-p.title-forms-fields {
-	margin-bottom: 0px;
-	font-size: 20px;
-	text-align: center;
+.title-forms-fields {
+  margin: 2em 0 1em 0;
+	font-size: 1.4em;
+	text-align: left;
+  color: var(--primary);
 }
 
 span.checkbox-grid {
@@ -518,6 +530,16 @@ span.checkbox-grid {
 
 .icon-button {
   padding: 15px 20px;
+}
+
+.submit-end-page {
+  padding: 15px 30px 15px;
+  margin: 4em 0 1.5em;
+  margin-left: 200px;
+}
+
+.submit-end-page span {
+  vertical-align: super;
 }
 
 .submit-hover{
