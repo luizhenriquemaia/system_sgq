@@ -3,7 +3,8 @@
   --primary: #ED3237;
   --secondary: #36CF1C;
   --background: #FFFFFF;
-  --background2: #E7E7E7
+  --background2: #E7E7E7;
+  --card-color: #F3FFF1;
 }
 
 /* fonts */
@@ -129,7 +130,7 @@ table td, table th{
   }
 
   h5 {
-    font-size: 1.6em;
+    font-size: 1.4em;
   }
 
   label{
@@ -205,6 +206,20 @@ table td, table th{
 
   .table-servicos td, .table-servicos th, .table-insumos td, .table-insumos th {
     text-align: left;
+  }
+
+  .card-image {
+    height: 310px;
+  }
+
+  .card-content {
+    min-height: 105px;
+    padding: 15px 15px 15px 0px;
+    width: 90%;
+  }
+
+  .card-content p {
+    font-size: 1.2em;
   }
 
   .table-insumos {
@@ -339,8 +354,15 @@ tfoot td {
 
 .title-table .title-table-orcs {
   text-align: left;
-  margin-top: 2.5em;
+  margin-top: 3em;
 }
+
+ .title-table .title-section-orcs {
+   text-align: left;
+   margin-top: 2em;
+   color: var(--primary);
+ }
+
 
 .title-form-after-table {
   font-size: 1.3em;
@@ -361,6 +383,104 @@ img.logo_nav{
   width: 230px;
 }
 
+/* Cards */
+.card {
+  transition: .5s ease-in-out;
+}
+
+.card:hover {
+  background-color: var(--secondary);
+}
+
+.card-content {
+  color: black;
+  border-top: solid 1px black;
+  margin: auto
+}
+
+
+.card-image {
+  padding: 15px;
+}
+
+.card-image * {
+  transition: .5s ease-in-out;
+}
+
+
+/* SVGs of cards */
+.svg-veneziana-change, .svg-chapa-fixa-plana, .svg-chapa-retratil-plana {
+  width: 100%;
+}
+
+.card:hover .svg-veneziana-change {
+  fill: #A3A3A3;
+  fill-opacity: 0.5;
+}
+
+.card:hover .svg-veneziana-change-line {
+  stroke: #8F8F8F;
+}
+
+.card:hover .svg-veneziana-change-perfil-frente {
+  stroke: #757575;
+  fill: #757575;
+}
+
+.card:hover .svg-veneziana-change-perfil-frente-line {
+  stroke: #757575;
+}
+
+.card:hover .svg-veneziana-change-perfil-lateral {
+  stroke: #3F3F40;
+  fill: #3F3F40;
+}
+
+
+.card:hover .svg-chapa-fixa-plana .sombra-telhado, 
+.card:hover .svg-chapa-fixa-plana .telhado {
+  stroke: #CBB07C;
+  fill: #CBB07C;
+}
+
+
+.card:hover .svg-chapa-fixa-plana .policarbonato, 
+.card:hover .svg-chapa-retratil-plana .policarbonato,
+.card:hover .svg-chapa-fixa-curva .policarbonato,
+.card:hover .svg-chapa-retratil-curva .policarbonato {
+  stroke: #5E5E5E;
+  fill: #5E5E5E;
+}
+
+.card:hover .svg-chapa-fixa-plana .calha {
+  stroke: #373435;
+  fill: #373435;
+}
+
+.card:hover .svg-chapa-fixa-plana .alvenaria,
+.card:hover .svg-chapa-retratil-plana .alvenaria,
+.card:hover .svg-chapa-fixa-curva .alvenaria,
+.card:hover .svg-chapa-retratil-curva .alvenaria {
+  stroke: #F5F0D3;
+  fill: #F5F0D3;
+}
+
+.card:hover .svg-chapa-fixa-plana .janela,
+.card:hover .svg-chapa-retratil-plana .janela, 
+.card:hover .svg-chapa-retratil-plana .telhado,
+.card:hover .svg-chapa-fixa-curva .janela, 
+.card:hover .svg-chapa-fixa-curva .placa {
+  stroke: #6D6D6D;
+  fill: #6D6D6D;
+}
+
+.card:hover .svg-chapa-retratil-curva .portao {
+  stroke: #727376;
+  fill: #727376;
+}
+
+
+
 .divider{
   overflow: hidden;
   box-sizing: inherit;
@@ -369,7 +489,7 @@ img.logo_nav{
 
 }
 
-div.container-content{
+.container-content{
   margin-top: 30px;
   margin-right: 15%;
   margin-left: 15%;
