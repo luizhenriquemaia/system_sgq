@@ -1,59 +1,63 @@
-{% extends "main/basePage.html" %}
+{% extends "main/base-page-comercial.html" %}
 {% block content %}
 {% if user.is_authenticated %}
 <div class="content">
-	<div class="title-page">
-		<h4>Orçamento para {{orcamento.nomecliente}}</h4>
+	<div class="title-page title-left title-page-without-address">
+		<h4>Venezianas para <span>{{orcamento.desccliente}}</span></h4>
 	</div>
-	<div class="endereco-orcamento">
-			{{orcamento.endereco}}
-		<div class="divider"></div>
-	</div>
+	<div class="divider"></div>
 	<form method="POST" onsubmit=submitForm(event)>
 		{% csrf_token %}
-		<div class="row">
-			<div class="col s7">
-				<label>Tipo de Aleta:</label>
-				<select name="tipAleta" id="tipoAleta_id" required>
-					<option value="">-------</option>
-					{% for aleta in aletas %}
-					<option value="{{ aleta.codigo }}">{{ aleta.codigo }} - {{ aleta.descricao }}</option>
-					{% endfor %}
-				</select>
+		<h5 class="title-forms-fields">Policarbonato</h5>
+		<div class="form-group-of-fields">
+			<div class="row">
+				<div class="col s12">
+					<label>Tipo de Aleta:</label>
+					<select name="tipAleta" id="tipoAleta_id" required>
+						<option value="">-------</option>
+						{% for aleta in aletas %}
+						<option value="{{ aleta.codigo }}">{{ aleta.codigo }} - {{ aleta.descricao }}</option>
+						{% endfor %}
+					</select>
+				</div>
 			</div>
-			<div class="col s5">
-				<label>Selante</label>
-				{{ form.selante }}
+			<div class="row">
+				<div class="col s12">
+					<label>Selante</label>
+					{{ form.selante }}
+				</div>
 			</div>
 		</div>
-		<table class="highlight" id="tableVenezianas_id">
-			<thead>
-				<tr>
+		<h5 class="title-forms-fields">Vãos</h5>
+		<div class="form-group-of-fields">
+			<table class="table-generic-orcs" id="tableVenezianas_id">
+				<thead>
 					<th>Base</th>
 					<th>Altura</th>
 					<th>Repetições</th>
 					<th>Rebites por Aleta</th>
-				</tr>
-			</thead>
-			<tbody id="bodyVeneziana_id">
-				<tr>
-					<td>{{ form.base }}</td>
-					<td>{{ form.altura }}</td>
-					<td>{{ form.repeticoes }}</td>
-					<td>{{ form.rebite }}</td>
-				</tr>
-			</tbody>
-		</table>
-		<br>
-		<br>
-		<div class="row">
-			<div class="col s2">
-				<button class="submit-hover icon-button" type="button" onclick=addVao()><i class="material-icons">add</i></button>
-			</div>
-			<div class="col s1 offset-s9" style="padding:0px;">
-				<button class="submit-hover icon-button" name="btnProximo" type="submit"><i class="material-icons">navigate_next</i></button>
-			</div>
+				</thead>
+				<tbody id="bodyVeneziana_id">
+					<tr>
+						<td>{{ form.base }}</td>
+						<td>{{ form.altura }}</td>
+						<td>{{ form.repeticoes }}</td>
+						<td>{{ form.rebite }}</td>
+					</tr>
+				</tbody>
+				<tfoot class="tfoot-button">
+					<td colspan="4">
+						<button class="submit-hover" type="button" onclick=addVao()>
+							<i class="material-icons">add</i>
+						</button>
+					</td>
+				</tfoot>
+			</table>
 		</div>
+		<button class="submit-hover submit-end-page" name="btnProximo" type="submit">
+			<span>Ok </span>
+			<i class="material-icons">navigate_next</i>
+		</button>
 	</form>
 </div>
 <script>

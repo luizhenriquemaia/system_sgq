@@ -200,16 +200,27 @@ table td, table th{
     border-bottom: 1px solid #dddddd;
   }
 
-  .table-pendencias thead, .table-servicos thead, .table-insumos thead {
+  .table-pendencias thead, 
+  .table-servicos thead, 
+  .table-insumos thead,
+  .table-generic-orcs thead {
     background-color: var(--background2);
     color: #000;
   }
 
-  .table-pendencias, .table-servicos, .table-insumos {
+  .table-pendencias, 
+  .table-servicos, 
+  .table-insumos {
     margin-bottom: 120px;
   }
 
-  .table-servicos td, .table-servicos th, .table-insumos td, .table-insumos th {
+  .table-generic-orcs {
+    margin-bottom: 50px
+  }
+
+  .table-servicos td, .table-servicos th, 
+  .table-insumos td, .table-insumos th,
+  .table-generic-orcs td, .table-generic-orcs th {
     text-align: left;
   }
 
@@ -335,6 +346,15 @@ table thead{
 
 tfoot td {
   border-bottom: none;
+}
+
+.tfoot-button button {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.tfoot-button .submit-hover {
+  height: 60px;
 }
 
 .config-table td, .config-table th {
