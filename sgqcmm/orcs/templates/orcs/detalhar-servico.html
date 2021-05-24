@@ -1,92 +1,85 @@
-{% extends "main/basePage.html" %}
+{% extends "main/base-page-comercial.html" %}
 {% block content %}
 {% if user.is_authenticated %}
 <div class="content">
-	<div class="title-page">
-		<h4>Orçamento para {{orcamento.desccliente}}</h4>
+	<div class="title-page title-left title-page-without-address">
+		<h4>Insumos do serviço do <span>{{orcamento.desccliente}}</span></h4>
 	</div>
-	<div class="endereco-orcamento">
-		{{ orcamento.endereco }}
-		<div class="divider"></div>
+	<div class="divider"></div>
+	<div class="title-table">
+		<h5 class="title-table-orcs">INSUMOS</h5>
 	</div>
-		<h5 style="text-align:center;">Insumos do Item</h5>
-		<br>
-		<div class="row" style="text-align:center; font-weight:bold;">
-			<div class="col s1" style="text-align:left;">Item</div>
-			<div class="col s4" style="text-align:left;">Descrição</div>
-			<div class="col s1">Qtd.</div>
-			<div class="col s1">Unid.</div>
-			<div class="col s2">Vlr. Unit.</div>
-			<div class="col s2">Vlr. Total</div>
-			<div class="col s1"></div>
-		</div>
-		<div class="divider"></div>
-		<br>
-		<div id="id_insumosServico">
+	<table class="table-generic-orcs">
+		<thead>
+			<th>Item</th>
+			<th>Descrição</th>
+			<th>Qtd.</th>
+			<th>Unid.</th>
+			<th>Vlr. Unit.</th>
+			<th>Vlr. Total</th>
+			<th></th>
+			<th></th>
+		</thead>
+		<tbody id="id_insumosServico">
 			{% for insumo in insumos %}
-				<div class="row">
-					<div class="col s1">
-						{{insumo.item}}
-					</div>
-					<div class="col s4">
-						<a href="./{{idEap}}/alterar-insumo-atividade/{{insumo.id}}">
-							{{insumo.descricao}}
-						</a>
-					</div>
-					<div class="col s1" style="text-align:center;">
-						{{insumo.quantidade}}
-					</div>
-					<div class="col s1" style="text-align:center;">
-						{{insumo.unidade}}
-					</div>
-					<div class="col s2" style="text-align:center;">
-						{{insumo.custo}}
-					</div>
-					<div class="col s2" style="text-align:center;">
-						{{insumo.valorTotal}}
-					</div>
-					<div class="col s1" style="text-align:center;">
-						<button class="generic-action-icon-button" value="{{insumo.id}}" onclick=deleteInputService(this.value)>
-							<i class="material-icons">delete</i>
-						</button>
-					</div>
-				</div>
+			<tr>
+				<td>{{insumo.item}}</td>
+				<td>
+					<a href="./{{idEap}}/alterar-insumo-atividade/{{insumo.id}}">
+						{{insumo.descricao}}
+					</a>
+				</td>
+				<td>{{insumo.quantidade}}</td>
+				<td>{{insumo.unidade}}</td>
+				<td>{{insumo.custo}}</td>
+				<td>{{insumo.valorTotal}}</td>
+				<td>
+					<button class="generic-action-icon-button" value="{{itemeap.codeap}}" onclick=editService(this.value)>
+						<i class="material-icons">edit</i>
+					</button>
+				</td>
+				<td>
+					<button class="generic-action-icon-button" value="{{insumo.id}}" onclick=deleteInputService(this.value)>
+						<i class="material-icons">delete</i>
+					</button>
+				</td>
+			</tr>
 			{% endfor %}
-		</div>
-		<form method="POST" class="form-add-to-table" onsubmit=addNewBudgetInput(event)>
-			{% csrf_token %}
-			<div class="row">
-				<div class="col s5">
+		</tbody>
+		<tfoot>
+			<form method="POST" class="form-add-to-table" onsubmit=addNewBudgetInput(event)>
+				{% csrf_token %}
+				<td colspan="2">
 					<label>Novo Insumo</label>
 					{{ form.insumo }}
-				</div>
-				<div class="col s2">
+				</td>
+				<td colspan="2">
 					<a class="link-button" href="../../../cad-insumo/">
 						<span class="add-signal-vert1"></span>
 						<span class="add-signal-horiz1"></span>
 						<p class="add-text">CADASTRAR</p>
 					</a>
-				</div>
-				<div class="col s2">
+				</td>
+				<td>
 					<label>Quantidade</label>
 					{{ form.quant_insumo }}
-				</div>
-				<div class="col s2">
+				</td>
+				<td>
 					<label>Valor Unitário</label>
 					{{ form.valor_insumo }}
-				</div>
-				<div class="col s1">
+				</td>
+				<td>
 					<button class="generic-action-icon-button" type="submit">
-						<i class="material-icons medium">add</i>
+						<i class="material-icons">add</i>
 					</button>
-				</div>
-			</div>
-		</form>
-	<br>
-	<div class="divider"></div>
-	<br>
-	<br>
-	<a href="../../{{orcamento.codorcamento}}" style="text-align: left;"><i class="medium material-icons">reply_all</i></a>
+				</td>
+				
+			</form>
+		</tfoot>
+	</table>
+	<a href="../../{{orcamento.codorcamento}}" style="text-align: left;">
+		<i class="medium material-icons">reply_all</i>
+	</a>
 </div>
 <script>
 	function addNewBudgetInput(e) {
