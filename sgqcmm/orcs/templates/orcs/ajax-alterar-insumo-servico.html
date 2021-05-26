@@ -1,0 +1,37 @@
+<form method="POST" >
+    {% csrf_token %}
+    <td>
+        <a class="generic-action-icon-button" href="../../../cad-insumo/">
+            <i class="material-icons">add</i>
+        </a>
+    </td>
+    <td>
+        <select name="insumo" id="id_insumo{{serviceInput.id}}">
+            {% for insumo in insumosSelect %}
+                {% if insumo.id == serviceInput.insumo.id %}
+                <option value="{{ insumo.id }}" selected>{{ insumo }}</option>
+                {% else %}
+                <option value="{{ insumo.id }}">{{ insumo }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </td>
+    <td colspan="2">
+        <input type="number" name="quantidade" id="id_quantidade{{serviceInput.id}}" value="{{ serviceInput.qtdprod }}" min="0">
+    </td>
+    <td>
+        <input type="number" name="valor_unitario" id="id_valor_unitario{{serviceInput.id}}" value="{{ serviceInput.cstunpr }}">
+    </td>
+    <td></td>
+    <td>
+        <button class="generic-action-icon-button" value="{{serviceInput.id}}" type="submit"
+            onclick="saveEditInputService(event, this.value)">
+            <i class="material-icons">check</i>
+        </button>
+    </td>
+    <td>
+        <button class="generic-action-icon-button" value="{{serviceInput.id}}" onclick=deleteInputService(this.value)>
+            <i class="material-icons">delete</i>
+        </button>
+    </td>
+</form>

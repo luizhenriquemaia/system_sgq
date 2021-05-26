@@ -25,30 +25,35 @@ class formInserirInsumoNaAtividade(forms.Form):
     quant_insumo = forms.CharField(max_length=10)
     valor_insumo = forms.CharField(max_length=10, required=False)
 
+
 class formInserirServico(forms.Form):
     descricao = forms.CharField(max_length=255)
     codigo_eap = forms.CharField(max_length=30)
     tipo = forms.ChoiceField(choices=[
         ('3', 'Entrega Externa'), ('5', 'Totalizador de Entrega Externa')])
+    quantidade = forms.CharField(max_length=20, required=False)
+    unidade = forms.CharField(max_length=20, required=False)
+    valor_unitario = forms.CharField(max_length=20, required=False)
+
+
+class formEditarEap(forms.Form):
+    codigo_eap = forms.CharField(max_length=10, required=False)
+    descricao = forms.CharField(max_length=400, required=False)
+    quantidade = forms.CharField(max_length=20, required=False)
+    unidade = forms.CharField(max_length=20, required=False)
+    valor_unitario = forms.CharField(max_length=20, required=False)
     
 
 class formCadInsumo(forms.Form):
-    combcatInsumo = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.filter(
+    categoria_insumo = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.filter(
         Q(id=15)|Q(id=16)|Q(id=17)|Q(id=36)|Q(id=37)|Q(id=38)|Q(id=39)|Q(id=42)|Q(id=43)|Q(id=44)|Q(id=45)|Q(id=46)|Q(id=47)|Q(id=48)|Q(id=49)|Q(id=50)|Q(id=51)|Q(id=52)|Q(id=53)|Q(id=54)|Q(id=55)|Q(id=56)|Q(id=57)|Q(id=58)|Q(id=59)|Q(id=60)|Q(id=61)|Q(id=62)).order_by('descricao'),
         to_field_name="id")
-    descInsumo = forms.CharField(label='descricao', max_length=100, required=True)
-    unidInsumo = forms.CharField(label='unidade', max_length=5, required=True)
-    custoInsumo = forms.CharField(label='custo', max_length=10, required=True)
-    espessura = forms.CharField(max_length=10, required=False)
-    comprimento = forms.CharField(max_length=10, required=False)
-    largura = forms.CharField(max_length=10, required=False)
-
-
-class formEditarTextoEAP(forms.Form):
-    texto_novo = forms.CharField(max_length=400, required=False)
-    codigo_eap_novo = forms.CharField(max_length=10, required=False)
-    valor_unitario_novo = forms.CharField(max_length=20, required=False)
-    quantidade_nova = forms.CharField(max_length=100, required=False)
+    descricao = forms.CharField(max_length=100, required=True)
+    unidade = forms.CharField(max_length=5, required=True)
+    custo = forms.DecimalField(max_digits=12, decimal_places=4)
+    espessura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    comprimento = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    largura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
 
 
 class formAtualizarDadosInsumo(forms.Form):
@@ -72,10 +77,10 @@ class formInserirDeslocamento(forms.Form):
 
 
 class formAlterarInsumoOrc(forms.Form):
-    quantidadeInsumo = forms.CharField(max_length=10, required=False)
-    valorUnitarioInsumo = forms.CharField(max_length=10, required=False)
-    novoInsumoOrc = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=15)|Q(catins_id=16)|Q(catins_id=36)|Q(catins_id=37)|Q(catins_id=38)|Q(catins_id=39)|Q(catins_id=41)|Q(catins_id=42)|Q(catins_id=43)|Q(catins_id=44)|Q(catins_id=45)|Q(catins_id=46)|Q(catins_id=47)|Q(catins_id=48)|Q(catins_id=49)|Q(catins_id=51)|Q(catins_id=52)|Q(catins_id=53)|Q(catins_id=54)|Q(catins_id=61)|Q(catins_id=62)).order_by('descricao'),
-                                   to_field_name="id", widget=forms.Select(attrs={'class':'select-add-button'}), required=False)
+    insumo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=15)|Q(catins_id=16)|Q(catins_id=36)|Q(catins_id=37)|Q(catins_id=38)|Q(catins_id=39)|Q(catins_id=41)|Q(catins_id=42)|Q(catins_id=43)|Q(catins_id=44)|Q(catins_id=45)|Q(catins_id=46)|Q(catins_id=47)|Q(catins_id=48)|Q(catins_id=49)|Q(catins_id=51)|Q(catins_id=52)|Q(catins_id=53)|Q(catins_id=54)|Q(catins_id=55)|Q(catins_id=61)|Q(catins_id=62)).order_by('descricao'),
+                                   to_field_name="id", required=False)
+    quantidade = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    valor_unitario = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
 
 
 class formEditarProposta(forms.Form):

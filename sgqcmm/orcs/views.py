@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import HttpResponseRedirect, redirect, render, reverse
 from django.http import HttpResponse
+from django.db.models import Q
 
 from main.funcoes import format_list_telefone, listacodigossup
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
@@ -21,7 +22,7 @@ from .calc.calculos_telha_trap import orc_telha_trapezoidal
 from .calc.calculos_veneziana import orc_venezianas
 from .forms import (formAdicionarDesconto, formAlterarInsumoOrc,
                     formAlterarStatus, formAtualizarDadosInsumo, formCadInsumo,
-                    formEditarContrato, formEditarProposta, formEditarTextoEAP,
+                    formEditarContrato, formEditarProposta, formEditarEap,
                     formInserirDeslocamento, formInserirInsumo,
                     formInserirInsumoNaAtividade, formInserirServico,
                     formMarcarVisita, formMedidasVenezianas,
@@ -91,7 +92,7 @@ def somar_custos_eap_editar_orcamento(eap_atividade, eap_entrega, eap_totalizado
                             # Adicionar em uma lista temporária para organizar pro template
                             lista_eaps_atividade.append(item_atividade)
                 else:
-                    valor_entrega = item_entrega.vlrunit
+                    valor_entrega = item_entrega.vlrunit * item_entrega.qtdorc
                 item_entrega.qtdorc = round(item_entrega.qtdorc, 2)
                 item_entrega.vlrunit = round(valor_entrega / item_entrega.qtdorc, 2)
                 valor_totalizador += round(item_entrega.qtdorc * item_entrega.vlrunit, 2)
@@ -379,7 +380,7 @@ def editar_orcamento(request, codorcam):
                             ORDER BY codeap
                             """
             eaps_do_orcamento = g03EapOrc.objetos.raw(raw_query_eaps, [orcamento_escolhido])
-        except DoesNotExist:
+        except ObjectDoesNotExist:
             eaps_do_orcamento = []
         eap_orc_5 = [eap for eap in eaps_do_orcamento if eap.tipo == 5]
         eap_orc_3 = [eap for eap in eaps_do_orcamento if eap.tipo == 3]
@@ -692,31 +693,35 @@ def cadastrar_insumo(request):
     if request.method == "POST":
         form = formCadInsumo(request.POST)
         if form.is_valid():
-            catInsumo = int(request.POST['combcatInsumo'])
-            descInsumo = form.cleaned_data['descInsumo']
-            unidInsumo = form.cleaned_data['unidInsumo']
-            custoInsumo = float(form.cleaned_data['custoInsumo'])
-            espessura = formatar_custos_para_bd(form.cleaned_data['espessura']) if form.cleaned_data['espessura'] else 0
-            comprimento = formatar_custos_para_bd(form.cleaned_data['comprimento']) if form.cleaned_data['comprimento'] else 0
-            largura = formatar_custos_para_bd(form.cleaned_data['largura']) if form.cleaned_data['largura'] else 0
-            ultimo_insumo_adicionado = a11Insumos.objetos.latest('-id').only('id', 'codigo')
-            novoInsumo = a11Insumos(id = ultimo_insumo_adicionado.id + 1,
+            espessura = form.cleaned_data['espessura'] if form.cleaned_data['espessura'] else 0
+            comprimento = form.cleaned_data['comprimento'] if form.cleaned_data['comprimento'] else 0
+            largura = form.cleaned_data['largura'] if form.cleaned_data['largura'] else 0
+            try:
+                ultimo_insumo_adicionado = a11Insumos.objetos.latest('-id')
+            except ObjectDoesNotExist:
+                ultimo_insumo_adicionado = {"id": 0, "codigo": 0}
+            novo_insumo = a11Insumos(id = ultimo_insumo_adicionado.id + 1,
                                     codigo = ultimo_insumo_adicionado.codigo + 1,
-                                    descricao = descInsumo,
-                                    undbas = unidInsumo,
-                                    undcompr = unidInsumo,
+                                    descricao = form.cleaned_data['descricao'],
+                                    undbas = form.cleaned_data['unidade'],
+                                    undcompr = form.cleaned_data['unidade'],
                                     fatundcomp = 1,
-                                    custo01 = custoInsumo,
-                                    custo02 = custoInsumo,
-                                    prvda = custoInsumo,
+                                    custo01 = form.cleaned_data['custo'],
+                                    custo02 = form.cleaned_data['custo'],
+                                    prvda = form.cleaned_data['custo'],
                                     pesunbas = 0,
                                     qtppal = 0,
-                                    catins_id = catInsumo,
+                                    catins_id = form.cleaned_data['categoria_insumo'],
                                     espessura = espessura,
                                     comprimento = comprimento,
-                                    largura = largura)
-            novoInsumo.save()
+                                    largura = largura,
+                                    dataatualizacao = datetime.date.today())
+            novo_insumo.save()
             return HttpResponseRedirect(reverse('orcs:detalhar_servico', args=(codOrcAtual, codigo_servico_atual,)))
+        else:
+            print(form.errors.as_data())
+            message.error("Dados incorretos")
+            return render(request, "orcs/cad-insumo.html", {"form":form,})
     else:
         form = formCadInsumo()
     return render(request, "orcs/cad-insumo.html", {"form":form,})
@@ -756,6 +761,35 @@ def detalhar_servico(request, codorcam, codeap):
             "insumos": insumos_atividade, "form": form})
     else:
         HttpResponse(status=405)
+
+
+def ajax_editar_servico(request, codorcam, codeap):
+    if request.user:
+        if request.method == "GET":
+            servico_eap = g03EapOrc.objetos.filter(orcamento__id=codorcam, codeap=codeap)[0]
+            servico_eap.vlrunit = formatar_custos_para_template(servico_eap.vlrunit)
+            servico_eap.qtdorc = formatar_custos_para_template(servico_eap.qtdorc)
+            return render(request, 'orcs/ajax-editar-eap.html', {"eaporcam": servico_eap})
+        elif request.method == "POST":
+            form = formEditarEap(request.POST)
+            if form.is_valid():
+                try:
+                    servico_eap = g03EapOrc.objetos.filter(orcamento__id=codorcam, codeap=codeap)[0]
+                    servico_eap.codeap = form.cleaned_data['codigo_eap'] if form.cleaned_data['codigo_eap'] else servico_eap.codeap
+                    servico_eap.descitem = form.cleaned_data['descricao'] if form.cleaned_data['descricao'] else servico_eap.descitem
+                    servico_eap.qtdorc = formatar_custos_para_bd(form.cleaned_data['quantidade']) if form.cleaned_data['quantidade'] else servico_eap.qtdorc
+                    servico_eap.unidade = form.cleaned_data['unidade'] if form.cleaned_data['unidade'] else servico_eap.unidade
+                    servico_eap.vlrunit = formatar_custos_para_bd(form.cleaned_data['valor_unitario']) if form.cleaned_data['valor_unitario'] else servico_eap.vlrunit
+                    servico_eap.save()
+                    return HttpResponse(status=201)
+                except:
+                    return HttpResponse(status=500)
+            else:
+                return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=405)
+    else:
+        return HttpResponse(status=403)
 
 
 def ajax_excluir_servico(request, codorcam, codeap):
@@ -822,7 +856,7 @@ def ajax_carregar_servico(request, codorcam):
                                 ORDER BY codeap
                                 """
                 eaps_do_orcamento = g03EapOrc.objetos.raw(raw_query_eaps, [orcamento_escolhido])
-            except DoesNotExist:
+            except ObjectDoesNotExist:
                 eaps_do_orcamento = []
             eap_orc_5 = [eap for eap in eaps_do_orcamento if eap.tipo == 5]
             eap_orc_3 = [eap for eap in eaps_do_orcamento if eap.tipo == 3]
@@ -860,12 +894,41 @@ def ajax_carregar_insumo_servico(request, codorcam, codeap):
                         "valorTotal": formatar_custos_para_template(insumo.qtdprod * insumo.cstunpr)
                     }
                 )
-            return render(request, "orcs/carregar-insumos-servico.html", 
+            return render(request, "orcs/ajax-carregar-insumos-servico.html", 
                 {"idEap": codeap, "insumos": insumos_atividade})
         else:
             return HttpResponse(status=403)
     else:
         return HttpResponse(status=405)
+
+
+def ajax_alterar_insumo_servico(request, codorcam, id_eap, id_insumo):
+    if request.user:
+        if request.method == "GET":
+            form = formAlterarInsumoOrc()
+            inputs_select = a11Insumos.objetos.filter(Q(catins_id=15)|Q(catins_id=16)|Q(catins_id=36)|Q(catins_id=37)|Q(catins_id=38)|Q(catins_id=39)|Q(catins_id=41)|Q(catins_id=42)|Q(catins_id=43)|Q(catins_id=44)|Q(catins_id=45)|Q(catins_id=46)|Q(catins_id=47)|Q(catins_id=48)|Q(catins_id=49)|Q(catins_id=51)|Q(catins_id=52)|Q(catins_id=53)|Q(catins_id=54)|Q(catins_id=55)|Q(catins_id=61)|Q(catins_id=62)).only('id', 'descricao').order_by('descricao')
+            service_input = g05InsEAP.objetos.get(id=id_insumo)
+            return render(request, 'orcs/ajax-alterar-insumo-servico.html',
+                {"serviceInput": service_input, "form": form, "insumosSelect": inputs_select})
+        elif request.method == "POST":
+            form = formAlterarInsumoOrc(request.POST)
+            if form.is_valid():
+                try:
+                    service_input = g05InsEAP.objetos.get(id=id_insumo)
+                    service_input.insumo_id = form.cleaned_data['insumo'] if form.cleaned_data['insumo'] else service_input.insumo_id
+                    service_input.qtdprod = form.cleaned_data['quantidade'] if form.cleaned_data['quantidade'] else service_input.qtdprod
+                    service_input.cstunpr = form.cleaned_data['valor_unitario'] if form.cleaned_data['valor_unitario'] or form.cleaned_data['valor_unitario'] >= 0 else service_input.cstunpr
+                    service_input.save()
+                    return HttpResponse(status=200)
+                except:
+                    return HttpResponse(status=500)
+            else:
+                print(form.errors.as_data())
+                return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=405)
+    else:
+        return HttpResponse(status=403)
 
 
 def ajax_inserir_insumo_servico(request, codorcam, codeap):
@@ -1076,34 +1139,6 @@ def adicionar_desconto(request, codorcam, codeap):
     else:
         form = formAdicionarDesconto()
         return render(request, "orcs/adicionar-desconto.html", {"form": form, "orcamento": orcamento, "desconto_ant": atividade})
-
-
-def editar_eap(request, codorcam, id):
-    orcamento = obter_dados_gerais_orc(codorcam)
-    codOrcAtual = request.session['codorcamento']
-    eap = g03EapOrc.objetos.get(id=id)
-    if request.method == "POST":
-        form = formEditarTextoEAP(request.POST)
-        if form.is_valid():
-            try:
-                eap.descitem = form.cleaned_data['texto_novo'] if form.cleaned_data['texto_novo'] else eap.descitem
-                eap.codeap = form.cleaned_data['codigo_eap_novo'] if form.cleaned_data['codigo_eap_novo'] else eap.codeap
-                eap.coditem = eap.codeap
-                eap.vlrunit = formatar_custos_para_bd(form.cleaned_data['valor_unitario_novo']) if form.cleaned_data['valor_unitario_novo'] else eap.vlrunit
-                eap.qtdorc = formatar_custos_para_bd(form.cleaned_data['quantidade_nova']) if form.cleaned_data['quantidade_nova'] else eap.qtdorc
-                eap.save()
-                messages.info(request, "EAP alterada com sucesso")
-            except:
-                messages.error(request, "Erro ao alterar eap")
-            strCodOrc = int(codOrcAtual)
-            return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
-    elif request.method == "GET":
-        eap.vlrunit = formatar_custos_para_template(eap.vlrunit)
-        eap.qtdorc = formatar_custos_para_template(eap.qtdorc)
-        form = formEditarTextoEAP()
-        return render(request, "orcs/editar-eap.html", {"eap": eap})
-    else:
-        return HttpResponse(status=405)
 
 
 def editar_proposta(request, codorcam):

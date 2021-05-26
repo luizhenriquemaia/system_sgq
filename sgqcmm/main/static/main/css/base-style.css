@@ -3,7 +3,9 @@
   --primary: #ED3237;
   --secondary: #36CF1C;
   --background: #FFFFFF;
-  --background2: #E7E7E7
+  --background2: #E7E7E7;
+  --card-color: #F3FFF1;
+  --secondary-dark: #2dad17;
 }
 
 /* fonts */
@@ -129,7 +131,7 @@ table td, table th{
   }
 
   h5 {
-    font-size: 1.6em;
+    font-size: 1.4em;
   }
 
   label{
@@ -137,7 +139,11 @@ table td, table th{
   }
 
   .title-page {
-    margin-top: 120px;
+    margin: 5em 0 3em;
+  }
+
+  .title-page-without-address {
+    margin-bottom: 2em;
   }
 
   .title-left h4 {
@@ -153,7 +159,7 @@ table td, table th{
   }
 
   .title-section h5 {
-    color: #ED3237;
+    color: var(--primary);
   }
 
   .subtitle-section {
@@ -194,17 +200,42 @@ table td, table th{
     border-bottom: 1px solid #dddddd;
   }
 
-  .table-pendencias thead, .table-servicos thead, .table-insumos thead {
+  .table-pendencias thead, 
+  .table-servicos thead, 
+  .table-insumos thead,
+  .table-generic-orcs thead {
     background-color: var(--background2);
     color: #000;
   }
 
-  .table-pendencias, .table-servicos, .table-insumos {
+  .table-pendencias,
+  .table-servicos, 
+  .table-insumos {
     margin-bottom: 120px;
   }
 
-  .table-servicos td, .table-servicos th, .table-insumos td, .table-insumos th {
+  .table-generic-orcs {
+    margin-bottom: 50px
+  }
+
+  .table-servicos td, .table-servicos th, 
+  .table-insumos td, .table-insumos th,
+  .table-generic-orcs td, .table-generic-orcs th {
     text-align: left;
+  }
+
+  .card-image {
+    height: 310px;
+  }
+
+  .card-content {
+    min-height: 105px;
+    padding: 15px 15px 15px 0px;
+    width: 90%;
+  }
+
+  .card-content p {
+    font-size: 1.2em;
   }
 
   .table-insumos {
@@ -317,13 +348,21 @@ tfoot td {
   border-bottom: none;
 }
 
+.tfoot-button button {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.tfoot-button .submit-hover {
+  height: 60px;
+}
+
 .config-table td, .config-table th {
   text-align: left;
 }
 
-.title-page{
+.title-page {
   font-family: 'Butler-Regular';
-  margin-bottom: 68px;
 }
 
 .title-orcs {
@@ -339,14 +378,28 @@ tfoot td {
 
 .title-table .title-table-orcs {
   text-align: left;
-  margin-top: 2.5em;
+  margin-top: 3em;
 }
+
+ .title-table .title-section-orcs {
+   text-align: left;
+   margin-top: 2em;
+   color: var(--primary);
+ }
+
 
 .title-form-after-table {
   font-size: 1.3em;
   text-align: left;
   margin-top: 6em;
   margin-bottom: 1.2em;
+}
+
+.form-group-of-fields {
+  margin-left: 200px;
+  border-radius: 15px;
+  border: var(--secondary-dark) solid 2px;
+  padding: 10px;
 }
 
 .endereco-orcamento{
@@ -361,6 +414,104 @@ img.logo_nav{
   width: 230px;
 }
 
+/* Cards */
+.card {
+  transition: .5s ease-in-out;
+}
+
+.card:hover {
+  background-color: var(--secondary);
+}
+
+.card-content {
+  color: black;
+  border-top: solid 1px black;
+  margin: auto
+}
+
+
+.card-image {
+  padding: 15px;
+}
+
+.card-image * {
+  transition: .5s ease-in-out;
+}
+
+
+/* SVGs of cards */
+.svg-veneziana-change, .svg-chapa-fixa-plana, .svg-chapa-retratil-plana {
+  width: 100%;
+}
+
+.card:hover .svg-veneziana-change {
+  fill: #A3A3A3;
+  fill-opacity: 0.5;
+}
+
+.card:hover .svg-veneziana-change-line {
+  stroke: #8F8F8F;
+}
+
+.card:hover .svg-veneziana-change-perfil-frente {
+  stroke: #757575;
+  fill: #757575;
+}
+
+.card:hover .svg-veneziana-change-perfil-frente-line {
+  stroke: #757575;
+}
+
+.card:hover .svg-veneziana-change-perfil-lateral {
+  stroke: #3F3F40;
+  fill: #3F3F40;
+}
+
+
+.card:hover .svg-chapa-fixa-plana .sombra-telhado, 
+.card:hover .svg-chapa-fixa-plana .telhado {
+  stroke: #CBB07C;
+  fill: #CBB07C;
+}
+
+
+.card:hover .svg-chapa-fixa-plana .policarbonato, 
+.card:hover .svg-chapa-retratil-plana .policarbonato,
+.card:hover .svg-chapa-fixa-curva .policarbonato,
+.card:hover .svg-chapa-retratil-curva .policarbonato {
+  stroke: #5E5E5E;
+  fill: #5E5E5E;
+}
+
+.card:hover .svg-chapa-fixa-plana .calha {
+  stroke: #373435;
+  fill: #373435;
+}
+
+.card:hover .svg-chapa-fixa-plana .alvenaria,
+.card:hover .svg-chapa-retratil-plana .alvenaria,
+.card:hover .svg-chapa-fixa-curva .alvenaria,
+.card:hover .svg-chapa-retratil-curva .alvenaria {
+  stroke: #F5F0D3;
+  fill: #F5F0D3;
+}
+
+.card:hover .svg-chapa-fixa-plana .janela,
+.card:hover .svg-chapa-retratil-plana .janela, 
+.card:hover .svg-chapa-retratil-plana .telhado,
+.card:hover .svg-chapa-fixa-curva .janela, 
+.card:hover .svg-chapa-fixa-curva .placa {
+  stroke: #6D6D6D;
+  fill: #6D6D6D;
+}
+
+.card:hover .svg-chapa-retratil-curva .portao {
+  stroke: #727376;
+  fill: #727376;
+}
+
+
+
 .divider{
   overflow: hidden;
   box-sizing: inherit;
@@ -369,7 +520,7 @@ img.logo_nav{
 
 }
 
-div.container-content{
+.container-content{
   margin-top: 30px;
   margin-right: 15%;
   margin-left: 15%;
@@ -382,10 +533,11 @@ footer a{
 	color: #FFFFFF;
 }
 
-p.title-forms-fields {
-	margin-bottom: 0px;
-	font-size: 20px;
-	text-align: center;
+.title-forms-fields {
+  margin: 2em 0 1em 0;
+	font-size: 1.4em;
+	text-align: left;
+  color: var(--primary);
 }
 
 span.checkbox-grid {
@@ -398,6 +550,16 @@ span.checkbox-grid {
 
 .icon-button {
   padding: 15px 20px;
+}
+
+.submit-end-page {
+  padding: 15px 30px 15px;
+  margin: 4em 0 1.5em;
+  margin-left: 200px;
+}
+
+.submit-end-page span {
+  vertical-align: super;
 }
 
 .submit-hover{
@@ -451,102 +613,63 @@ a{
 	color: var(--secondary);
 }
 
-/* Corpo do botão */
-a.link-button {
-  content: "";
-  display: block;
-  width: 20px;
-  height: 20px;
-	margin-top: 35px;
-  background: #fff;
-  position: relative;
-}
-
-p.add-text{
-  content: "";
-  display: block;
-  color: #fff;
-  font-size: 1px;
-  position: relative;
-  left: 8px;
-  top: 13px;
-  visibility: hidden;
-  text-decoration: none;
-}
-
-/* Sinal de mais */
-.add-signal-vert1{
-  content: "";
-  display: block;
-  width: 2px;
-  height: 20px;
-  background: var(--secondary);
-  margin: 0px 10px 0px;
+/* link button for add new */
+.link-button {
   position: absolute;
-}
-
-.add-signal-horiz1{
-  content: "";
-  display: block;
-  width: 20px;
-  height: 2px;
-  background: var(--secondary);
-  margin: 10px 0px 0px;
-  position: absolute;
-}
-
-/* Efeito do hover */
-a.link-button:hover {
-  content: "";
-  display: block;
   height: 43px;
   width: 100px;
-  position: absolute;
-	background-color: var(--secondary);
-  font-family: "Roboto";
-	color: #000;
-  letter-spacing: 0.5px;
-  text-decoration: none;
-	margin-top: 23px;
-  padding: 0px;
-	transition-timing-function: ease-in;
-  transition: 1s;
-  transition-delay: .5s;
+  padding: 0;
+  margin: -10px 0 0;
+  background: var(--background);
+}
+
+.link-button:hover {
+	background-color: var(--secondary);	
+  transition: .6s ease-in;
+  transition-delay: .7s;
   box-shadow: 0 1.5px 4px rgba(0, 0, 0, .24), 0 1.5px 6px rgba(0, 0, 0, .12);
 }
 
-/* Efeito do hover em cima do sinal de mais */
-a.link-button:hover .add-signal-horiz1 {
-  width: 1px;
-  height: 1px;
-  top: 0;
-  left: 0;
-	margin-top: 0px;
-	transition-timing-function: ease-in;
-  transform: rotate(720deg);
-  transition: 1s;
-  position: absolute;
+.link-button .add-text{
+  position: relative;
+  color: var(--background);
+  margin-left: 6px;
+  visibility: hidden;
 }
 
-a.link-button:hover .add-signal-vert1 {
-  width: 1px;
-  height: 1px;
-  top: 0;
-  left: 0;
-	margin-left: 0px;
-	transition-timing-function: ease-in;
-  transform: rotate(720deg);
-  transition: 1s;
-  position: absolute;
-}
-
-a.link-button:hover p.add-text {
-  content: "";
-	top: 0px;
-  font-size: 14px;
+.link-button:hover .add-text {
   transition: .5s;
 	transition-delay: .8s;
   visibility: visible;
+}
+
+.link-button  .add-signal-vert1, .link-button  .add-signal-horiz1 {
+  position: absolute;
+  content: "";
+  background: var(--secondary);
+}
+
+
+.link-button  .add-signal-vert1 {
+  width: 2px;
+  height: 20px;
+  margin: 10px 10px 0px;
+}
+
+.link-button  .add-signal-horiz1 {
+  width: 20px;
+  height: 2px;
+  margin: 20px 0px 0px;
+}
+
+.link-button:hover .add-signal-vert1, .link-button:hover .add-signal-horiz1 {
+  width: 0px;
+  height: 0px;
+  top: 0;
+  left: 0;
+  margin: 0;
+  transform: rotate(720deg);
+  transition: .8s ease-in;
 }
 
 /* Menu full-screen */

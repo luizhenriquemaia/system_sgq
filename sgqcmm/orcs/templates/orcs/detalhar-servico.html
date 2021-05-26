@@ -1,94 +1,136 @@
-{% extends "main/basePage.html" %}
+{% extends "main/base-page-comercial.html" %}
 {% block content %}
 {% if user.is_authenticated %}
 <div class="content">
-	<div class="title-page">
-		<h4>Orçamento para {{orcamento.desccliente}}</h4>
+	<div class="title-page title-left title-page-without-address">
+		<h4>Insumos do serviço do <span>{{orcamento.desccliente}}</span></h4>
 	</div>
-	<div class="endereco-orcamento">
-		{{ orcamento.endereco }}
-		<div class="divider"></div>
+	<div class="divider"></div>
+	<div class="title-table">
+		<h5 class="title-table-orcs">INSUMOS</h5>
 	</div>
-		<h5 style="text-align:center;">Insumos do Item</h5>
-		<br>
-		<div class="row" style="text-align:center; font-weight:bold;">
-			<div class="col s1" style="text-align:left;">Item</div>
-			<div class="col s4" style="text-align:left;">Descrição</div>
-			<div class="col s1">Qtd.</div>
-			<div class="col s1">Unid.</div>
-			<div class="col s2">Vlr. Unit.</div>
-			<div class="col s2">Vlr. Total</div>
-			<div class="col s1"></div>
-		</div>
-		<div class="divider"></div>
-		<br>
-		<div id="id_insumosServico">
+	<table class="table-generic-orcs">
+		<thead>
+			<th>Item</th>
+			<th>Descrição</th>
+			<th>Qtd.</th>
+			<th>Unid.</th>
+			<th>Vlr. Unit.</th>
+			<th>Vlr. Total</th>
+			<th></th>
+			<th></th>
+		</thead>
+		<tbody id="id_insumosServico">
 			{% for insumo in insumos %}
-				<div class="row">
-					<div class="col s1">
-						{{insumo.item}}
-					</div>
-					<div class="col s4">
-						<a href="./{{idEap}}/alterar-insumo-atividade/{{insumo.id}}">
-							{{insumo.descricao}}
-						</a>
-					</div>
-					<div class="col s1" style="text-align:center;">
-						{{insumo.quantidade}}
-					</div>
-					<div class="col s1" style="text-align:center;">
-						{{insumo.unidade}}
-					</div>
-					<div class="col s2" style="text-align:center;">
-						{{insumo.custo}}
-					</div>
-					<div class="col s2" style="text-align:center;">
-						{{insumo.valorTotal}}
-					</div>
-					<div class="col s1" style="text-align:center;">
-						<button class="generic-action-icon-button" value="{{insumo.id}}" onclick=deleteInputService(this.value)>
-							<i class="material-icons">delete</i>
-						</button>
-					</div>
-				</div>
+			<tr id="inputOfService_id{{insumo.id}}">
+				<td>{{insumo.item}}</td>
+				<td>{{insumo.descricao}}</td>
+				<td>{{insumo.quantidade}}</td>
+				<td>{{insumo.unidade}}</td>
+				<td>{{insumo.custo}}</td>
+				<td>{{insumo.valorTotal}}</td>
+				<td>
+					<button class="generic-action-icon-button" value="{{insumo.id}}" onclick=editInputService(this.value)>
+						<i class="material-icons">edit</i>
+					</button>
+				</td>
+				<td>
+					<button class="generic-action-icon-button" value="{{insumo.id}}" onclick=deleteInputService(this.value)>
+						<i class="material-icons">delete</i>
+					</button>
+				</td>
+			</tr>
 			{% endfor %}
-		</div>
-		<form method="POST" class="form-add-to-table" onsubmit=addNewBudgetInput(event)>
-			{% csrf_token %}
-			<div class="row">
-				<div class="col s5">
+		</tbody>
+		<tfoot>
+			<form method="POST" class="form-add-to-table" onsubmit=addNewBudgetInput(event)>
+				{% csrf_token %}
+				<td colspan="2">
 					<label>Novo Insumo</label>
 					{{ form.insumo }}
-				</div>
-				<div class="col s2">
+				</td>
+				<td colspan="2">
 					<a class="link-button" href="../../../cad-insumo/">
 						<span class="add-signal-vert1"></span>
 						<span class="add-signal-horiz1"></span>
 						<p class="add-text">CADASTRAR</p>
 					</a>
-				</div>
-				<div class="col s2">
+				</td>
+				<td>
 					<label>Quantidade</label>
 					{{ form.quant_insumo }}
-				</div>
-				<div class="col s2">
+				</td>
+				<td>
 					<label>Valor Unitário</label>
 					{{ form.valor_insumo }}
-				</div>
-				<div class="col s1">
+				</td>
+				<td>
 					<button class="generic-action-icon-button" type="submit">
-						<i class="material-icons medium">add</i>
+						<i class="material-icons">add</i>
 					</button>
-				</div>
-			</div>
-		</form>
-	<br>
-	<div class="divider"></div>
-	<br>
-	<br>
-	<a href="../../{{orcamento.codorcamento}}" style="text-align: left;"><i class="medium material-icons">reply_all</i></a>
+				</td>
+				
+			</form>
+		</tfoot>
+	</table>
+	<a href="../../{{orcamento.codorcamento}}" style="text-align: left;">
+		<i class="medium material-icons">reply_all</i>
+	</a>
 </div>
 <script>
+	function loadInputsOfService() {
+		let xhttp = new XMLHttpRequest()
+		xhttp.onreadystatechange = function (data) {
+			if (this.readyState === 4 && this.status === 200) {
+				document.getElementById("id_insumosServico").innerHTML = this.response
+			} else if (this.readyState === 4 && this.status !== 200) {
+				M.toast({ html: "Erro ao atualizar lista de insumos, por favor recarregue a página", classes: 'red rounded', displayLength: 3000 })
+			}
+		}
+		xhttp.open("GET", './{{idEap}}/ajax/carregar-insumo-servico/')
+		xhttp.send()
+	}
+
+	function editInputService(idInput) {
+		let xhttpRequest = new XMLHttpRequest()
+		xhttpRequest.onreadystatechange = function (data) {
+			if (this.readyState === 4 && this.status === 200) {
+				document.getElementById(`inputOfService_id${idInput}`).innerHTML = this.response
+			}
+		}
+		xhttpRequest.open("GET", `./{{idEap}}/ajax/alterar-insumo/${idInput}/`, true)
+		xhttpRequest.send()
+	}
+
+	function saveEditInputService(e, idInput) {
+		e.preventDefault()
+		const dataToBackend = new FormData()
+		dataToBackend.append("insumo", document.getElementById(`id_insumo${idInput}`).value)
+		dataToBackend.append("quantidade", document.getElementById(`id_quantidade${idInput}`).value)
+		dataToBackend.append("valor_unitario", document.getElementById(`id_valor_unitario${idInput}`).value)
+		const request = new Request(`./{{idEap}}/ajax/alterar-insumo/${idInput}/`,
+			{
+				method: 'POST',
+				headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
+				body: dataToBackend
+			})
+		fetch(request, {
+			method: 'POST',
+			mode: 'same-origin'
+		}).then(
+			function (response) {
+				if (response.status === 200) {
+					M.toast({ html: "Insumo alterado", classes: 'green rounded', displayLength: 2000 })
+					loadInputsOfService()
+				} else if (response.status === 400) {
+					M.toast({ html: "Dados inválidos", classes: 'red rounded', displayLength: 3000 })
+				} else {
+					M.toast({ html: "Erro", classes: 'red rounded', displayLength: 3000 })
+				}
+			}
+		)
+	}
+
 	function addNewBudgetInput(e) {
 		e.preventDefault()
 		const dataToBackend = new FormData()
@@ -108,16 +150,7 @@
 			function(response) {
 				if (response.status === 200) {
 					M.toast({ html: "Insumo adicionado", classes: 'green rounded', displayLength: 2000 })
-					let xhttp = new XMLHttpRequest()
-					xhttp.onreadystatechange = function(data) {
-						if (this.readyState === 4 && this.status === 200) {
-							document.getElementById("id_insumosServico").innerHTML = this.response
-						} else if (this.readyState === 4 && this.status !== 200) {
-							M.toast({ html: "Erro ao atualizar lista de insumos, por favor recarregue a página", classes: 'red rounded', displayLength: 3000 })
-						}
-					}
-					xhttp.open("GET", './{{idEap}}/ajax/carregar-insumo-servico/')
-					xhttp.send()
+					loadInputsOfService()
 				} else if (response.status === 400) {
 					M.toast({ html: "Dados inválidos", classes: 'red rounded', displayLength: 3000 })
 				} else {
@@ -141,16 +174,7 @@
 			function(response) {
 				if (response.status === 204) {
 					M.toast({ html: "Insumo excluído", classes: 'green rounded', displayLength: 2000 })
-					let xhttp = new XMLHttpRequest()
-					xhttp.onreadystatechange = function(data) {
-						if (this.readyState === 4 && this.status === 200) {
-							document.getElementById("id_insumosServico").innerHTML = this.response
-						} else if (this.readyState === 4 && this.status !== 200) {
-							M.toast({ html: "Erro ao atualizar lista de insumos, por favor recarregue a página", classes: 'red rounded', displayLength: 3000 })
-						}
-					}
-					xhttp.open("GET", './{{idEap}}/ajax/carregar-insumo-servico/')
-					xhttp.send()
+					loadInputsOfService()
 				} else if (response.status === 400) {
 					M.toast({ html: "Dados inválidos", classes: 'red rounded', displayLength: 3000 })
 				} else {
@@ -160,6 +184,7 @@
 		)
 
 	}
+
 </script>
 {% endif %}
 {% endblock content %}

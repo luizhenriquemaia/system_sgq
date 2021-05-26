@@ -1,0 +1,20 @@
+{% for insumo in insumos %}
+<tr id="inputOfService_id{{insumo.id}}">
+    <td>{{insumo.item}}</td>
+    <td>{{insumo.descricao}}</td>
+    <td>{{insumo.quantidade}}</td>
+    <td>{{insumo.unidade}}</td>
+    <td>{{insumo.custo}}</td>
+    <td>{{insumo.valorTotal}}</td>
+    <td>
+        <button class="generic-action-icon-button" value="{{insumo.id}}" onclick=editInputService(this.value)>
+            <i class="material-icons">edit</i>
+        </button>
+    </td>
+    <td>
+        <button class="generic-action-icon-button" value="{{insumo.id}}" onclick=deleteInputService(this.value)>
+            <i class="material-icons">delete</i>
+        </button>
+    </td>
+</tr>
+{% endfor %}
