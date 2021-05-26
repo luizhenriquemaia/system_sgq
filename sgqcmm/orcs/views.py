@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import HttpResponseRedirect, redirect, render, reverse
 from django.http import HttpResponse
+from django.db.models import Q
 
 from main.funcoes import format_list_telefone, listacodigossup
 from main.models import (a03Estados, a04Municipios, a05Bairros, a06Lograds,
@@ -889,12 +890,41 @@ def ajax_carregar_insumo_servico(request, codorcam, codeap):
                         "valorTotal": formatar_custos_para_template(insumo.qtdprod * insumo.cstunpr)
                     }
                 )
-            return render(request, "orcs/carregar-insumos-servico.html", 
+            return render(request, "orcs/ajax-carregar-insumos-servico.html", 
                 {"idEap": codeap, "insumos": insumos_atividade})
         else:
             return HttpResponse(status=403)
     else:
         return HttpResponse(status=405)
+
+
+def ajax_alterar_insumo_servico(request, codorcam, id_eap, id_insumo):
+    if request.user:
+        if request.method == "GET":
+            form = formAlterarInsumoOrc()
+            inputs_select = a11Insumos.objetos.filter(Q(catins_id=15)|Q(catins_id=16)|Q(catins_id=36)|Q(catins_id=37)|Q(catins_id=38)|Q(catins_id=39)|Q(catins_id=41)|Q(catins_id=42)|Q(catins_id=43)|Q(catins_id=44)|Q(catins_id=45)|Q(catins_id=46)|Q(catins_id=47)|Q(catins_id=48)|Q(catins_id=49)|Q(catins_id=51)|Q(catins_id=52)|Q(catins_id=53)|Q(catins_id=54)|Q(catins_id=55)|Q(catins_id=61)|Q(catins_id=62)).only('id', 'descricao').order_by('descricao')
+            service_input = g05InsEAP.objetos.get(id=id_insumo)
+            return render(request, 'orcs/ajax-alterar-insumo-servico.html',
+                {"serviceInput": service_input, "form": form, "insumosSelect": inputs_select})
+        elif request.method == "POST":
+            form = formAlterarInsumoOrc(request.POST)
+            if form.is_valid():
+                try:
+                    service_input = g05InsEAP.objetos.get(id=id_insumo)
+                    service_input.insumo_id = form.cleaned_data['insumo'] if form.cleaned_data['insumo'] else service_input.insumo_id
+                    service_input.qtdprod = form.cleaned_data['quantidade'] if form.cleaned_data['quantidade'] else service_input.qtdprod
+                    service_input.cstunpr = form.cleaned_data['valor_unitario'] if form.cleaned_data['valor_unitario'] or form.cleaned_data['valor_unitario'] >= 0 else service_input.cstunpr
+                    service_input.save()
+                    return HttpResponse(status=200)
+                except:
+                    return HttpResponse(status=500)
+            else:
+                print(form.errors.as_data())
+                return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=405)
+    else:
+        return HttpResponse(status=403)
 
 
 def ajax_inserir_insumo_servico(request, codorcam, codeap):

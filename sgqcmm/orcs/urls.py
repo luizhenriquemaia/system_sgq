@@ -78,9 +78,9 @@ urlpatterns = [
         views.detalhar_servico, 
         name='detalhar_servico'),
     path(
-        'preorcamento/<int:codorcam>/detalhar-serv/<int:idEap>/alterar-insumo-atividade/<int:idInsumo>',
-        views.alterar_insumo_atividade, 
-        name='alterar_insumo_atividade'),
+        'preorcamento/<int:codorcam>/detalhar-serv/<int:id_eap>/ajax/alterar-insumo/<int:id_insumo>/',
+        views.ajax_alterar_insumo_servico, 
+        name='ajax_alterar_insumo_servico'),
     path(
         'marcar-visita/<int:codorcam>/', 
         views.marcar_visita, 

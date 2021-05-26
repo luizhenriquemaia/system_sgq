@@ -22,19 +22,15 @@
 		</thead>
 		<tbody id="id_insumosServico">
 			{% for insumo in insumos %}
-			<tr>
+			<tr id="inputOfService_id{{insumo.id}}">
 				<td>{{insumo.item}}</td>
-				<td>
-					<a href="./{{idEap}}/alterar-insumo-atividade/{{insumo.id}}">
-						{{insumo.descricao}}
-					</a>
-				</td>
+				<td>{{insumo.descricao}}</td>
 				<td>{{insumo.quantidade}}</td>
 				<td>{{insumo.unidade}}</td>
 				<td>{{insumo.custo}}</td>
 				<td>{{insumo.valorTotal}}</td>
 				<td>
-					<button class="generic-action-icon-button" value="{{itemeap.codeap}}" onclick=editService(this.value)>
+					<button class="generic-action-icon-button" value="{{insumo.id}}" onclick=editInputService(this.value)>
 						<i class="material-icons">edit</i>
 					</button>
 				</td>
@@ -82,6 +78,59 @@
 	</a>
 </div>
 <script>
+	function loadInputsOfService() {
+		let xhttp = new XMLHttpRequest()
+		xhttp.onreadystatechange = function (data) {
+			if (this.readyState === 4 && this.status === 200) {
+				document.getElementById("id_insumosServico").innerHTML = this.response
+			} else if (this.readyState === 4 && this.status !== 200) {
+				M.toast({ html: "Erro ao atualizar lista de insumos, por favor recarregue a página", classes: 'red rounded', displayLength: 3000 })
+			}
+		}
+		xhttp.open("GET", './{{idEap}}/ajax/carregar-insumo-servico/')
+		xhttp.send()
+	}
+
+	function editInputService(idInput) {
+		let xhttpRequest = new XMLHttpRequest()
+		xhttpRequest.onreadystatechange = function (data) {
+			if (this.readyState === 4 && this.status === 200) {
+				document.getElementById(`inputOfService_id${idInput}`).innerHTML = this.response
+			}
+		}
+		xhttpRequest.open("GET", `./{{idEap}}/ajax/alterar-insumo/${idInput}/`, true)
+		xhttpRequest.send()
+	}
+
+	function saveEditInputService(e, idInput) {
+		e.preventDefault()
+		const dataToBackend = new FormData()
+		dataToBackend.append("insumo", document.getElementById(`id_insumo${idInput}`).value)
+		dataToBackend.append("quantidade", document.getElementById(`id_quantidade${idInput}`).value)
+		dataToBackend.append("valor_unitario", document.getElementById(`id_valor_unitario${idInput}`).value)
+		const request = new Request(`./{{idEap}}/ajax/alterar-insumo/${idInput}/`,
+			{
+				method: 'POST',
+				headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
+				body: dataToBackend
+			})
+		fetch(request, {
+			method: 'POST',
+			mode: 'same-origin'
+		}).then(
+			function (response) {
+				if (response.status === 200) {
+					M.toast({ html: "Insumo alterado", classes: 'green rounded', displayLength: 2000 })
+					loadInputsOfService()
+				} else if (response.status === 400) {
+					M.toast({ html: "Dados inválidos", classes: 'red rounded', displayLength: 3000 })
+				} else {
+					M.toast({ html: "Erro", classes: 'red rounded', displayLength: 3000 })
+				}
+			}
+		)
+	}
+
 	function addNewBudgetInput(e) {
 		e.preventDefault()
 		const dataToBackend = new FormData()
@@ -101,16 +150,7 @@
 			function(response) {
 				if (response.status === 200) {
 					M.toast({ html: "Insumo adicionado", classes: 'green rounded', displayLength: 2000 })
-					let xhttp = new XMLHttpRequest()
-					xhttp.onreadystatechange = function(data) {
-						if (this.readyState === 4 && this.status === 200) {
-							document.getElementById("id_insumosServico").innerHTML = this.response
-						} else if (this.readyState === 4 && this.status !== 200) {
-							M.toast({ html: "Erro ao atualizar lista de insumos, por favor recarregue a página", classes: 'red rounded', displayLength: 3000 })
-						}
-					}
-					xhttp.open("GET", './{{idEap}}/ajax/carregar-insumo-servico/')
-					xhttp.send()
+					loadInputsOfService()
 				} else if (response.status === 400) {
 					M.toast({ html: "Dados inválidos", classes: 'red rounded', displayLength: 3000 })
 				} else {
@@ -134,16 +174,7 @@
 			function(response) {
 				if (response.status === 204) {
 					M.toast({ html: "Insumo excluído", classes: 'green rounded', displayLength: 2000 })
-					let xhttp = new XMLHttpRequest()
-					xhttp.onreadystatechange = function(data) {
-						if (this.readyState === 4 && this.status === 200) {
-							document.getElementById("id_insumosServico").innerHTML = this.response
-						} else if (this.readyState === 4 && this.status !== 200) {
-							M.toast({ html: "Erro ao atualizar lista de insumos, por favor recarregue a página", classes: 'red rounded', displayLength: 3000 })
-						}
-					}
-					xhttp.open("GET", './{{idEap}}/ajax/carregar-insumo-servico/')
-					xhttp.send()
+					loadInputsOfService()
 				} else if (response.status === 400) {
 					M.toast({ html: "Dados inválidos", classes: 'red rounded', displayLength: 3000 })
 				} else {
@@ -153,6 +184,7 @@
 		)
 
 	}
+
 </script>
 {% endif %}
 {% endblock content %}
