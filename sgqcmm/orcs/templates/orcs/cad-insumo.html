@@ -1,54 +1,53 @@
-{% extends "main/basePage.html" %}
+{% extends "main/base-page-comercial.html" %}
 {% block content %}
   {% if user.is_authenticated %}
   <div class="content">
-    <div class="title-page">
-      <h4>Cadastrar Insumo</h4>
+    <div class="title-page title-left title-page-without-address">
+      <h4>Cadastrar <span>Insumo</span></h4>
     </div>
-    <div class="endereco-orcamento">      
-      <div class="divider"></div>
-    </div>
+    <div class="divider"></div>
     <form method="POST">
       {% csrf_token %}
-      <div class="form-field">
+      <h5 class="title-forms-fields">Dados novo insumo</h5>
+      <div class="form-group-of-fields">
         <div class="row">
-          <div class="col s6">
+          <div class="col s12">
             <label>Categoria do Insumo</label>
-            {{ form.combcatInsumo }}
-          </div>
-          <div class="col s6">
-            <label>Descrição do Insumo</label>
-            {{ form.descInsumo }}
+            {{ form.categoria_insumo }}
           </div>
         </div>
         <div class="row">
-          <div class="col s6">
-            <label>Unidade</label>
-            {{ form.unidInsumo }}
-          </div>
-          <div class="col s6">
-            <label>Custo</label>
-            {{ form.custoInsumo }}
+          <div class="col s12 input-field">
+            {{ form.descricao }}
+            <label for="id_descricao">Descrição do Insumo</label>
           </div>
         </div>
         <div class="row">
-          <div class="col s4">
-            <label>Espessura</label>
+          <div class="col s6 input-field">
+            {{ form.custo }}
+            <label for="id_custo">Custo</label>
+          </div>
+          <div class="col s6 input-field">
+            {{ form.unidade }}
+            <label for="id_unidade">Unidade</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s4 input-field">
             {{ form.espessura }}
+            <label for="id_espessura">Espessura</label>
           </div>
-          <div class="col s4">
-            <label>Comprimento</label>
+          <div class="col s4 input-field">
             {{ form.comprimento }}
+            <label for="id_comprimento">Comprimento</label>
           </div>
-          <div class="col s4">
-            <label>Largura</label>
+          <div class="col s4 input-field">
             {{ form.largura }}
+            <label for="id_largura">Largura</label>
           </div>
         </div>
       </div>
-      <br>
-      <br>
-      <button class="submit-ok submit-hover" name="btnCadastrar" type="submit" value="btnCadastrar">
+      <button class="submit-hover submit-end-page" name="btnCadastrar" type="submit" value="btnCadastrar">
         <i class="material-icons">check</i>
       </button>
     </form>

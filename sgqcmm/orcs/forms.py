@@ -45,15 +45,15 @@ class formEditarEap(forms.Form):
     
 
 class formCadInsumo(forms.Form):
-    combcatInsumo = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.filter(
+    categoria_insumo = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.filter(
         Q(id=15)|Q(id=16)|Q(id=17)|Q(id=36)|Q(id=37)|Q(id=38)|Q(id=39)|Q(id=42)|Q(id=43)|Q(id=44)|Q(id=45)|Q(id=46)|Q(id=47)|Q(id=48)|Q(id=49)|Q(id=50)|Q(id=51)|Q(id=52)|Q(id=53)|Q(id=54)|Q(id=55)|Q(id=56)|Q(id=57)|Q(id=58)|Q(id=59)|Q(id=60)|Q(id=61)|Q(id=62)).order_by('descricao'),
         to_field_name="id")
-    descInsumo = forms.CharField(label='descricao', max_length=100, required=True)
-    unidInsumo = forms.CharField(label='unidade', max_length=5, required=True)
-    custoInsumo = forms.CharField(label='custo', max_length=10, required=True)
-    espessura = forms.CharField(max_length=10, required=False)
-    comprimento = forms.CharField(max_length=10, required=False)
-    largura = forms.CharField(max_length=10, required=False)
+    descricao = forms.CharField(max_length=100, required=True)
+    unidade = forms.CharField(max_length=5, required=True)
+    custo = forms.DecimalField(max_digits=12, decimal_places=4)
+    espessura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    comprimento = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    largura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
 
 
 class formAtualizarDadosInsumo(forms.Form):
