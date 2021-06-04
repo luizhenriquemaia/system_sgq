@@ -230,15 +230,15 @@ def atualizar_dados_insumo(request, codInsumo):
     codorcam = request.session['codorcamento']
     insumo_bd = a11Insumos.objetos.get(codigo=codInsumo)
     insumo_para_template = {
-                    "codigo": insumo_bd.codigo,
-                    "descricao": insumo_bd.descricao,
-                    "unidade": insumo_bd.undbas,
-                    "valor_unitario": insumo_bd.custo01,
-                    "espessura": insumo_bd.espessura,
-                    "comprimento": insumo_bd.comprimento,
-                    "largura": insumo_bd.largura,
-                    "categoria": insumo_bd.catins
-                    }
+        "codigo": insumo_bd.codigo,
+        "descricao": insumo_bd.descricao,
+        "unidade": insumo_bd.undbas,
+        "valor_unitario": insumo_bd.custo01,
+        "espessura": insumo_bd.espessura,
+        "comprimento": insumo_bd.comprimento,
+        "largura": insumo_bd.largura,
+        "categoria": insumo_bd.catins
+        }
     categorias_select = a10CatsInsumos.get_all_categories(a10CatsInsumos)
     if request.method == 'POST':
         form = formAtualizarDadosInsumo(request.POST)
@@ -592,85 +592,76 @@ def excluir_orcamento(request, codorcam):
 
 def inserir_deslocamento(request, codorcam):
     orcamento = obter_dados_gerais_orc(codorcam)
-    codOrcAtual = request.session['codorcamento']
+    codigo_orcamento_atual = request.session['codorcamento']
+    id_orcamento_escolhido = g01Orcamento.objetos.get(pk=int(codorcam)).id
+    raw_query_eaps = """ 
+                        SELECT id, codeap, descitem, CAST(qtdorc AS DECIMAL(12,2)), 
+                        unidade, CAST(vlrunit AS DECIMAL(12,2)), tipo
+                        FROM main_g03eaporc 
+                        WHERE orcamento_id = %s AND tipo = 3
+                        ORDER BY codeap
+                    """
+    entregas_select = g03EapOrc.objetos.raw(raw_query_eaps, [id_orcamento_escolhido])
+    form = formInserirDeslocamento()
     if request.method == "POST":
         form = formInserirDeslocamento(request.POST)
         if form.is_valid():
+            distancia = form.cleaned_data['distancia'] if form.cleaned_data['distancia'] else 0
+            tipo_veiculo = form.cleaned_data['tipo_veiculo'] if form.cleaned_data['tipo_veiculo'] else 0
+            dias = form.cleaned_data['dias'] if form.cleaned_data['dias'] else 0
+            hospedagem = form.cleaned_data['hospedagem'] if form.cleaned_data['hospedagem'] else 0
+            passagem = form.cleaned_data['passagem'] if form.cleaned_data['passagem'] else 0
+            try: 
+                eap = g03EapOrc.objetos.get(id=request.POST['entrega'])
+                if eap.tipo != 3:
+                    message.error("Entrega inválida")
+                    return render(request, "orcs/inserir-deslocamento.html", {"orcamento": orcamento, "form": form,
+                        "entregasSelect": entregas_select})
+            except ObjectDoesNotExist:
+                message.error("Entrega inválida")
+                return render(request, "orcs/inserir-deslocamento.html", {"orcamento": orcamento, "form": form,
+                    "entregasSelect": entregas_select})
             # id insumos -> hospedagem = 135, gasolina = 142, diesel s10 = 147, diesel s500 = 146, passagem = 140
-            quantKm = form.cleaned_data['quantKm']
-            codVeiculo = int(request.POST['combVeiculo'])
-            quantDias = form.cleaned_data['quantDias']
-            quantHosp = form.cleaned_data['quantHosp']
-            quantPassagens = form.cleaned_data['quantPassagens']
-            if quantKm != '' and quantDias != '':
-                quantCombust = float(quantKm) * float(quantDias) * 2 / 10
-                if codVeiculo == 1:
-                    codInsumos = [142, 135, 140]
-                elif codVeiculo == 2:
-                    codInsumos = [147, 135, 140]
+            insumos_para_adicionar = []
+            if distancia != 0 and dias != 0:
+                quantidade_combustivel = distancia * dias * 2 / 8
+                if tipo_veiculo == 1:
+                    tipo_combustivel = 142
+                elif tipo_veiculo == 2:
+                    tipo_combustivel = 147
                 else:
-                    codInsumos = [146, 135, 140]
-                    quantCombust = float(quantKm) * float(quantDias) * 2 / 2.2 if codVeiculo == 3 else float(quantKm) * float(quantDias) * 2 / 4
-            else:
-                quantCombust = 0
-                codInsumos = [142, 135, 140]
-            quantInsumos = [quantCombust, quantHosp, quantPassagens]
-
-            if quantKm != '' or quantHosp != '' or quantPassagens != '':
-                eapsOrcamento = g03EapOrc.objetos.filter(orcamento_id=codOrcAtual).order_by('-id')
-                prefUltimaEap = eapsOrcamento[0].codeap
-                # Verificar se já existe eap de deslocamento
-                eapsOrcamento = g03EapOrc.objetos.filter(tipo=2)
-                for eapOrcamento in eapsOrcamento:
-                    idEap = eapOrcamento.id if eapOrcamento.codeap == f'{prefUltimaEap[:2]}01.04.' else g03EapOrc.proxnumeap(g03EapOrc)
-                # Criar nova eap
-                novaEAP = g03EapOrc(
-                                    id = idEap,
-                                    orcamento = g01Orcamento.objetos.get(pk=codOrcAtual),
-                                    codeap = f'{prefUltimaEap[:2]}01.04.',
-                                    coditem = f'{prefUltimaEap[:2]}01.04.',
-                                    descitem = f"Deslocamento e Hospedagem",
-                                    tipo = 2,
-                                    qtdorc = 1,
-                                    unidade = 'un',
-                                    vlrunit = 0
-                                    )
-                novaEAP.save()
-                # Verificar se já existe atividade
-                try:
-                    atividadeEap = g04AtvEap.objetos.get(eap_id=idEap)
-                except:
-                    # Criar atividade padrao para item da EAP
-                    nvCodAtvEap = g04AtvEap.proxnumatveap(g04AtvEap)
-                    atividadeEap = g04AtvEap(
-                                        id = nvCodAtvEap,
-                                        eap = novaEAP,
-                                        atvpadr = a15AtvsPad.objetos.get(pk=5)
-                                        )
-                    atividadeEap.save()
-                # Inserir insumos da eap
-                i = 0
-                for quantInsumo in quantInsumos:
-                    if quantInsumo != '':
-                        bdInsumo = a11Insumos.objetos.get(id=codInsumos[i])
-                        # Criar insumos da eap
-                        novoInsEap = g05InsEAP(atividade = atividadeEap,
-                                               insumo = a11Insumos.objetos.get(codigo=bdInsumo.codigo),
-                                               qtdprod = quantInsumo,
-                                               qtdimpr = 0,
-                                               cstunpr = a11Insumos.objetos.get(codigo=bdInsumo.codigo).custo01,
-                                               cstunim = 0)
-                        novoInsEap.save()
-                    i += 1
-                # Atualizar custos do orcamento
-                # A FUNÇÃO ESTÁ GERANDO O ERRO 504
-                #atualizar_custos_orc(cod_orc_atual)
-                atualizar_lista_insumos(codOrcAtual)
-                strCodOrc = int(codOrcAtual)
-                return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
+                    tipo_combustivel = 146
+                    quantidade_combustivel = distancia * dias * 2 / 2.2 if tipo_veiculo == 3 else distancia * dias * 2 / 4
+                insumos_para_adicionar.append(
+                    {"quantidade": quantidade_combustivel, "insumo": tipo_combustivel})
+            if hospedagem != 0:
+                insumos_para_adicionar.append(
+                    {"quantidade": hospedagem, "insumo": 135})
+            if passagem != 0:
+                insumos_para_adicionar.append(
+                    {"quantidade": passagem, "insumo": 140})
+            for insumo in insumos_para_adicionar:
+                novo_insumo = g05InsEAP(
+                    qtdprod=insumo['quantidade'],
+                    qtdimpr=0,
+                    cstunpr=0,
+                    cstunim=0,
+                    insumo=a11Insumos.objetos.get(id=insumo['insumo']),
+                    eap=eap)
+                novo_insumo.save()
+            # Atualizar custos do orcamento
+            # A FUNÇÃO ESTÁ GERANDO O ERRO 504
+            #atualizar_custos_orc(cod_orc_atual)
+            atualizar_lista_insumos(codigo_orcamento_atual)
+            return HttpResponseRedirect(reverse('orcs:editar_orcamento', args=(codorcam,)))
+        else:
+            return render(request, "orcs/inserir-deslocamento.html", {"orcamento": orcamento, "form": form,
+                "entregasSelect": entregas_select})
+    elif request.method == "GET":
+        return render(request, "orcs/inserir-deslocamento.html", {"orcamento": orcamento, "form": form,
+            "entregasSelect": entregas_select})
     else:
-        form = formInserirDeslocamento()
-        return render(request, "orcs/inserir-deslocamento.html", {"form": form})
+        return HttpResponse(status=405)
 
 
 def cadastrar_insumo(request):

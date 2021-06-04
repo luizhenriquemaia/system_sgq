@@ -34,7 +34,9 @@
 					<td>{{itemeap.codeap}}</td>
 					<td>
 						{% if itemeap.tipo == 3 %}
-						<a href="./detalhar-serv/{{itemeap.id}}"><i class="material-icons">unfold_more</i></a>
+						<a href="./detalhar-serv/{{itemeap.id}}" class="generic-action-icon-button">
+							<i class="material-icons">unfold_more</i>
+						</a>
 						{% endif %}
 					</td>
 					<td>{{itemeap.descitem}}</td>
@@ -49,7 +51,7 @@
 					</td>
 					<td>
 						{% if itemeap.tipo == 3 %}
-						<a href="./adicionar-desconto/{{itemeap.id}}">
+						<a href="./adicionar-desconto/{{itemeap.id}}" class="generic-action-icon-button">
 							<i class="material-icons">money_off</i>
 						</a>
 						{% endif %}

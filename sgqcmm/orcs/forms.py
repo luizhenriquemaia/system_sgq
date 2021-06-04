@@ -69,11 +69,11 @@ class formAtualizarDadosInsumo(forms.Form):
 
 
 class formInserirDeslocamento(forms.Form):
-    quantKm = forms.CharField(max_length=5, required=False)
-    combVeiculo = forms.ChoiceField(choices=[('0', ''),('1', 'Carro'), ('2', 'Caminhonete'), ('3', 'Caminhão Munck'), ('4', 'Caminhão Toco')], required=False)
-    quantDias = forms.CharField(max_length=10, required=False)
-    quantHosp = forms.CharField(max_length=10, required=False)
-    quantPassagens = forms.CharField(max_length=10, required=False)
+    distancia = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0, required=False)
+    tipo_veiculo = forms.ChoiceField(choices=[('0', ''),('1', 'Carro'), ('2', 'Caminhonete'), ('3', 'Caminhão Munck'), ('4', 'Caminhão Toco')], required=False)
+    dias = forms.DecimalField(max_digits=12, decimal_places=1, min_value=0, required=False)
+    hospedagem = forms.DecimalField(max_digits=12, decimal_places=1, min_value=0, required=False)
+    passagem = forms.DecimalField(max_digits=12, decimal_places=1, min_value=0, required=False)
 
 
 class formAlterarInsumoOrc(forms.Form):
