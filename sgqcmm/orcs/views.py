@@ -228,56 +228,43 @@ def atualizar_lista_insumos(codOrcam):
 
 def atualizar_dados_insumo(request, codInsumo):
     codorcam = request.session['codorcamento']
+    insumo_bd = a11Insumos.objetos.get(codigo=codInsumo)
+    insumo_para_template = {
+                    "codigo": insumo_bd.codigo,
+                    "descricao": insumo_bd.descricao,
+                    "unidade": insumo_bd.undbas,
+                    "valor_unitario": insumo_bd.custo01,
+                    "espessura": insumo_bd.espessura,
+                    "comprimento": insumo_bd.comprimento,
+                    "largura": insumo_bd.largura,
+                    "categoria": insumo_bd.catins
+                    }
+    categorias_select = a10CatsInsumos.get_all_categories(a10CatsInsumos)
     if request.method == 'POST':
         form = formAtualizarDadosInsumo(request.POST)
         if form.is_valid():
-            insumo_bd = a11Insumos.objetos.filter(codigo=codInsumo)
-            novo_preco = formatar_custos_para_bd(form.cleaned_data['novo_preco']) if form.cleaned_data['novo_preco'] else insumo_bd[0].custo01
-            nova_descricao = form.cleaned_data['nova_descricao'] if form.cleaned_data['nova_descricao'] else insumo_bd[0].descricao
-            nova_unidade = form.cleaned_data['nova_unidade'] if form.cleaned_data['nova_unidade'] else insumo_bd[0].undbas
-            nova_espessura = formatar_custos_para_bd(form.cleaned_data['nova_espessura']) if form.cleaned_data['nova_espessura'] else insumo_bd[0].espessura
-            novo_comprimento = formatar_custos_para_bd(form.cleaned_data['novo_comprimento']) if form.cleaned_data['novo_comprimento'] else insumo_bd[0].comprimento
-            nova_largura = formatar_custos_para_bd(form.cleaned_data['nova_largura']) if form.cleaned_data['nova_largura'] else insumo_bd[0].largura
-            nova_categoria = request.POST['nova_cat_insumo'] if request.POST['nova_cat_insumo'] else insumo_bd[0].catins_id
-            dataAtualizacao = datetime.date.today()
-            a11Insumos.objetos.filter(codigo=codInsumo).update(
-                descricao=nova_descricao, 
-                undbas=nova_unidade,
-                custo01=novo_preco,
-                espessura=nova_espessura,
-                comprimento=novo_comprimento,
-                largura=nova_largura,
-                dataatualizacao=dataAtualizacao
-            )
+            insumo_bd.custo01 = form.cleaned_data['valor_unitario'] if form.cleaned_data['valor_unitario'] else insumo_bd.custo01
+            insumo_bd.descricao = form.cleaned_data['descricao'] if form.cleaned_data['descricao'] else insumo_bd.descricao
+            insumo_bd.undbas = form.cleaned_data['unidade'] if form.cleaned_data['unidade'] else insumo_bd.undbas
+            insumo_bd.espessura = form.cleaned_data['espessura'] if form.cleaned_data['espessura'] else insumo_bd.espessura
+            insumo_bd.comprimento = form.cleaned_data['comprimento'] if form.cleaned_data['comprimento'] else insumo_bd.comprimento
+            insumo_bd.largura = form.cleaned_data['largura'] if form.cleaned_data['largura'] else insumo_bd.largura
+            insumo_bd.catins_id = form.cleaned_data['categoria'] if form.cleaned_data['categoria'] else insumo_bd.catins_id
+            insumo_bd.dataatualizacao = datetime.date.today()
+            insumo_bd.save()
             messages.info(request, "Dados atualizados com sucesso")
-            strcodorc = str(codorcam)
-            #atualizar_custos_orc(codorcam)
-            atualizar_lista_insumos(codorcam)
             return HttpResponseRedirect(
-                reverse(
-                    'orcs:editar_orcamento', args=(strcodorc,)))
+                reverse('orcs:editar_orcamento', args=(codorcam,)))
         else:
+            print(form.errors.as_data())
             messages.error(request, "Erro ao atualizar dados do insumo")
-            return HttpResponseRedirect(
-                reverse(
-                    'orcs:atualizar-dados-insumo', 
-                    args=(codInsumo,)))
+            return render(
+            request, "orcs/atualizar-dados-insumo.html", {
+                "insumo": insumo_para_template, "categoriasSelect": categorias_select})
     else:
-        form = formAtualizarDadosInsumo()
-        insumo = a11Insumos.objetos.get(codigo=codInsumo)
-        dicInsumo = {
-                     "codigo": insumo.codigo,
-                     "antigaDescricao": insumo.descricao,
-                     "antigaUnidade": insumo.undbas,
-                     "antigoPreco": formatar_custos_para_template(insumo.custo01),
-                     "antigaEspessura": insumo.espessura,
-                     "antigoComprimento": insumo.comprimento,
-                     "antigaLargura": insumo.largura,
-                     "antigaCategoria": a10CatsInsumos.objetos.get(id=insumo.catins_id).descricao
-                     }
         return render(
             request, "orcs/atualizar-dados-insumo.html", {
-                "form": form, "insumo": dicInsumo})
+                "insumo": insumo_para_template, "categoriasSelect": categorias_select})
 
 
 def view_para_atualizar_custos_orc(request, codorcam):

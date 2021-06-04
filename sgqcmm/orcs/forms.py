@@ -57,13 +57,13 @@ class formCadInsumo(forms.Form):
 
 
 class formAtualizarDadosInsumo(forms.Form):
-    nova_descricao = forms.CharField(max_length=100, required=False)
-    novo_preco = forms.CharField(max_length=10, required=False)
-    nova_unidade = forms.CharField(max_length=5, required=False)
-    nova_espessura = forms.CharField(max_length=10, required=False)
-    novo_comprimento = forms.CharField(max_length=10, required=False)
-    nova_largura = forms.CharField(max_length=10, required=False)
-    nova_cat_insumo = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.filter(
+    descricao = forms.CharField(max_length=100, required=False)
+    valor_unitario = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
+    unidade = forms.CharField(max_length=5, required=False)
+    espessura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    comprimento = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    largura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
+    categoria = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.filter(
         Q(id=15)|Q(id=16)|Q(id=17)|Q(id=36)|Q(id=37)|Q(id=38)|Q(id=39)|Q(id=42)|Q(id=43)|Q(id=44)|Q(id=45)|Q(id=46)|Q(id=47)|Q(id=48)|Q(id=49)|Q(id=50)|Q(id=51)|Q(id=52)|Q(id=53)|Q(id=54)|Q(id=55)|Q(id=56)|Q(id=57)|Q(id=58)|Q(id=59)|Q(id=60)|Q(id=61)|Q(id=62)).order_by('descricao'),
         to_field_name="id", required=False)
 
