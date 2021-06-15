@@ -1,57 +1,62 @@
-{% extends "main/basePage.html" %}
+{% extends "main/base-page-comercial.html" %}
 {% block content %}
   {% if user.is_authenticated %}
   <div class="content">
-    <div class="title-page">
-      <h4>Transporte e Hospedagem</h4>
+    <div class="title-page title-left title-orcs">
+      <h4>Viagens para obra de <span>{{orcamento.desccliente}}</span></h4>
     </div>
     <div class="endereco-orcamento">
-      <div class="divider"></div>
+      {{ orcamento.endereco }}
     </div>
+    <div class="divider"></div>
     <form method="POST">
       {% csrf_token %}
-      <div class="row">
-        <div class="col s12">
-          <p class="title-forms-fields">Combustível</p>
+      <h5 class="title-forms-fields">Combustível</h5>
+      <div class="form-group-of-fields">
+        <div class="row">
+          <div class="col s4">
+            <label for="id_distancia">Distância em km</label>
+            {{ form.distancia }}
+          </div>
+          <div class="col s4">
+            <label for="id_dias">Quantidade de dias</label>
+            {{ form.dias }}
+          </div>
+          <div class="col s4">
+            <label for="id_tipo_veiculo">Tipo de veículo</label>
+            {{ form.tipo_veiculo }}
+          </div>
         </div>
       </div>
-      <br>
-      <div class="row">
-        <div class="col s4 input-field">
-          {{ form.quantKm }}
-          <label>Distância em Km</label>
-        </div>
-        <div class="col s4 input-field">
-          {{ form.quantDias }}
-          <label>Quantidade de Dias</label>
-        </div>
-        <div class="col s4">
-          <label>Tipo de Veículo</label>
-          {{ form.combVeiculo }}
+      <h5 class="title-forms-fields">Viagens</h5>
+      <div class="form-group-of-fields">
+        <div class="row">
+          <div class="col s6">
+            <label for="id_hospedagem">Quantidade de diárias de hospedagem</label>
+            {{ form.hospedagem }}
+          </div>
+          <div class="col s6">
+            <label for="id_passagem">Quantidade de passagens</label>
+            {{ form.passagem }}
+          </div>
         </div>
       </div>
-      <br>
-      <br>
-      <div class="row">
-        <div class="col s12">
-          <p class="title-forms-fields">Hospedagem e Passagem</p>
+      <h5 class="title-forms-fields">EAP</h5>
+      <div class="form-group-of-fields">
+        <div class="row">
+          <div class="col s12">
+            <label for="id_eap">Entrega</label>
+            <select name="entrega" id="id_entrega" required>
+              <option value=""></option>
+              {% for entrega in entregasSelect %}
+              <option value="{{ entrega.id }}">{{ entrega.codeap }} {{ entrega.descitem }}</option>
+              {% endfor %}
+            </select>
+          </div>
         </div>
       </div>
-      <br>
-      <div class="row">
-        <div class="col s6 input-field">
-          {{ form.quantHosp }}
-          <label>Dias de Hospedagem</label>
-        </div>
-        <div class="col s6 input-field">
-          {{ form.quantPassagens }}
-          <label>Quantidade de Passagens</label>
-        </div>
-      </div>
-      <br>
-      <br>
-      <button class="submit-ok submit-hover" name="btnInserir" type="submit" value="btnInserir">
-        <i class="material-icons">navigate_next</i>
+      <button class="submit-hover submit-end-page" name="btnInserir" type="submit">
+        <span>Ok </span>
       </button>
     </form>
   </div>

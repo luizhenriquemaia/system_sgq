@@ -35,8 +35,7 @@ def inicio(request):
                                 "data": orcamento_cliente.dtorc,
                                 "cliente": possivel_cliente.descrcad,
                                 "pagamento": a19PlsPgtos.objetos.get(id=orcamento_cliente.plpgto_id).descricao,
-                                "status": a20StsOrcs.objetos.get(id=orcamento_cliente.status_id).descricao
-                            }
+                                "status": a20StsOrcs.objetos.get(id=orcamento_cliente.status_id).descricao}
                             if orcamento_cliente.fase_id == 1:
                                 lista_preorcamentos_pendentes.append(dic_orcamentos)
                             elif orcamento_cliente.fase_id == 2:
@@ -61,11 +60,9 @@ def inicio(request):
                                 "data": orcamento_cliente.dtorc,
                                 "cliente": possivel_cliente.descrcad,
                                 "pagamento": a19PlsPgtos.objetos.get(id=orcamento_cliente.plpgto_id).descricao,
-                                "status": a20StsOrcs.objetos.get(id=orcamento_cliente.status_id).descricao
-                            }
+                                "status": a20StsOrcs.objetos.get(id=orcamento_cliente.status_id).descricao}
                             if orcamento_cliente.fase_id == 1:
-                                lista_preorcamentos_pendentes.append(
-                                    dic_orcamentos)
+                                lista_preorcamentos_pendentes.append(dic_orcamentos)
                             elif orcamento_cliente.fase_id == 2:
                                 lista_visitas_pendentes.append(dic_orcamentos)
                             elif orcamento_cliente.fase_id == 3:
@@ -103,8 +100,7 @@ def inicio(request):
                 "data": pendencia.dtorc,
                 "cliente": e01Cadastros.objetos.get(id=e04EndCad.objetos.get(id=pendencia.ender_id).cadastro_id).descrcad,
                 "pagamento": a19PlsPgtos.objetos.get(id=pendencia.plpgto_id).descricao,
-                "status": a20StsOrcs.objetos.get(id=pendencia.status_id).descricao
-            }
+                "status": a20StsOrcs.objetos.get(id=pendencia.status_id).descricao}
             if pendencia.fase_id == 1:
                 lista_preorcamentos_pendentes.append(dic_pendencias)
             elif pendencia.fase_id == 2:
@@ -113,14 +109,11 @@ def inicio(request):
                 lista_orcamentos_pendentes.append(dic_pendencias)
             elif pendencia.fase_id == 4:
                 lista_contratos_pendentes.append(dic_pendencias)
-            elif pendencia.fase_id == 5:
-                lista_obras_pendentes.append(dic_pendencias)
-            elif pendencia.fase_id == 6:
-                lista_obras_finalizadas.append(dic_pendencias)
+        numeros_pendencias = [len(lista_preorcamentos_pendentes), len(lista_visitas_pendentes), len(lista_orcamentos_pendentes), len(lista_contratos_pendentes)]
     return render(request, "main/inicio.html", {"preOrcPend": lista_preorcamentos_pendentes, "visitasPend": lista_visitas_pendentes,
                                                 "orcamPend": lista_orcamentos_pendentes, "contrPend": lista_contratos_pendentes,
                                                 "obraPend": lista_obras_pendentes, "obraAFinal": lista_obras_finalizadas,
-                                                "form": formPesqPorCliente})
+                                                "form": formPesqPorCliente, "numerosPendencias":numeros_pendencias})
 
 
 def apps_disponiveis(request):
@@ -143,7 +136,7 @@ def login_request(request):
             if user is not None:
                 login(request, user)
                 messages.info(request, "Login realizado com sucesso")
-                return redirect("main:inicio")
+                return redirect("main:apps_disponiveis")
             else:
                 messages.error(request, "Usuário ou senha invalido")
         else:

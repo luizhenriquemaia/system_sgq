@@ -17,20 +17,24 @@
             <th>Quant. Prod.</th>
             <th>Cst. Prod.</th>
             <th>Vlr. Total</th>
+            <th></th>
         </thead>
         <tbody>
             {% for insumo in insumos %}
             <tr>
                 <td>{{insumo.codigo}}</td>
                 <td>
-                    <a href="../../atualizar-dados-insumo/{{insumo.codigo}}">
-                        <strong>{{insumo.descricao}}</strong>
-                    </a>
+                    {{insumo.descricao}}
                 </td>
                 <td>{{insumo.undBas}}</td>
                 <td>{{insumo.qtdProd}}</td>
                 <td>{{insumo.cstUnPr}}</td>
                 <td>{{insumo.vlrTotal}}</td>
+                <td>
+                    <a href="../../atualizar-dados-insumo/{{insumo.codigo}}" class="generic-action-icon-button">
+                        <i class="material-icons">edit</i>
+                    </a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

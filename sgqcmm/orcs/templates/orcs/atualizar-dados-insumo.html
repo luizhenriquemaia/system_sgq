@@ -1,94 +1,65 @@
-{% extends "main/basePage.html" %}
+{% extends "main/base-page-comercial.html" %}
 {% block content %}
-  {% if user.is_authenticated %}
+{% if user.is_authenticated %}
   <div class="content">
-    <div class="title-page">
-      <h4>Atualizar Dados do Insumo Cód.: {{ insumo.codigo }}</h4>
+    <div class="title-page title-left title-page-without-address">
+      <h4>Atualizar dados do insumo cód.: <span>{{ insumo.codigo }}</span></h4>
     </div>
-    <div class="endereco-orcamento">
-      <div class="divider"></div>
-    </div>
+    <div class="divider"></div>
     <form method="POST">
       {% csrf_token %}
-      <div class="form-field">
+      <h5 class="title-forms-fields">Dados insumo</h5>
+      <div class="form-group-of-fields">
         <div class="row">
-          <div class="col s6">
-            <label>Antiga Descrição</label>
-            <p>{{ insumo.antigaDescricao }}</p>
-          </div>
-          <div class="col s5">
-            <label>Nova Descrição</label>
+          <div class="col s12">
+            <label>Descrição</label>
+            <input type="text" name="descricao" id="id_descricao" maxlength="100" value="{{insumo.descricao}}">
             {{ form.nova_descricao }}
           </div>
         </div>
         <div class="row">
           <div class="col s6">
-            <label>Antiga Unidade</label>
-            <p>{{ insumo.antigaUnidade }}</p>
+            <label>Preço</label>
+            <input type="number" name="valor_unitario" id="id_valor_unitario" value="{{insumo.valor_unitario}}" min="0" step="0.0001">
           </div>
-          <div class="col s5">
-            <label>Nova Unidade</label>
-            {{ form.nova_unidade }}
+          <div class="col s6">
+            <label>Unidade</label>
+            <input type="text" name="unidade" id="id_unidade" maxlength="5" value="{{insumo.unidade}}">
           </div>
         </div>
         <div class="row">
-          <div class="col s6">
-            <label>Antigo Preço</label>
-            <p>{{ insumo.antigoPreco }}</p>
+          <div class="col s4">
+            <label>Comprimento (mm)</label>
+            <input type="number" name="comprimento" id="id_comprimento" value="{{insumo.comprimento}}" min="0" step="0.0001">
           </div>
-          <div class="col s5">
-            <label>Novo Preço</label>
-            {{ form.novo_preco }}
+          <div class="col s4">
+            <label>Largura (mm)</label>
+            <input type="number" name="largura" id="id_largura" value="{{insumo.largura}}" min="0" step="0.0001">
           </div>
-        </div>
-        <div class="row">
-          <div class="col s6">
-            <label>Antiga Espessura (mm)</label>
-            <p>{{ insumo.antigaEspessura }}</p>
-          </div>
-          <div class="col s5">
-            <label>Nova Espessura (mm)</label>
-            {{ form.nova_espessura }}
+          <div class="col s4">
+            <label>Espessura (mm)</label>
+            <input type="number" name="espessura" id="id_espessura" value="{{insumo.espessura}}" min="0" step="0.0001">
           </div>
         </div>
         <div class="row">
-          <div class="col s6">
-            <label>Antigo Comprimento (mm)</label>
-            <p>{{ insumo.antigoComprimento }}</p>
-          </div>
-          <div class="col s5">
-            <label>Novo Comprimento (mm)</label>
-            {{ form.novo_comprimento }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s6">
-            <label>Antiga Largura (mm)</label>
-            <p>{{ insumo.antigaLargura }}</p>
-          </div>
-          <div class="col s5">
-            <label>Nova Largura (mm)</label>
-            {{ form.nova_largura }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s6">
-            <label>Antiga Categoria</label>
-            <p>{{ insumo.antigaCategoria }}</p>
-          </div>
-          <div class="col s5">
-            <label>Nova Categoria</label>
-            {{ form.nova_cat_insumo }}
+          <div class="col s12">
+            <label>Categoria</label>
+            <select name="categoria" id="id_categoria">
+              {% for categoria in categoriasSelect %}
+                {% if categoria.id == insumo.categoria.id %}
+                  <option value="{{ categoria.id }}" selected>{{ categoria }}</option>
+                {% else %}
+                  <option value="{{ categoria.id }}">{{ categoria }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
           </div>
         </div>
       </div>
-      <br>
-			<br>
-      <div class="row">
-				<div class="col s1 offset-s12" style="padding:0px;">
-					<button class="submit-hover" name="btnProximo" type="submit" style="padding: 15px 20px 15px 20px;"><i class="material-icons">navigate_next</i></button>
-				</div>
-			</div>
+      <button class="submit-hover submit-end-page" name="btnProximo" type="submit">
+        <span>Ok </span>
+        <i class="material-icons">navigate_next</i>
+      </button>
     </form>
   </div>
 {% endif %}
