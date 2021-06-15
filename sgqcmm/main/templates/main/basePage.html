@@ -22,24 +22,10 @@
 				</ul>
 			</nav>
 			<ul class="sidenav" id="mobile-demo">
-				<li><a href="/clientes/">
-					<i class="material-icons medium">create_new_folder</i>
-					<span>Novo Orçamento</span>
+				<li><a href="/apps-disponiveis/">
+					<i class="material-icons medium">home</i>
+					<span>Apps</span>
 				</a></li>
-				<li><a href="/orcs/cronog-visitas/">
-					<i class="material-icons medium">directions_car</i>
-					<span>Visitas Pendentes</span>
-				</a></li>
-				{% if user.is_staff %}
-				<li><a href="/orcs/contratos-pendentes/">
-					<i class="material-icons medium">content_paste</i>
-					<span>Contratos Pendentes</span>
-				</a></li>
-				<li><a href="/orcs/info-obras/">
-					<i class="material-icons medium">build</i>
-					<span>Obras Pendentes</span>
-				</a></li>
-				{% endif %}
 				<li ><a href="/edit-profile/">
 					<i class="material-icons medium">account_box</i>
 					<span>Usuário</span>

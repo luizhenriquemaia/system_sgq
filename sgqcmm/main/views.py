@@ -136,7 +136,7 @@ def login_request(request):
             if user is not None:
                 login(request, user)
                 messages.info(request, "Login realizado com sucesso")
-                return redirect("main:inicio")
+                return redirect("main:apps_disponiveis")
             else:
                 messages.error(request, "Usuário ou senha invalido")
         else:

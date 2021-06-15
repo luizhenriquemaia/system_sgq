@@ -5,10 +5,9 @@
 		<header>
 			<nav>
 				{% load static %}
-				<a href="/apps-disponiveis/" class="brand-logo">
+				<a href="/inicio/" class="brand-logo">
 				&nbsp<img class="logo_nav" src="{% static 'main/media/GC_Logo.png' %}">
 				</a>
-                <a href="/inicio/">SGQ COMERCIAL</a>
 				{% if user.is_authenticated %}
 				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 				<ul  class="right hide-on-med-and-down">
@@ -23,6 +22,10 @@
 				</ul>
 			</nav>
 			<ul class="sidenav" id="mobile-demo">
+				<li><a href="/apps-disponiveis/">
+					<i class="material-icons medium">home</i>
+					<span>Apps</span>
+				</a></li>
 				<li><a href="/clientes/">
 					<i class="material-icons medium">create_new_folder</i>
 					<span>Novo Orçamento</span>

@@ -19,45 +19,198 @@
 }
 
 /* mobile style */
-.grid{
+.grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
 }
 
-body{
+.grid-services {
+  display: grid;
+  width: 80%;
+  grid-gap: 1em;
+  margin: 0 auto;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.grid-services a {
+  margin-bottom: 50px;
+}
+
+.grid-services svg {
+  width: 700px;
+  height: 500px;
+}
+
+body {
   font-size: 2em;
 }
 
-nav{
+nav {
   height: 3em;
 }
 
-h4{
+nav a, nav ul a {
+    color: #000;
+  }
+
+h4 {
   font-size: 2.2em;
+  margin: 1em 0 0.7em;
 }
 
-h5{
+h5 {
   font-size: 1.8em;
 }
 
-label{
-  font-size: .5em;
+label {
+  font-size: 1em;
 }
 
-.content{
-  width: 100%;
-  margin: 10px 0px 10px;
+input {
+  font-size: 1em;
 }
 
-.divider{
+.title-page {
+  font-family: 'Butler-Regular';
+}
+
+.title-page-red * {
+  color: var(--primary);
+}
+
+.title-section h5 {
+  color: var(--primary);
+}
+
+.title-section {
+  margin: 1em 0 0.8em;
+}
+
+.title-left h4 {
+  text-align: center;
+}
+
+.title-left h4 span {
+  color: var(--primary);
+}
+
+.title-table {
+  text-align: center;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.title-table .title-section-orcs {
+  text-align: center;
+  margin-top: 1em;
+  color: var(--primary);
+}
+
+.title-table .title-table-orcs {
+  text-align: center;
+  margin-top: 2em;
+}
+
+.endereco-orcamento{
+  font-family: 'Butler-Regular';
+  font-size: 1.4em;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.subtitle-section {
+  margin-top: 1.2em;
+}
+
+.subtitle-section span {
+  color: var(--secondary);
+  font-weight: bold;
+}
+
+.content {
+  width: auto;
+  margin: 0px 30px 0px;
+}
+
+.divider {
   height: 3px;
 }
 
 table td, table th{
-  border-bottom: 1px solid rgb(172, 172, 172);
+  border-bottom: 1px solid #dddddd;
 }
 
-.submit-ok{
+.table-servicos td, .table-servicos th, 
+.table-insumos td, .table-insumos th,
+.table-generic-orcs td, .table-generic-orcs th {
+  text-align: left;
+}
+
+.table-pendencias thead, 
+.table-servicos thead, 
+.table-insumos thead,
+.table-generic-orcs thead {
+  background-color: var(--background2);
+  color: #000;
+}
+
+.table-pendencias,
+.table-servicos, 
+.table-insumos {
+  margin-bottom: 120px;
+}
+
+.table-generic-orcs {
+  margin-bottom: 50px
+}
+
+.card-content {
+  min-height: 3em;
+  padding: 15px 15px 15px 0px;
+  width: 90%;
+}
+
+.select-app {
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
+.form-group-of-fields {
+  margin-left: 0;
+  border-radius: 15px;
+  border: var(--secondary-dark) solid 2px;
+  padding: 10px;
+}
+
+.title-forms-fields {
+  margin: 2em 0 1em 0;
+	font-size: 1.4em;
+	text-align: center;
+  color: var(--primary);
+}
+
+.collection {
+  margin: 0.5rem 0.5em 1rem 0.5em;
+}
+
+.collection .collection-item {
+  line-height: 1.6;
+}
+
+.pesq-client-button {
+  margin: 1.5em 0 0;
+  color: var(--secondary);
+  background-color: var(--background);
+  cursor: pointer;
+}
+
+.submit-end-page {
+  padding: 15px 60px 15px;
+  margin: 4em 0 1.5em 41%;
+}
+
+.submit-ok {
   height: 2em;
   padding: 15px;
   left: 95%;
@@ -76,7 +229,7 @@ table td, table th{
   margin-left: 30px;
 }
 
-.sandwich-line1, .sandwich-line2, .sandwich-line3{
+.sandwich-line1, .sandwich-line2, .sandwich-line3 {
   background-color: white;
   width: 40px;
   height: 4px;
@@ -92,7 +245,7 @@ table td, table th{
   opacity: 0;
 }
 
-.change .sandwich-line3{
+.change .sandwich-line3 {
   transform: rotate(45deg) translate(-8px, -8px);
 }
 
@@ -117,13 +270,25 @@ table td, table th{
     font-size: 1em;
   }
 
+  .grid-services {
+    display: grid;
+    width: 100%;
+    margin: 0 auto;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid-services a {
+    margin-bottom: 50px;
+  }
+
+  .grid-services svg {
+    width: 300px;
+    height: 250px;
+  }
+
   nav {
     height: 80px;
     line-height: 64px;
-  }
-
-  nav a, nav ul a {
-    color: #000;
   }
 
   h4 {
@@ -134,8 +299,8 @@ table td, table th{
     font-size: 1.4em;
   }
 
-  label{
-  font-size: 1em;
+  input {
+    font-size: 16px;
   }
 
   .title-page {
@@ -146,66 +311,37 @@ table td, table th{
     margin-bottom: 2em;
   }
 
+  .title-table .title-table-orcs {
+    text-align: left;
+    margin-top: 3em;
+  }
+
+  .title-table .title-section-orcs {
+    text-align: left;
+  }
+
   .title-left h4 {
     text-align: left;
   }
 
-  .title-left h4 span {
-    color: var(--primary);
-  }
-
-  .title-section {
-    margin-top: 80px;
-  }
-
-  .title-section h5 {
-    color: var(--primary);
-  }
-
-  .subtitle-section {
-    margin-top: 30px;
-  }
-
-  .subtitle-section span {
-    color: var(--secondary);
-    font-weight: bold;
+  .endereco-orcamento{
+    text-align: left;
   }
 
   .content{
-    width: auto;
     margin: 30px 100px 30px;
   }
 
-  .pesq_cliente button {
-    background-color: var(--background);
-    color: #fff;
-  }
-
   .pesq-client-button {
-    margin: 1em 0 0;
-    color: var(--secondary);
-    background-color: var(--background);
-    cursor: pointer;
+    margin-top: 1em;
   }
 
-  .divider{
+  .divider {
     height: 1px;
   }
 
   .form-edit-proposta {
     margin-top: 50px;
-  }
-
-  table td, table th{
-    border-bottom: 1px solid #dddddd;
-  }
-
-  .table-pendencias thead, 
-  .table-servicos thead, 
-  .table-insumos thead,
-  .table-generic-orcs thead {
-    background-color: var(--background2);
-    color: #000;
   }
 
   .table-pendencias,
@@ -218,9 +354,13 @@ table td, table th{
     margin-bottom: 50px
   }
 
-  .table-servicos td, .table-servicos th, 
-  .table-insumos td, .table-insumos th,
-  .table-generic-orcs td, .table-generic-orcs th {
+  .form-group-of-fields {
+    margin-left: 200px;
+    border-radius: 15px;
+    padding: 10px;
+  }
+
+  .title-forms-fields {
     text-align: left;
   }
 
@@ -245,6 +385,11 @@ table td, table th{
   .submit-hover{
     height: 50px;
 	  padding: 20px;
+  }
+
+  .submit-end-page {
+    padding: 15px 30px 15px;
+    margin-left: 200px;
   }
 
   .submit-ok{
@@ -323,6 +468,10 @@ button{
   border: none;
 }
 
+.input-field > label {
+  font-size: 1em;
+}
+
 table{
   width: 100%;
   margin: auto;
@@ -361,31 +510,13 @@ tfoot td {
   text-align: left;
 }
 
-.title-page {
-  font-family: 'Butler-Regular';
-}
-
 .title-orcs {
   margin-bottom: 0px;
 }
 
 .title-table {
-  text-align: center;
   font-size: 1.2em;
-  margin-top: 2em;
-  margin-bottom: 2em;
 }
-
-.title-table .title-table-orcs {
-  text-align: left;
-  margin-top: 3em;
-}
-
- .title-table .title-section-orcs {
-   text-align: left;
-   margin-top: 2em;
-   color: var(--primary);
- }
 
 
 .title-form-after-table {
@@ -395,19 +526,7 @@ tfoot td {
   margin-bottom: 1.2em;
 }
 
-.form-group-of-fields {
-  margin-left: 200px;
-  border-radius: 15px;
-  border: var(--secondary-dark) solid 2px;
-  padding: 10px;
-}
 
-.endereco-orcamento{
-  font-family: 'Butler-Regular';
-  font-size: 1.4em;
-  color: var(--primary);
-  margin-bottom: 50px;
-}
 
 img.logo_nav{
   vertical-align: middle;
@@ -533,13 +652,6 @@ footer a{
 	color: #FFFFFF;
 }
 
-.title-forms-fields {
-  margin: 2em 0 1em 0;
-	font-size: 1.4em;
-	text-align: left;
-  color: var(--primary);
-}
-
 span.checkbox-grid {
 	margin-top: 20px;
 }
@@ -550,12 +662,6 @@ span.checkbox-grid {
 
 .icon-button {
   padding: 15px 20px;
-}
-
-.submit-end-page {
-  padding: 15px 30px 15px;
-  margin: 4em 0 1.5em;
-  margin-left: 200px;
 }
 
 .submit-end-page span {
