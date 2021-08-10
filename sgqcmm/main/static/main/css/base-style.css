@@ -2,10 +2,11 @@
 :root{
   --primary: #ED3237;
   --secondary: #36CF1C;
+  --secondary-dark: #2DAD17;
   --background: #FFFFFF;
   --background2: #E7E7E7;
+  --background-dark: #C9C3C5;
   --card-color: #F3FFF1;
-  --secondary-dark: #2DAD17;
 }
 
 /* fonts */
@@ -131,6 +132,98 @@ input {
 .content {
   width: auto;
   margin: 0px 30px 0px;
+}
+
+.login-body {
+  background-color: var(--background-dark);
+  color: white;
+}
+
+.login-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 80%;
+  grid-gap: 1em;
+  margin: 0 auto;
+  grid-template-areas: 
+    'logo-login text-login'
+    'form-login form-login'
+  ;
+}
+
+.login-content-display-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 80%;
+  grid-gap: 1em;
+  margin: 0 auto;
+  grid-template-areas: 
+    'logo-login form-login'
+  ;
+}
+
+.login-logo {
+  grid-area: logo-login;
+}
+
+.login-text, .login-form {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  grid-area: text-login;
+}
+
+.login-text h1 {
+  font-family: 'Butler-Regular';
+  text-align: center;
+  color: white;
+  font-size: 3em;
+  text-transform: uppercase;
+}
+
+.login-text h5 {
+  text-align: center;
+  color: white;
+  font-size: 1.5em;
+}
+
+.login-text button, .login-form button {
+  cursor: pointer;
+  width: 50%;
+  left: 25%;
+  padding: 15px 20px 15px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1em;
+  letter-spacing: 2px;
+  color: white;
+  background-color: var(--secondary);
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.login-form {
+  visibility: hidden;
+  grid-area: form-login;
+}
+
+.login-form * {
+  margin: 1em 0 1em;
+}
+
+.login-form input {
+  padding: 1em 1em;
+  border-radius: 10px;
+  border: none;
+}
+
+.display {
+  visibility: visible;
+}
+
+.hide {
+  visibility: hidden;
+  width: 0;
+  height: 0;
 }
 
 .divider {
