@@ -62,7 +62,7 @@
 <script>
 	function addVao() {
 		const bodyOfTable = document.getElementById("bodyVeneziana_id")
-		let numberOfRows = document.getElementById("tableVenezianas_id").rows.length
+		let numberOfRows = bodyOfTable.rows.length
 		let xhttp = new XMLHttpRequest()
 		xhttp.onreadystatechange = function (data) {
 			if (this.readyState === 4 && this.status === 200) {
@@ -72,17 +72,17 @@
 				M.toast({ html: "Erro ao adicionar mais vãos", classes: 'red rounded', displayLength: 3000 })
 			}
 		}
-		xhttp.open("GET", `../ajax/adicionar-mais-vaos/${numberOfRows}`, true)
+		xhttp.open("GET", `../ajax/adicionar-mais-vaos/${numberOfRows+1}`, true)
 		xhttp.send()
 	}
 
 	function submitForm(e) {
 		e.preventDefault()
 		const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-		let numberOfRows = document.getElementById("tableVenezianas_id").rows.length
+		let numberOfRows = document.getElementById("bodyVeneziana_id").rows.length
 		let data_to_backend = new FormData()
 		let totalVaos = 0
-		for (var i = 1; i < numberOfRows; i++) {
+		for (var i = 1; i <= numberOfRows; i++) {
 			let base_vao = document.getElementById(`id_${i}-base`).value
 			let altura_vao = document.getElementById(`id_${i}-altura`).value
 			let repeticoes_vao = document.getElementById(`id_${i}-repeticoes`).value

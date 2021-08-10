@@ -1683,6 +1683,7 @@ def imp_contrato(request, codorcam):
 
 def venezianas(request, codigo_orcamento):
     if request.method == "POST":
+        print(f"\n\n{request.POST}\n\n")
         forms = [formMedidasVenezianas(request.POST, prefix=i) for i in range(1, int(request.POST['totalVaos']) + 1)]
         if all((form.is_valid() for form in forms)):
             venezianas = []
@@ -1696,8 +1697,11 @@ def venezianas(request, codigo_orcamento):
                         'rebite': form.cleaned_data['rebite'],
                     }
                     venezianas.append(dict_veneziana)
+            print(f"\n\n{venezianas}\n\n")
+            
             codigo_aleta = request.POST['aleta']
             codigo_selante = request.POST['1-selante']
+
             if venezianas == [] or codigo_aleta == "":
                 return HttpResponse(status=400)
             try:
