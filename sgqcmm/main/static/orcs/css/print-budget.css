@@ -69,8 +69,8 @@ h2{
 }
 
 .header-space {
-	background: url("../media/Untitled-3-1.jpg") no-repeat center center;
-	background-size: 54mm 13mm;
+	background: url("../media/Timbrado-head.png") no-repeat center center;
+	background-size: 90mm;
 	z-index: 1;
 }
 
@@ -82,7 +82,7 @@ h2{
 	margin-top: -114mm;
 	padding-top: 114mm;
 	content: "";
-	background: url("../media/Untitled-3-2.jpg") no-repeat center center;
+	background: url("../media/Timbrado-footer.png") no-repeat center center;
 	background-size: 210mm 138mm;
 	z-index: 1;
 }
