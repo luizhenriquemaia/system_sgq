@@ -45,9 +45,7 @@ class formEditarEap(forms.Form):
     
 
 class formCadInsumo(forms.Form):
-    categoria_insumo = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.filter(
-        Q(id=15)|Q(id=16)|Q(id=17)|Q(id=36)|Q(id=37)|Q(id=38)|Q(id=39)|Q(id=42)|Q(id=43)|Q(id=44)|Q(id=45)|Q(id=46)|Q(id=47)|Q(id=48)|Q(id=49)|Q(id=50)|Q(id=51)|Q(id=52)|Q(id=53)|Q(id=54)|Q(id=55)|Q(id=56)|Q(id=57)|Q(id=58)|Q(id=59)|Q(id=60)|Q(id=61)|Q(id=62)).order_by('descricao'),
-        to_field_name="id")
+    categoria_insumo = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.all().order_by('descricao'), to_field_name="id")
     descricao = forms.CharField(max_length=100, required=True)
     unidade = forms.CharField(max_length=5, required=True)
     custo = forms.DecimalField(max_digits=12, decimal_places=4)
@@ -63,9 +61,7 @@ class formAtualizarDadosInsumo(forms.Form):
     espessura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
     comprimento = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
     largura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
-    categoria = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.filter(
-        Q(id=15)|Q(id=16)|Q(id=17)|Q(id=36)|Q(id=37)|Q(id=38)|Q(id=39)|Q(id=42)|Q(id=43)|Q(id=44)|Q(id=45)|Q(id=46)|Q(id=47)|Q(id=48)|Q(id=49)|Q(id=50)|Q(id=51)|Q(id=52)|Q(id=53)|Q(id=54)|Q(id=55)|Q(id=56)|Q(id=57)|Q(id=58)|Q(id=59)|Q(id=60)|Q(id=61)|Q(id=62)).order_by('descricao'),
-        to_field_name="id", required=False)
+    categoria = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.all().order_by('descricao'), to_field_name="id", required=False)
 
 
 class formInserirDeslocamento(forms.Form):
@@ -101,8 +97,8 @@ class formEditarProposta(forms.Form):
         label='prazoValidade', max_length=5, required=True)
     vendedor = forms.ModelChoiceField(
         queryset=c01Usuarios.objetos.all(), to_field_name="id", required=False)
-    tipo_proposta = forms.ChoiceField(choices=[('1', 'Fabricação e instalação da cobertura'), 
-        ('2', 'Só o material'), ('3', 'Outros serviços')], required=True)
+    tipo_proposta = forms.ChoiceField(choices=[('1', 'Execução de serviços'), 
+        ('2', 'Só o material')], required=True)
 
 
 class formEditarContrato(forms.Form):

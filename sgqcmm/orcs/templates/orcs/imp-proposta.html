@@ -3,7 +3,7 @@
   <head>
     {% load static %}
     <link href="{% static 'orcs/css/print-budget.css' %}" rel="stylesheet"/>
-    <title>SGQ CAMAMAR</title>
+    <title>SGQ</title>
   </head>
   <body>
     <table class="table-page">
@@ -22,30 +22,45 @@
               <p class="date-on-the-left">Goiânia - GO, {{ today }}.</p>
               <div class="greetings">
                 {% if dadosProposta.empresa %}
-                {% if dadosProposta.genero_empresa == 0 %}
-                <p>À</p>
+                  {% if dadosProposta.genero_empresa == 0 %}
+                    <p>À</p>
+                  {% else %}
+                    <p>Ao</p>
+                  {% endif %}
+                  <p>{{ dadosProposta.empresa }}</p>
+                  <p>Att.: {{ dadosProposta.tratamento }} {{ dadosProposta.cliente }}</p>
                 {% else %}
-                <p>Ao</p>
+                  {% if dadosProposta.genero == 0 %}
+                  <p>À</p>
+                  {% else %}
+                  <p>Ao</p>
+                  {% endif %}
+                  <p>{{ dadosProposta.tratamento }} {{ dadosProposta.cliente }}</p>
                 {% endif %}
-                <p>{{ dadosProposta.empresa }}</p>
-                <p>Att.: {{ dadosProposta.tratamento }} {{ dadosProposta.cliente }}</p>
-                <p>End. Obra: {{ dadosProposta.enderecoObra }}</p>
-                {% else %}
-                {% if dadosProposta.genero == 0 %}
-                <p>À</p>
-                {% else %}
-                <p>Ao</p>
-                {% endif %}
-                <p>{{ dadosProposta.tratamento }} {{ dadosProposta.cliente }}</p>
-                <p>End. Obra: {{ dadosProposta.enderecoObra }}</p>
+                {% if tipoProposta != 2 %}
+                  <p>End. Obra: {{ dadosProposta.enderecoObra }}</p>
                 {% endif %}
               </div>
               <div class="services-section unbreakable">
-                <p>
-                  Conforme a solicitação viemos por meio desta apresentar a proposta de
-                  preços para fornecimento de material e mão de obra especializada para
-                  a execução de:
-                </p>
+                {% if tipoProposta != 2 %}
+                  {% if insumos %}
+                  <p>
+                    Conforme a solicitação viemos por meio desta apresentar a proposta de
+                    preços para fornecimento de <strong>material</strong> e <strong>mão de obra especializada</strong> para
+                    a execução de:
+                  </p>
+                  {% else %}
+                  <p>
+                    Conforme a solicitação viemos por meio desta apresentar a proposta de
+                    preços para fornecimento de <strong>mão de obra especializada</strong> para a execução de:
+                  </p>
+                  {% endif %}
+                {% else %}
+                  <p>
+                    Conforme a solicitação viemos por meio desta apresentar a proposta de
+                    preços para fornecimento de <strong>material</strong> para a execução de:
+                  </p>
+                {% endif %}
                 <table class="table-content">
                   <thead>
                     <th style="width:8%;">Item</th>
@@ -61,18 +76,20 @@
                   </tbody>
                 </table>
               </div>
-              <section class="unbreakable">
-                <div class="subtitle">
-                  Sistema Construtivo
-                </div>
-                <div class="subtitle-text">
-                  <ul style="padding-top:0;padding-bottom:0;margin-bottom:0;">
-                    {% for insumo in insumos %}
-                    <li class="lista-insumos">{{ insumo.descricao }}</li>
-                    {% endfor %}
-                  </ul>
-                </div>
-              </section>
+              {% if insumos %}
+                <section class="unbreakable">
+                  <div class="subtitle">
+                    Insumos
+                  </div>
+                  <div class="subtitle-text">
+                    <ul style="padding-top:0; padding-bottom:0; margin-bottom:0;">
+                      {% for insumo in insumos %}
+                      <li class="lista-insumos">{{ insumo.descricao }}</li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </section>
+              {% endif %}
               <section class="unbreakable">
                 <div class="subtitle">
                   Valores Propostos
@@ -98,7 +115,7 @@
                     </tr>
                     {% endfor %}
                     <tfoot>
-                      <td colspan="2" style="text-align: right;">Valor total da proposta: </td>
+                      <td colspan="2" style="text-align: right;">Total da proposta: </td>
                       <td>R$ {{ totalProposta }}</td>
                     </tfoot>
                   </table>
@@ -112,6 +129,7 @@
                   {{ dadosProposta.condPgto }}. Outras formas de pagamento sob consulta.
                 </div>
               </section>
+              {% if tipoProposta != 2 %}
               <section class="unbreakable">
                 <div class="subtitle">
                   Prazo de Execução da Obra
@@ -120,6 +138,7 @@
                   Até {{ dadosProposta.prazoObra }} dias úteis sem chuva, após a assinatura do contrato e o recebimento da entrada.
                 </div>
               </section>
+              {% endif %}
               <section class="unbreakable">
                 <div class="subtitle">
                   Prazo de Validade da Proposta
@@ -134,10 +153,14 @@
                 </div>
                 <div class="subtitle-text">
                   <ul>
-                    <li>Para calhas e rufos zincados foram considerados apenas pintura da face externa dos mesmos;</li>
-                    <li>Todos os impostos já inclusos no preço;</li>
+                    {% if chapasZincadas %}
+                      <li>Para chapas zincadas foi considerado apenas a pintura da face externa dos mesmos;</li>
+                    {% endif %}
+                    {% if tipoProposta != 2 %}
                     <li>Transporte de todos os materiais por conta da contratada
                       no perímetro urbano de Goiânia - GO;</li>
+                    {% endif %}
+                    <li>Todos os impostos já inclusos no preço;</li>
                     <li>Sujeito a aprovação de crédito;</li>
                     <li>Valores sujeitos a reajustamento após validade da proposta;</li>
                     <li>O material deverá ser estocado em local coberto, seco e ventilado.</li>
