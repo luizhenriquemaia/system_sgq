@@ -611,7 +611,6 @@ tfoot td {
   font-size: 1.2em;
 }
 
-
 .title-form-after-table {
   font-size: 1.3em;
   text-align: left;
@@ -619,11 +618,13 @@ tfoot td {
   margin-bottom: 1.2em;
 }
 
-
-
-img.logo_nav{
+nav .logo_nav {
   vertical-align: middle;
-  width: 230px;
+  width: 60%;
+}
+
+nav .text-logo-nav {
+  margin-left: 60px;
 }
 
 /* Cards */
