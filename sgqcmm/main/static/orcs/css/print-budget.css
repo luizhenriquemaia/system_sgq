@@ -4,9 +4,6 @@
   margin: 0;
 }
 
-
-
-
 /* variables */
 :root{
   --primary: #8b1014;
@@ -70,7 +67,7 @@ h2{
 
 .header-space {
 	background: url("../media/Timbrado-head.png") no-repeat center center;
-	background-size: 90mm;
+	background-size: 80mm;
 	z-index: 1;
 }
 
@@ -201,7 +198,7 @@ h2{
 }
 
 .table-content th{
-	padding: 10px 0px 10px;
+	padding: 10px 10px;
 	text-align: center;
 	font-weight: 500;
 	letter-spacing: 0.8px; 
