@@ -23,8 +23,7 @@ from .calc.calculos_veneziana import orc_venezianas
 from .forms import (formAdicionarDesconto, formAlterarInsumoOrc,
                     formAlterarStatus, formAtualizarDadosInsumo, formCadInsumo,
                     formEditarContrato, formEditarProposta, formEditarEap,
-                    formInserirDeslocamento, formInserirInsumo,
-                    formInserirInsumoNaAtividade, formInserirServico,
+                    formInserirDeslocamento, formInserirInsumoNaAtividade, formInserirServico,
                     formMarcarVisita, formMedidasVenezianas,
                     formOrcamentoMultiClickPlanoFixo,
                     formOrcamentoTelhaTrapezoidalFixo,
@@ -702,7 +701,8 @@ def cadastrar_insumo(request):
             return render(request, "orcs/cad-insumo.html", {"form":form,})
     else:
         form = formCadInsumo()
-    return render(request, "orcs/cad-insumo.html", {"form":form,})
+        categorias_insumo = a10CatsInsumos.ordenadas(a10CatsInsumos)
+    return render(request, "orcs/cad-insumo.html", {"form":form, "categoriasInsumos": categorias_insumo})
 
 
 def detalhar_servico(request, codorcam, codeap):
@@ -884,7 +884,7 @@ def ajax_alterar_insumo_servico(request, codorcam, id_eap, id_insumo):
     if request.user:
         if request.method == "GET":
             form = formAlterarInsumoOrc()
-            inputs_select = a11Insumos.objetos.filter(Q(catins_id=15)|Q(catins_id=16)|Q(catins_id=36)|Q(catins_id=37)|Q(catins_id=38)|Q(catins_id=39)|Q(catins_id=41)|Q(catins_id=42)|Q(catins_id=43)|Q(catins_id=44)|Q(catins_id=45)|Q(catins_id=46)|Q(catins_id=47)|Q(catins_id=48)|Q(catins_id=49)|Q(catins_id=51)|Q(catins_id=52)|Q(catins_id=53)|Q(catins_id=54)|Q(catins_id=55)|Q(catins_id=61)|Q(catins_id=62)).only('id', 'descricao').order_by('descricao')
+            inputs_select = a11Insumos.objetos.all().only('id', 'descricao').order_by('descricao')
             service_input = g05InsEAP.objetos.get(id=id_insumo)
             return render(request, 'orcs/ajax-alterar-insumo-servico.html',
                 {"serviceInput": service_input, "form": form, "insumosSelect": inputs_select})
