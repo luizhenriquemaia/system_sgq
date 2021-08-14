@@ -297,7 +297,7 @@ class ParafusosTelha():
     def calc_parafusos_telha_zincada(self, largura, comprimento, repeticoes, quant_modulos, largura_telha):
         quantidade_vaos = Decimal(arrend_cima(largura / largura_telha, 0))
         # vão máximo entre terças de 1,50m
-        quantidade_tercas = Decimal(arrend_cima(comprimento / 1.5, 0) + 1)
+        quantidade_tercas = Decimal(arrend_cima(comprimento / Decimal(1.5), 0) + 1)
         quant_parafusos = Decimal(arrend_cima(quantidade_vaos * 4 * quantidade_tercas * repeticoes * quant_modulos, 0))
         # 10% a mais
         quantidade = quant_parafusos * Decimal(1.1)

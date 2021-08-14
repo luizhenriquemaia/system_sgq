@@ -9,7 +9,6 @@
 			{{ orcamento.endereco }}
 		</div>
 		<div class="divider"></div>
-		{% if eaporcam %}
 		<div class="title-table">
 			<h5 class="title-table-orcs">SERVIÇOS</h5>
 		</div>
@@ -29,6 +28,7 @@
 				<th></th>
 			</thead>
 			<tbody id="services_id">
+				{% if eaporcam %}
 				{% for itemeap in eaporcam %}
 				<tr id="services_id{{itemeap.codeap}}">
 					<td>{{itemeap.codeap}}</td>
@@ -63,6 +63,7 @@
 					</td>
 				</tr>
 				{% endfor %}
+				{% endif %}
 			</tbody>
 			<tfoot>
 				<form method="POST" onsubmit=addService(event)>
@@ -99,7 +100,6 @@
 				</form>
 			</tfoot>
 		</table>
-		{% endif %}
 		<div class="divider"></div>
 		<div class="title-table">
 			<h5 class="title-table-orcs">NOVO SERVIÇO</h5>

@@ -98,17 +98,9 @@ urlpatterns = [
         views.obra_visitada, 
         name='obra_visitada'),
     path(
-        'imp-proposta/<int:codorcam>/',
+        'imp-proposta/<int:codorcam>/<int:tipo_proposta>/',
         views.imp_proposta,
         name='imp_proposta'),
-    path(
-        'imp-proposta-so-material/<int:codorcam>/',
-        views.imp_proposta_so_material,
-        name='imp_proposta_so_material'),
-    path(
-        'imp-proposta-outros-servicos/<int:codorcam>/',
-        views.imp_proposta_outros_servicos,
-        name='imp_proposta_outros_servicos'),
     path(
         'editar-proposta/<int:codorcam>/', 
         views.editar_proposta, 

@@ -9,18 +9,10 @@ from main.models import (a10CatsInsumos, a11Insumos, a15AtvsPad, a19PlsPgtos,
 class formAdicionarDesconto(forms.Form):
     valor_desconto = forms.CharField(
         label='valor_desconto', max_length=5, required=True)
-
-class formInserirInsumo(forms.Form):
-    combInsumo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(
-        Q(catins_id=8) | Q(catins_id=15) | Q(catins_id=16) | Q(catins_id=17) | Q(catins_id=36) | Q(catins_id=37) | Q(catins_id=38) | Q(catins_id=39) | Q(catins_id=41) | Q(catins_id=42) | Q(catins_id=43) | Q(catins_id=44) | Q(catins_id=45) | Q(catins_id=46) | Q(catins_id=47) | Q(catins_id=48) | Q(catins_id=49) | Q(catins_id=51) | Q(catins_id=52) | Q(catins_id=53) | Q(catins_id=54)|Q(catins_id=55)|Q(catins_id=57)|Q(catins_id=58)|Q(catins_id=59)|Q(catins_id=60)|Q(catins_id=61)|Q(catins_id=62)).order_by('descricao'),
-        to_field_name="codigo", widget=forms.Select(attrs={'class':'select-add-button'}))
-    quantInsumo = forms.CharField(label='Quantidade', max_length=5, required=True)
-    combAtvPad = forms.ModelChoiceField(queryset=a15AtvsPad.objetos.filter(Q(id=21)|Q(id=35)|Q(id=36)|Q(id=55)|Q(id=56)).order_by('descricao'),
-                                   to_field_name="id")
+        
 
 class formInserirInsumoNaAtividade(forms.Form):
-    insumo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(
-        Q(catins_id=8)|Q(catins_id=15)|Q(catins_id=16)|Q(catins_id=17)|Q(catins_id=36)|Q(catins_id=37)|Q(catins_id=38)|Q(catins_id=39)|Q(catins_id=41)|Q(catins_id=42)|Q(catins_id=43)|Q(catins_id=44)|Q(catins_id=45)|Q(catins_id=46)|Q(catins_id=47)|Q(catins_id=48)|Q(catins_id=49)| Q(catins_id=51)|Q(catins_id=52)|Q(catins_id=53)|Q(catins_id=54)|Q(catins_id=55)|Q(catins_id=57)|Q(catins_id=58)|Q(catins_id=59)|Q(catins_id=60)|Q(catins_id=61)|Q(catins_id=62)).order_by('descricao'),
+    insumo = forms.ModelChoiceField(queryset=a11Insumos.objetos.all().only("id", "descricao", "codigo").order_by('descricao'),
         to_field_name="id", widget=forms.Select(attrs={'class':'select-add-button'}))
     quant_insumo = forms.CharField(max_length=10)
     valor_insumo = forms.CharField(max_length=10, required=False)
@@ -45,9 +37,7 @@ class formEditarEap(forms.Form):
     
 
 class formCadInsumo(forms.Form):
-    categoria_insumo = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.filter(
-        Q(id=15)|Q(id=16)|Q(id=17)|Q(id=36)|Q(id=37)|Q(id=38)|Q(id=39)|Q(id=42)|Q(id=43)|Q(id=44)|Q(id=45)|Q(id=46)|Q(id=47)|Q(id=48)|Q(id=49)|Q(id=50)|Q(id=51)|Q(id=52)|Q(id=53)|Q(id=54)|Q(id=55)|Q(id=56)|Q(id=57)|Q(id=58)|Q(id=59)|Q(id=60)|Q(id=61)|Q(id=62)).order_by('descricao'),
-        to_field_name="id")
+    categoria_insumo = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.all().only('id', 'ordenador', 'descricao').order_by('ordenador'), to_field_name="id")
     descricao = forms.CharField(max_length=100, required=True)
     unidade = forms.CharField(max_length=5, required=True)
     custo = forms.DecimalField(max_digits=12, decimal_places=4)
@@ -63,9 +53,7 @@ class formAtualizarDadosInsumo(forms.Form):
     espessura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
     comprimento = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
     largura = forms.DecimalField(max_digits=12, decimal_places=4, min_value=0, required=False)
-    categoria = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.filter(
-        Q(id=15)|Q(id=16)|Q(id=17)|Q(id=36)|Q(id=37)|Q(id=38)|Q(id=39)|Q(id=42)|Q(id=43)|Q(id=44)|Q(id=45)|Q(id=46)|Q(id=47)|Q(id=48)|Q(id=49)|Q(id=50)|Q(id=51)|Q(id=52)|Q(id=53)|Q(id=54)|Q(id=55)|Q(id=56)|Q(id=57)|Q(id=58)|Q(id=59)|Q(id=60)|Q(id=61)|Q(id=62)).order_by('descricao'),
-        to_field_name="id", required=False)
+    categoria = forms.ModelChoiceField(queryset=a10CatsInsumos.objetos.all().only('id', 'ordenador', 'descricao').order_by('ordenador'), to_field_name="id", required=False)
 
 
 class formInserirDeslocamento(forms.Form):
@@ -77,8 +65,8 @@ class formInserirDeslocamento(forms.Form):
 
 
 class formAlterarInsumoOrc(forms.Form):
-    insumo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=15)|Q(catins_id=16)|Q(catins_id=36)|Q(catins_id=37)|Q(catins_id=38)|Q(catins_id=39)|Q(catins_id=41)|Q(catins_id=42)|Q(catins_id=43)|Q(catins_id=44)|Q(catins_id=45)|Q(catins_id=46)|Q(catins_id=47)|Q(catins_id=48)|Q(catins_id=49)|Q(catins_id=51)|Q(catins_id=52)|Q(catins_id=53)|Q(catins_id=54)|Q(catins_id=55)|Q(catins_id=61)|Q(catins_id=62)).order_by('descricao'),
-                                   to_field_name="id", required=False)
+    insumo = forms.ModelChoiceField(queryset=a11Insumos.objetos.all().only("id", "descricao", "codigo").order_by('descricao'),
+        to_field_name="id", required=False)
     quantidade = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
     valor_unitario = forms.DecimalField(max_digits=12, decimal_places=4, required=False)
 
@@ -101,8 +89,8 @@ class formEditarProposta(forms.Form):
         label='prazoValidade', max_length=5, required=True)
     vendedor = forms.ModelChoiceField(
         queryset=c01Usuarios.objetos.all(), to_field_name="id", required=False)
-    tipo_proposta = forms.ChoiceField(choices=[('1', 'Fabricação e instalação da cobertura'), 
-        ('2', 'Só o material'), ('3', 'Outros serviços')], required=True)
+    tipo_proposta = forms.ChoiceField(choices=[('1', 'Execução de serviços'), 
+        ('2', 'Só o material')], required=True)
 
 
 class formEditarContrato(forms.Form):
@@ -283,9 +271,9 @@ class FormEstruturaCobertura(forms.Form):
     tipo_pintura = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=52).order_by("descricao").order_by("descricao"),
                                               to_field_name="codigo")
     quantidade_pintura = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0, required=False)
-    chapa_rufo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
+    chapa_rufo = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=16)|Q(catins_id=63)).order_by("descricao"),
                                               to_field_name="codigo")
-    chapa_calha = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(catins_id=16).order_by("descricao"),
+    chapa_calha = forms.ModelChoiceField(queryset=a11Insumos.objetos.filter(Q(catins_id=16)|Q(catins_id=63)).order_by("descricao"),
                                                to_field_name="codigo")
     montante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
     jusante = forms.ChoiceField(choices=[('0', 'livre'), ('1', 'rufo'), ('2', 'calha'), ('3', 'tampar')], required=False)
