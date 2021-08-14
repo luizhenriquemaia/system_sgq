@@ -166,6 +166,10 @@ input {
   grid-area: logo-login;
 }
 
+.login-logo svg {
+  width: 80%;
+}
+
 .login-text, .login-form {
   display: flex;
   flex-direction: column;
@@ -546,6 +550,15 @@ nav li {
   padding: 10px 0 10px;
 }
 
+nav .logo_nav {
+  vertical-align: middle;
+  width: 60%;
+}
+
+nav .text-logo-nav {
+  margin-left: 60px;
+}
+
 h1, h2, h3, h4, h5, h6{
   font-weight: 400;
   text-align: center;
@@ -616,15 +629,6 @@ tfoot td {
   text-align: left;
   margin-top: 6em;
   margin-bottom: 1.2em;
-}
-
-nav .logo_nav {
-  vertical-align: middle;
-  width: 60%;
-}
-
-nav .text-logo-nav {
-  margin-left: 60px;
 }
 
 /* Cards */
