@@ -20,7 +20,7 @@
 						<input type="text" name="tratamento" id="id_tratamento" maxlength="20" value="{{ orcamento.tratamento }}" required>
 					</div>
 					<div class="col s10">
-						<label for="id_nomeCliente">Nome do Cliente</label>
+						<label for="id_nomeCliente">Nome do cliente</label>
 						<input type="text" name="nomeCliente" id="id_nomeCliente" maxlength="300" value="{{ orcamento.nomecliente }}" required>
 					</div>
 				</div>
@@ -35,7 +35,7 @@
 			<div class="form-group-of-fields">
 				<div class="row">
 					<div class="col s6">
-						<label>Condição de Pagamento</label>
+						<label>Condição de pagamento</label>
 						{{ form.condPgto }}
 					</div>
 					<div class="col s6">
@@ -45,18 +45,22 @@
 				</div>
 				<div class="row">
 					<div class="col s6">
-						<label for="id_prazoObra">Prazo de Execução</label>
+						<label for="id_prazoObra">Prazo de execução</label>
 						<input type="text" name="prazoObra" id="id_prazoObra" maxlength="5" value="{{ dadosOrcamento.prazoObra }}" required>
 					</div>
 					<div class="col s6">
-						<label for="id_prazoValidade">Prazo de Validade</label>
+						<label for="id_prazoValidade">Prazo de validade</label>
 						<input type="text" name="prazoValidade" id="id_prazoValidade" maxlength="10" value="{{ dadosOrcamento.prazoValidade }}" required>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col s12">
-						<label for="id_tipo_proposta">Tipo de Proposta</label>
+					<div class="col s6">
+						<label for="id_tipo_proposta">Tipo de proposta</label>
 						{{ form.tipo_proposta }}
+					</div>
+					<div class="col s6">
+						<label for="id_tipo_proposta">Mostrar indíces na tabela de valores</label>
+						{{ form.show_index }}
 					</div>
 				</div>
 			</div>

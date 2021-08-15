@@ -1159,7 +1159,8 @@ def editar_proposta(request, codorcam):
             orcamento.save()
             strcodorc = str(codorcam)
             tipo_proposta = int(request.POST['tipo_proposta'])
-            return HttpResponseRedirect(reverse('orcs:imp_proposta', args=(strcodorc, tipo_proposta)))
+            show_index = int(request.POST['show_index'])
+            return HttpResponseRedirect(reverse('orcs:imp_proposta', args=(strcodorc, tipo_proposta, show_index)))
         else:
             orcamento_template = {
                 "prazoObra": orcamento.prazo,
@@ -1177,7 +1178,7 @@ def editar_proposta(request, codorcam):
             "form": form, "codorcam": codorcam})
 
 
-def imp_proposta(request, codorcam, tipo_proposta):
+def imp_proposta(request, codorcam, tipo_proposta, show_index):
     orcamento = obter_dados_gerais_orc(codorcam)
     bd_orc = g01Orcamento.objetos.get(id=codorcam)
     cliente = e01Cadastros.objetos.get(id=orcamento['codcliente'])
@@ -1275,7 +1276,8 @@ def imp_proposta(request, codorcam, tipo_proposta):
     return render(request, "orcs/imp-proposta.html",
                 {"dadosProposta": dados_proposta, "eapProp": budget_services,
                  "insumos": budget_inputs_list_ordered, "totalProposta": total_budget_amount, "today": today,
-                "listDescricoesOrc": budget_deliveries, "tipoProposta": tipo_proposta, "chapasZincadas": chapas_zincadas})
+                "listDescricoesOrc": budget_deliveries, "tipoProposta": tipo_proposta, "chapasZincadas": chapas_zincadas,
+                "showIndex": show_index})
 
 
 def editar_contrato(request, codorcam):
