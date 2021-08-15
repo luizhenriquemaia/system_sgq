@@ -20,7 +20,9 @@
 					<form method="POST">
 						{% csrf_token %}
 						{{form.nome_cliente}}
-						<button type="submit" class="invisible-button">ok</button>
+						<button type="submit" class="invisible-button">
+							<i class="small material-icons">check</i>
+						</button>
 					</form>
 				</div>
 			</div>
@@ -132,20 +134,6 @@
 					Você possui <span>{{ numerosPendencias.2 }}</span> propostas pendentes.
 				</p>
 			</div>
-			<div class="col s3 offset-s2" style="text-align:right">
-				<div class="pesq_cliente scale-transition scale-out" id="pesqClientesForm">
-					<form method="POST">
-						{% csrf_token %}
-						{{form.nome_cliente}}
-						<button type="submit" class="invisible-button">ok</button>
-					</form>
-				</div>
-			</div>
-			<div class="col s1" style="text-align:right">
-				<button type="button" class="pesq-client-button" onclick="showPesqCliente()">
-					<i class="small material-icons">search</i>
-				</button>
-			</div>
 		</div>
 	</div>
 	<table class="table-pendencias">
@@ -189,20 +177,6 @@
 				<p>
 					Você possui <span>{{ numerosPendencias.3 }}</span> contratos pendentes.
 				</p>
-			</div>
-			<div class="col s3 offset-s2" style="text-align:right">
-				<div class="pesq_cliente scale-transition scale-out" id="pesqClientesForm">
-					<form method="POST">
-						{% csrf_token %}
-						{{form.nome_cliente}}
-						<button type="submit" class="invisible-button">ok</button>
-					</form>
-				</div>
-			</div>
-			<div class="col s1" style="text-align:right">
-				<button type="button" class="pesq-client-button" onclick="showPesqCliente()">
-					<i class="small material-icons">search</i>
-				</button>
 			</div>
 		</div>
 	</div>

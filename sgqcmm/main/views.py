@@ -78,7 +78,12 @@ def inicio(request):
         # Caso ocorra algum erro no formulário
         else:
             messages.error(request, "Erro ao listar orçamentos")
-    else:
+        numeros_pendencias = [len(lista_preorcamentos_pendentes), len(lista_visitas_pendentes), len(lista_orcamentos_pendentes), len(lista_contratos_pendentes)]
+        return render(request, "main/inicio.html", {"preOrcPend": lista_preorcamentos_pendentes, "visitasPend": lista_visitas_pendentes,
+                                                    "orcamPend": lista_orcamentos_pendentes, "contrPend": lista_contratos_pendentes,
+                                                    "obraPend": lista_obras_pendentes, "obraAFinal": lista_obras_finalizadas,
+                                                    "form": formPesqPorCliente, "numerosPendencias":numeros_pendencias})
+    elif request.method == "GET":
         # querys para usuário staff e usuário comum
         ids_status_orcamento_ativos = [status.id for status in a20StsOrcs.objetos.filter(ativo=1)]
         if request.user.is_staff:
@@ -110,10 +115,13 @@ def inicio(request):
             elif pendencia.fase_id == 4:
                 lista_contratos_pendentes.append(dic_pendencias)
         numeros_pendencias = [len(lista_preorcamentos_pendentes), len(lista_visitas_pendentes), len(lista_orcamentos_pendentes), len(lista_contratos_pendentes)]
-    return render(request, "main/inicio.html", {"preOrcPend": lista_preorcamentos_pendentes, "visitasPend": lista_visitas_pendentes,
-                                                "orcamPend": lista_orcamentos_pendentes, "contrPend": lista_contratos_pendentes,
-                                                "obraPend": lista_obras_pendentes, "obraAFinal": lista_obras_finalizadas,
-                                                "form": formPesqPorCliente, "numerosPendencias":numeros_pendencias})
+        return render(request, "main/inicio.html", {"preOrcPend": lista_preorcamentos_pendentes, "visitasPend": lista_visitas_pendentes,
+                                                    "orcamPend": lista_orcamentos_pendentes, "contrPend": lista_contratos_pendentes,
+                                                    "obraPend": lista_obras_pendentes, "obraAFinal": lista_obras_finalizadas,
+                                                    "form": formPesqPorCliente, "numerosPendencias":numeros_pendencias})
+    else:
+        return HttpResponse(405)
+
 
 
 def apps_disponiveis(request):

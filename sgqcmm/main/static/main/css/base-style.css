@@ -302,6 +302,12 @@ table td, table th{
   cursor: pointer;
 }
 
+.invisible-button {
+  padding: 8px;
+  cursor: pointer;
+  color: var(--secondary);
+}
+
 .submit-end-page {
   padding: 15px 60px 15px;
   margin: 4em 0 1.5em 41%;
