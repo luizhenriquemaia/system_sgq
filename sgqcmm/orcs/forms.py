@@ -91,6 +91,7 @@ class formEditarProposta(forms.Form):
         queryset=c01Usuarios.objetos.all(), to_field_name="id", required=False)
     tipo_proposta = forms.ChoiceField(choices=[('1', 'Execução de serviços'), 
         ('2', 'Só o material')], required=True)
+    show_index = forms.ChoiceField(choices=[('0', 'Sim'), ('1', 'Não')], required=True)
 
 
 class formEditarContrato(forms.Form):

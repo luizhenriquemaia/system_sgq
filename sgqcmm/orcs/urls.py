@@ -98,7 +98,7 @@ urlpatterns = [
         views.obra_visitada, 
         name='obra_visitada'),
     path(
-        'imp-proposta/<int:codorcam>/<int:tipo_proposta>/',
+        'imp-proposta/<int:codorcam>/<int:tipo_proposta>/<int:show_index>/',
         views.imp_proposta,
         name='imp_proposta'),
     path(
