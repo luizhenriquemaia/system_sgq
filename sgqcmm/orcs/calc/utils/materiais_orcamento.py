@@ -147,9 +147,13 @@ class PerfilVenezianaAluminio():
         self.comprimento = float(round(perfil_bd.comprimento / 1000, 2))
 
     def quantificar(self, base, altura, repeticoes):
-        self.total_perfis_horizontais = arrend_cima(2 * repeticoes * base / self.comprimento, 0)
-        quantidade_perfis_verticais = 2 * repeticoes * (arrend_cima(base, 0) + 1)
-        self.total_perfis_verticais = arrend_cima(quantidade_perfis_verticais * altura / self.comprimento, 0)
+        barras_por_peca_horizontal = round(base / self.comprimento, 1)
+        if barras_por_peca_horizontal > 1.5:
+            barras_por_peca_horizontal = arrend_cima(barras_por_peca_horizontal, 0)
+        self.total_perfis_horizontais = arrend_cima(2 * repeticoes * barras_por_peca_horizontal, 0)
+        quantidade_perfis_verticais = 2 * repeticoes * arrend_cima(base, 0)
+        pecas_verticais_por_barra = int(self.comprimento / altura)
+        self.total_perfis_verticais = arrend_cima(quantidade_perfis_verticais / pecas_verticais_por_barra, 0)
         self.quantidade = self.total_perfis_horizontais + self.total_perfis_verticais
 
 
