@@ -886,6 +886,8 @@ def ajax_alterar_insumo_servico(request, codorcam, id_eap, id_insumo):
             form = formAlterarInsumoOrc()
             inputs_select = a11Insumos.objetos.all().only('id', 'descricao').order_by('descricao')
             service_input = g05InsEAP.objetos.get(id=id_insumo)
+            service_input.qtdprod = str(service_input.qtdprod).replace(",", ".")
+            service_input.cstunpr = str(service_input.cstunpr).replace(",", ".")
             return render(request, 'orcs/ajax-alterar-insumo-servico.html',
                 {"serviceInput": service_input, "form": form, "insumosSelect": inputs_select})
         elif request.method == "POST":
@@ -1458,7 +1460,6 @@ def imp_contrato(request, codorcam):
 
 def venezianas(request, codigo_orcamento):
     if request.method == "POST":
-        print(f"\n\n{request.POST}\n\n")
         forms = [formMedidasVenezianas(request.POST, prefix=i) for i in range(1, int(request.POST['totalVaos']) + 1)]
         if all((form.is_valid() for form in forms)):
             venezianas = []
@@ -1472,8 +1473,6 @@ def venezianas(request, codigo_orcamento):
                         'rebite': form.cleaned_data['rebite'],
                     }
                     venezianas.append(dict_veneziana)
-            print(f"\n\n{venezianas}\n\n")
-            
             codigo_aleta = request.POST['aleta']
             codigo_selante = request.POST['1-selante']
 
