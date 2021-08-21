@@ -1,5 +1,6 @@
 # Materiais utilizados nos orçamentos
 from decimal import *
+from numpy import arange
 from main.models import a11Insumos
 from .funcoes_calculos import (arrend_cima, tot_peca_juncao, tot_pecas, tot_peca_sobras)
 
@@ -287,7 +288,7 @@ class ParafusosPolicarbonato():
         quant_parafusos_conf = quantidade 
         if not quant_parafusos_conf % 5 == 0:
             quantidade += 5 - (quant_parafusos_conf % 5)
-        self.quantidade = quantidade / 100
+        self.quantidade = round(quantidade / 100, 2)
 
 
 class ParafusosTelha():
@@ -487,6 +488,50 @@ class Rufo():
         if jusante == '1':
             quantidade += largura
         self.quantidade = Decimal(round(quantidade * repeticoes, 2))
+    
+    def preco(self):
+        return self.quantidade * self.custo
+
+
+class PerfilTrilho():
+    def __init__(self, codigo):
+        self.codigo = codigo
+        objeto_bd = a11Insumos.objetos.get(codigo=self.codigo)
+        self.descricao = objeto_bd.descricao
+        self.custo = objeto_bd.custo01
+
+    def calcular_quantidade(self, largura, comprimento, quant_modulos, quant_modulos_moveis, direcao_movimento):
+        quantidade = 0
+        largura_modulos = arrend_cima(largura / quant_modulos, 0)
+        if quant_modulos == 1 and direcao_movimento == 'comprimento':
+            if quant_modulos == quant_modulos_moveis:
+                if largura >= 5:
+                    # tem que ser sempre par esta divisão para a estrutura não ficar com um lado fazendo mais esforço
+                    if (largura / 3) % 2:
+                        quantidade += 1
+                    quantidade = (largura / 3) * 2 * comprimento * 2
+                else:
+                    quantidade = 2 * 2 * comprimento
+        elif quant_modulos == 1 and direcao_movimento == 'largura':
+            if quant_modulos == quant_modulos_moveis:
+                quantidade = 2 * 2 * largura
+        else:
+            if quant_modulos > 1 and direcao_movimento == 'largura':
+                if quant_modulos == quant_modulos_moveis:
+                    for i in arange(1, quant_modulos, 1):
+                        if i == quant_modulos - 1:
+                            quantidade += largura_modulos * i + largura_modulos
+                        else:
+                            quantidade += (largura_modulos * i + largura_modulos) * 2
+                elif quant_modulos > quant_modulos_moveis:
+                    for i in arange(quant_modulos - quant_modulos_moveis - 1, quant_modulos, 1):
+                        if i == quant_modulos - 1:
+                            quantidade += largura * i + largura
+                        else:
+                            quantidade += 2 * (largura * i + largura)
+            elif quant_modulos > 1 and direcao_movimento == 'comprimento':
+                quantidade = ((quant_modulos * 2) -1) * comprimento / (quant_modulos * 2)
+        self.quantidade = Decimal(tot_peca_juncao(quantidade, 6))
     
     def preco(self):
         return self.quantidade * self.custo
