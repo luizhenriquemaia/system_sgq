@@ -86,9 +86,9 @@ def orc_venezianas(codigo_aleta, codigo_selante, prefixo_eap, *valores):
         if chapa_aleta.espessura != 3:
             linha_atual_atividade += 1
             fita_aluminio = FitaAluminio(13770)
-            # 0.9 = 0.384 x 2 + margem de erro
+            # 0.997 = 0.414 x 2 / 0.83 -> +- 20% de margem de erro
             fita_aluminio.calcular_quantidade(
-                0.9 * arrend_cima(base_vao, 0) * chapa_aleta.linhas_de_aleta,
+                1 * arrend_cima(base_vao, 0) * chapa_aleta.linhas_de_aleta,
                 repeticoes
             )
             eap_resultante.append(
