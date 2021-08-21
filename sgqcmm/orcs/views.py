@@ -525,23 +525,23 @@ def editar_orcamento_antigo(request, codorcam):
         list_eaps3 = []
     # Obter Lista de Insumos do Orcamentos
     lista_insumos = []
-    for eap in g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=1):
-        for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
-            insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
-            index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo['descricao']), None)
-            if index_existent_insumo != None:
-                lista_insumos[index_existent_insumo]['quantidade'] += insumo['quantidade']
-            else:
-                dados_insumo =  {
-                    'id': insumo_objeto_a11.id,
-                    'codigo':insumo_objeto_a11.codigo,
-                    'descricao':insumo_objeto_a11.descricao,
-                    'undBas':insumo_objeto_a11.undbas,
-                    'qtdProd': round(insumo.qtdprod, 2),
-                    'cstUnPr': round(insumo.cstunpr, 2),
-                    'vlrTotal': '{:,}'.format(round(insumo.qtdprod * insumo.cstunpr, 2)).replace('.', 'x').replace(',', '.').replace('x', ',')
-                }
-                lista_insumos.append(dados_insumo)
+    # for eap in g03EapOrc.objetos.filter(orcamento_id=orcEscolhido, tipo=1):
+    #     for insumo in g05InsEAP.objetos.filter(eap_id=eap.id):
+    #         insumo_objeto_a11 = a11Insumos.objetos.get(id=insumo.insumo_id)
+    #         index_existent_insumo = next((index for index, insumo_adicionado in enumerate(lista_insumos) if insumo_adicionado['descricao'] == insumo['descricao']), None)
+    #         if index_existent_insumo != None:
+    #             lista_insumos[index_existent_insumo]['quantidade'] += insumo['quantidade']
+    #         else:
+    #             dados_insumo =  {
+    #                 'id': insumo_objeto_a11.id,
+    #                 'codigo':insumo_objeto_a11.codigo,
+    #                 'descricao':insumo_objeto_a11.descricao,
+    #                 'undBas':insumo_objeto_a11.undbas,
+    #                 'qtdProd': round(insumo.qtdprod, 2),
+    #                 'cstUnPr': round(insumo.cstunpr, 2),
+    #                 'vlrTotal': '{:,}'.format(round(insumo.qtdprod * insumo.cstunpr, 2)).replace('.', 'x').replace(',', '.').replace('x', ',')
+    #             }
+    #             lista_insumos.append(dados_insumo)
 
     return render(request, "orcs/editar-orcamento-antigo.html", {
         "orcamento": orcamento, "eaporcam": list_eaps,
@@ -674,7 +674,7 @@ def cadastrar_insumo(request):
             comprimento = form.cleaned_data['comprimento'] if form.cleaned_data['comprimento'] else 0
             largura = form.cleaned_data['largura'] if form.cleaned_data['largura'] else 0
             try:
-                ultimo_insumo_adicionado = a11Insumos.objetos.latest('-id')
+                ultimo_insumo_adicionado = a11Insumos.objetos.latest('id')
             except ObjectDoesNotExist:
                 ultimo_insumo_adicionado = {"id": 0, "codigo": 0}
             novo_insumo = a11Insumos(id = ultimo_insumo_adicionado.id + 1,
@@ -688,7 +688,7 @@ def cadastrar_insumo(request):
                                     prvda = form.cleaned_data['custo'],
                                     pesunbas = 0,
                                     qtppal = 0,
-                                    catins_id = form.cleaned_data['categoria_insumo'],
+                                    catins = form.cleaned_data['categoria_insumo'],
                                     espessura = espessura,
                                     comprimento = comprimento,
                                     largura = largura,
@@ -886,6 +886,8 @@ def ajax_alterar_insumo_servico(request, codorcam, id_eap, id_insumo):
             form = formAlterarInsumoOrc()
             inputs_select = a11Insumos.objetos.all().only('id', 'descricao').order_by('descricao')
             service_input = g05InsEAP.objetos.get(id=id_insumo)
+            service_input.qtdprod = str(service_input.qtdprod).replace(",", ".")
+            service_input.cstunpr = str(service_input.cstunpr).replace(",", ".")
             return render(request, 'orcs/ajax-alterar-insumo-servico.html',
                 {"serviceInput": service_input, "form": form, "insumosSelect": inputs_select})
         elif request.method == "POST":
@@ -1458,7 +1460,6 @@ def imp_contrato(request, codorcam):
 
 def venezianas(request, codigo_orcamento):
     if request.method == "POST":
-        print(f"\n\n{request.POST}\n\n")
         forms = [formMedidasVenezianas(request.POST, prefix=i) for i in range(1, int(request.POST['totalVaos']) + 1)]
         if all((form.is_valid() for form in forms)):
             venezianas = []
@@ -1472,8 +1473,6 @@ def venezianas(request, codigo_orcamento):
                         'rebite': form.cleaned_data['rebite'],
                     }
                     venezianas.append(dict_veneziana)
-            print(f"\n\n{venezianas}\n\n")
-            
             codigo_aleta = request.POST['aleta']
             codigo_selante = request.POST['1-selante']
 

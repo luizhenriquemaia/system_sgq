@@ -11,7 +11,7 @@ from .utils.materiais_orcamento import (
     Calha, ChapaPolicarbonato, DiscoCorte, Eletrodo, FitaAluminio,
     FitaVentTape, Gaxeta, Guarnicao, ParafusosPolicarbonato, PerfilArremate,
     PerfilU, PerfilUniao, PerfisEstruturaisDiferentes, PerfisEstruturaisIguais,
-    Roldana, Rufo, Selante)
+    PerfilTrilho, Roldana, Rufo, Selante)
 
 
 ############ Conferencia Distancia Apoios ########################
@@ -274,7 +274,8 @@ def orc_poli_plano(prefEap, **valores):
         comp_real, 
         valores['dados_dimensoes']['repeticoes_cobertura'], 
         dist_parafusos, 
-        perfil_uniao_igual_ao_arremate
+        perfil_uniao_igual_ao_arremate,
+        quantidade_de_modulos
     )
     linha_ant += 1
     eap_result.append(
@@ -424,57 +425,20 @@ def orc_poli_plano(prefEap, **valores):
         eap_result.append(linha_eap)
         custo_total += valores['dados_retratil']['quantidade_motor'] * a11Insumos.objetos.get(codigo=14225).custo01
 
-        ######################### Cantoneiras #######################
-        quantCantoneiras = 0
-        larguraModulos = arrend_cima(
-            valores['dados_dimensoes']['largura_cobertura'] / quantidade_de_modulos, 0)
-        if quantidade_de_modulos == 1 and estrutura_retratil_direcao_comprimento:
-            if quantidade_de_modulos == valores['dados_retratil']['quantidade_modulos_moveis']:
-                if valores['dados_dimensoes']['largura_cobertura'] >= 5:
-                    # tem que ser sempre par esta divisão para a estrutura não ficar com um lado fazendo mais esforço
-                    if (valores['dados_dimensoes']['largura_cobertura']/3) % 2:
-                        quantCantoneiras += 1
-                    quantCantoneiras = (
-                        valores['dados_dimensoes']['largura_cobertura'] / 3) * 2 * valores['dados_dimensoes']['comprimento_cobertura'] * 2
-                else:
-                    quantCantoneiras = 2 * 2 * valores['dados_dimensoes']['comprimento_cobertura']
-        elif quantidade_de_modulos == 1 and estrutura_retratil_direcao_largura:
-            if quantidade_de_modulos == valores['dados_retratil']['quantidade_modulos_moveis']:
-                quantCantoneiras = 2 * 2 * valores['dados_dimensoes']['largura_cobertura']
-        else:
-            if quantidade_de_modulos > 1 and estrutura_retratil_direcao_largura:
-                if quantidade_de_modulos == valores['dados_retratil']['quantidade_modulos_moveis']:
-                    for i in arange(1, quantidade_de_modulos, 1):
-                        if i == quantidade_de_modulos-1:
-                            quantCantoneiras += larguraModulos*i + larguraModulos
-                        else:
-                            quantCantoneiras += (larguraModulos *
-                                                i + larguraModulos)*2
-                elif quantidade_de_modulos > valores['dados_retratil']['quantidade_modulos_moveis']:
-                    for i in arange(quantidade_de_modulos - valores['dados_retratil']['quantidade_modulos_moveis']-1, quantidade_de_modulos, 1):
-                        if i == (quantidade_de_modulos) - 1:
-                            quantCantoneiras += larguraModulos*i + larguraModulos
-                        else:
-                            quantCantoneiras += 2 * \
-                                (larguraModulos*i + larguraModulos)
-            elif quantidade_de_modulos > 1 and estrutura_retratil_direcao_comprimento:
-                quantCantoneiras = (
-                    (quantidade_de_modulos * 2) - 1) * valores['dados_dimensoes']['comprimento_cobertura'] / quantidade_de_modulos * 2
-        quantCantoneiras = Decimal(tot_peca_juncao(quantCantoneiras, 6))
-        # Se for rolete de tecnil não precisa de cantoneira
-        if not valores['dados_retratil']['cod_roldana'] == 14219 or valores['dados_retratil']['cod_roldana'] == 14297:
-            linha_eap = escrever_linha_eap(
-                '', '', -1, quantCantoneiras, '', 0, 0, valores['dados_retratil']['cod_cantoneira'])
-            linha_ant += 1
-            eap_result.append(linha_eap)
-            custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['dados_retratil']['cod_cantoneira']).custo01
-
-        ####################### Perfis Cantoneiras ####################
-        linha_eap = escrever_linha_eap(
-            '', '', -1, quantCantoneiras, '', 0, 0, valores['dados_retratil']['cod_perfil_cantoneira'])
+        ####################### Perfis Trilhos ####################
+        perfil_trilho = PerfilTrilho(valores['dados_retratil']['cod_perfil_cantoneira'])
+        perfil_trilho.calcular_quantidade(
+            largura_orcamento,
+            comprimento_orcamento,
+            quantidade_de_modulos,
+            valores['dados_retratil']['quantidade_modulos_moveis'],
+            'comprimento' if estrutura_retratil_direcao_comprimento else 'largura'
+        )
         linha_ant += 1
-        eap_result.append(linha_eap)
-        custo_total += quantCantoneiras * a11Insumos.objetos.get(codigo=valores['dados_retratil']['cod_perfil_cantoneira']).custo01
+        eap_result.append(
+            escrever_eap_insumos(perfil_trilho)
+        )
+        custo_total += perfil_trilho.preco()
 
         ####################### Roldanas ##############################
         roldana = Roldana(valores['dados_retratil']['cod_roldana'])

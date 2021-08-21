@@ -1409,7 +1409,6 @@
 		dataToBackEnd.append("quantidade", document.getElementById("edit_quantidade_id").value)
 		dataToBackEnd.append("unidade", document.getElementById("edit_unidade_id").value)
 		dataToBackEnd.append("valor_unitario", document.getElementById("edit_valor_unitario_id").value)
-		console.log(document.getElementById("edit_valor_unitario_id").value)
 		const request = new Request(`./ajax/edit-servico/${codeEap}/`,
 			{
 				method: 'POST',
