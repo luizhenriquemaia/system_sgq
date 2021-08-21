@@ -274,7 +274,8 @@ def orc_poli_plano(prefEap, **valores):
         comp_real, 
         valores['dados_dimensoes']['repeticoes_cobertura'], 
         dist_parafusos, 
-        perfil_uniao_igual_ao_arremate
+        perfil_uniao_igual_ao_arremate,
+        quantidade_de_modulos
     )
     linha_ant += 1
     eap_result.append(

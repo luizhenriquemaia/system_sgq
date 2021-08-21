@@ -276,15 +276,14 @@ class ParafusosPolicarbonato():
             quantidade += 5 - (quant_parafusos_conf % 5)
         self.quantidade = quantidade / 100
     
-    def calc_parafuso_uniao(self, largura, dist_apoios, comprimento, repeticoes, dist_parafusos, perfil_uniao_igual_ao_arremate):
+    def calc_parafuso_uniao(self, largura, dist_apoios, comprimento, repeticoes, dist_parafusos, perfil_uniao_igual_ao_arremate, quant_modulos):
         if perfil_uniao_igual_ao_arremate:
-            quantidade_de_apoios = Decimal(arrend_cima(largura / dist_apoios, 2) + 1)
-            quant_parafusos = arrend_cima(quantidade_de_apoios * comprimento * repeticoes / dist_parafusos, 2)
+            quantidade_de_apoios = (Decimal(arrend_cima(Decimal(arrend_cima(largura / quant_modulos, 2))/dist_apoios, 0)) + 1) * quant_modulos
         else:
-            quantidade_de_apoios = Decimal(arrend_cima(largura / dist_apoios, 2) - 1)
-            quant_parafusos = arrend_cima(quantidade_de_apoios * comprimento * repeticoes / dist_parafusos, 2)
+            quantidade_de_apoios = (Decimal(arrend_cima(Decimal(arrend_cima(largura / quant_modulos, 2))/dist_apoios, 0)) - 1) * quant_modulos
+        quant_parafusos = arrend_cima(quantidade_de_apoios * comprimento * repeticoes / dist_parafusos, 2)
         # 10% a mais
-        quantidade = quant_parafusos * 1.1
+        quantidade = round(quant_parafusos * 1.1, 2)
         quant_parafusos_conf = quantidade 
         if not quant_parafusos_conf % 5 == 0:
             quantidade += 5 - (quant_parafusos_conf % 5)
