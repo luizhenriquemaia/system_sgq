@@ -826,7 +826,8 @@ def orc_poli_curvo(prefEap, **valores):
         comprimento_orcamento, 
         valores['dados_dimensoes']['repeticoes_cobertura'] * quantidade_de_modulos, 
         dist_parafusos, 
-        perfil_uniao_igual_ao_arremate
+        perfil_uniao_igual_ao_arremate,
+        quantidade_de_modulos
     )
     linha_ant += 1
     eap_result.append(
